@@ -1,5 +1,7 @@
 const functions = require('firebase-functions')
 const app = require('express')()
+const cors = require('cors')
+const bodyParser = require('body-parser')
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -10,9 +12,9 @@ const app = require('express')()
 // })
 
 app
-  .use(cors({ origin: true }))
+  .use(cors({origin: true}))
   .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: false }))
+  .use(bodyParser.urlencoded({extended: false}))
   .get('/todos', (req, res) => {
     const todos = [
       {
@@ -29,6 +31,6 @@ app
     return res.json(todos)
   })
   .get('*', (req, res) => res.status(404)
-    .json({ success: false, data: 'Endpoint not found' }))
+    .json({success: false, data: 'Endpoint not found'}))
 
 exports.api = functions.https.onRequest(app)
