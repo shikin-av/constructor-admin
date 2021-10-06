@@ -1,4 +1,4 @@
-const {db} = require('../utils')
+const {db} = require('../../firebase')
 
 module.exports = async (req, res) => {
   const {userId} = req.params

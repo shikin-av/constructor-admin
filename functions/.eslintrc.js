@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   env: {
-    es6: true,
+    es2017: true,
     node: true,
   },
   extends: [
@@ -9,8 +9,13 @@ module.exports = {
     'google',
   ],
   rules: {
-    quotes: ['error', 'single'],
-    semi: ['error', 'never'],
-    indent: ['error', 2],
+    'quotes': ['error', 'single'],
+    'semi': ['error', 'never'],
+    'indent': ['error', 2],
+    'object-curly-spacing': ['off'],
+    'no-trailing-spaces': ['off'],
+    'padded-blocks': ['off'],
+    'max-len': ['error', { 'code': 130 }],
+    'arrow-parens': ['off'],
   },
 }

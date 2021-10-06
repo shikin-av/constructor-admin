@@ -1,15 +1,10 @@
-const functions = require('firebase-functions')
-const express = require('express')
-const cors = require('cors')
-const {getModels, handleError} = require('./routes')
+exports.api = require('./api')
 
-const app = express()
+exports.loadMyModelsPage = require('./app/loadMyModelsPage')
+exports.loadMyModel = require('./app/loadMyModel')
+exports.saveMyModelPart = require('./app/saveMyModelPart')
+exports.saveMyModel = require('./app/saveMyModel')
+exports.deleteMyModel = require('./app/deleteMyModel')
 
-app
-  .use(cors({origin: true}))
-  .use(express.json())
-  .use(express.urlencoded({extended: false}))
-  .get('/models/:userId', getModels)
-  .get('*', handleError)
-
-exports.api = functions.https.onRequest(app)
+exports.loadStoryPage = require('./app/loadStoryPage')
+exports.loadStoryModel = require('./app/loadStoryModel')
