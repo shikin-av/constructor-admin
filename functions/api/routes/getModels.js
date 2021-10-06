@@ -1,20 +1,23 @@
 const {db} = require('../../firebase')
 
-module.exports = async (req, res) => {
+const getModels = async (req, res) => {
   const {userId} = req.params
-  return db
-    .collection(`models/users/${userId}`)
-    .orderBy('createdAt', 'desc')
-    .get()
-    .then((snapshot) => {
-      const models = snapshot.docs.map((doc) => ({
+
+  try {
+    const snapshot = await db.collection(`models/users/${userId}`)
+      .orderBy('updatedAt', 'desc').get()
+
+    const models = snapshot.docs.map(doc => {
+      return {
         id: doc.id,
         userId,
-      }))
-      return res.json(models)
+      }
     })
-    .catch((err) => {
-      console.error(err)
-      return res.status(500).json({error: err.code})
-    })
+
+    return Promise.resolve(res.json({ models }))
+  } catch (e) {
+    return Promise.reject(new Error(`can't load model page with userId:${userId}`))
+  }
 }
+
+module.exports = getModels
