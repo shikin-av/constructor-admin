@@ -12,13 +12,17 @@ firebase login
 
 firebase use constructor-2de11
 ````
-#### deploy function
+#### deploy Functions
 ````
 firebase deploy --only functions:FUNCTION_NAME
 ````
 #### deploy API
 ````
 firebase deploy --only functions:api
+````
+#### deploy Admin
+````
+firebas deploy --only hosting
 ````
 #### deploy .rules file
 ````

@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-const {functions} = require('../firebase')
+const {functions} = require('../../firebase')
 const {getModels, handleError} = require('./routes')
 // const {handleError} = require('./routes')
 
