@@ -1,6 +1,5 @@
-//sdfsdf
-const fun = () => console.log('I WORKING!')
+import React from 'react';
+import ReactDOM from 'react-dom'
+import App from './App.js'
 
-// sdasd
-
-fun();
+ReactDOM.render(<App />, document.body)

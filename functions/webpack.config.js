@@ -5,7 +5,7 @@ module.exports = {
   entry: './admin/app/index',
   module: {
     rules: [
-      { test: /\.(js)$/, use: 'babel-loader' },
+      { test: /\.js$/, use: 'babel-loader', exclude: /node_modules/, },
       { test: /\.css$/, use: [ 'style-loader', 'css-loader' ] },
       { test: /\.svg$/, use: 'svg-inline-loader' },
     ],
@@ -15,7 +15,9 @@ module.exports = {
     filename: 'bundle.js'
   },
   plugins: [
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Constructor Admin',
+    }),
   ],
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development', // development
   resolve: {
