@@ -1,4 +1,4 @@
-const {db} = require('../../firebase')
+const {db} = require('../../../firebase')
 
 const getModels = async (req, res) => {
   const {userId} = req.params

@@ -3,14 +3,18 @@ const sizeof = require('object-sizeof')
 
 const saveMyModel = functions.https.onCall(async (data, context) => {
   // TODO: вместо userId спользовать uid
-  let { userId, id, details } = data
+  let { userId, id, details, colors } = data
   details = JSON.parse(details)
+  colors = JSON.parse(colors)
 
   if (!userId) return Promise.reject(new Error('doesn`t have userId'))
   if (!id) return Promise.reject(new Error('doesn`t have id'))
   if (!details) return Promise.reject(new Error('doesn`t have details'))
   if (!Array.isArray(details)) {
     return Promise.reject(new Error(`"details" must be an array - ${details}`))
+  }
+  if (!Array.isArray(colors)) {
+    return Promise.reject(new Error(`"colors" must be an array - ${colors}`))
   }
 
   // const uid = context.auth.uid
@@ -37,6 +41,7 @@ const saveMyModel = functions.https.onCall(async (data, context) => {
     if (!doc.exists) { // new
       model = {
         details: [],
+        colors: [],
         userId,
       }
     } else {
@@ -48,6 +53,7 @@ const saveMyModel = functions.https.onCall(async (data, context) => {
 
   model.updatedAt = new Date().getTime()
   model.details = details.sort((d1, d2) => d1.q - d2.q)
+  model.colors = colors
 
   try {
     await db.collection(`models/users/${userId}`).doc(id).set(model)
