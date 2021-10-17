@@ -5,11 +5,9 @@
     "api": "firebase emulators:start --only functions",
     "app": "webpack-dev-server",
     "build": "SET NODE_ENV='production' && webpack",
-
     "deploy-admin": "firebase deploy --only functions:api",
     "deploy-app": "firebase deploy --only hosting",
     "deploy-func": "firebase deploy --only functions",
-
     "lint": "eslint .",
     "logs": "firebase functions:log",
     "shell": "firebase functions:shell",
@@ -29,10 +27,12 @@
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
+    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "css-loader": "^6.3.0",
     "eslint": "^7.6.0",
     "eslint-config-google": "^0.14.0",
+    "eslint-plugin-react": "^7.26.1",
     "firebase-functions-test": "^0.2.0",
     "html-webpack-plugin": "^5.3.2",
     "os-browserify": "^0.3.0",

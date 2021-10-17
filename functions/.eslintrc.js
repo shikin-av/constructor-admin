@@ -3,10 +3,12 @@ module.exports = {
   env: {
     es2017: true,
     node: true,
+    browser: true,
   },
   extends: [
     'eslint:recommended',
     'google',
+    'plugin:react/recommended',
   ],
   rules: {
     'quotes': ['error', 'single'],
@@ -17,5 +19,10 @@ module.exports = {
     'padded-blocks': ['off'],
     'max-len': ['error', { 'code': 130 }],
     'arrow-parens': ['off'],
+    'require-jsdoc': 0,
   },
+  parserOptions: {
+    'sourceType': 'module',
+  },
+  parser: 'babel-eslint',
 }
