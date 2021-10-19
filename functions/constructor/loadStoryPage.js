@@ -13,10 +13,14 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
     const snapshot = await db.collection(`models/users/${userId}`)
       .orderBy('updatedAt', 'desc').get()
 
-    const models = snapshot.docs.map(doc => ({ 
-      id: doc.id,
-      userId,
-    }))
+    const models = snapshot.docs.map(doc => {
+      const { userId, colors } = doc.data()
+      return {
+        id: doc.id,
+        userId,        
+        colors: colors || [],
+      }
+    })
 
     // TODO - стартуя с startAt с количеством limit
 
