@@ -13,9 +13,11 @@ const loadMyModelsPage = functions.https.onCall(async (data, context) => {
       .orderBy('updatedAt', 'desc').get()
 
     const models = snapshot.docs.map(doc => {
+      const { userId, colors } = doc.data()
       return {
         id: doc.id,
         userId,
+        colors: colors || [],
       }
     })
 
