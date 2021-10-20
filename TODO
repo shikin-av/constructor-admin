@@ -1,1 +1,3 @@
 storage rules with auth (гости только чтение)
+
+firebase.json настроить hosting для constructor-2de11 (уже настроено для constructor-admin)
