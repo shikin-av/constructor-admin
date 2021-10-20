@@ -1,6 +1,16 @@
 ### Constructor Admin Panel
 
-#### https://us-central1-constructor-2de11.cloudfunctions.net/api
+#### local
+http://localhost:5001/constructor-2de11/us-central1/api
+
+http://localhost:8080/
+
+#### production
+https://us-central1-constructor-2de11.cloudfunctions.net/api
+
+https://constructor-admin.web.app/
+
+#### ------------------------------------------
 
 #### preparing
 ````
@@ -22,7 +32,7 @@ firebase deploy --only functions:api
 ````
 #### deploy Admin
 ````
-firebas deploy --only hosting
+firebas deploy --only hosting:constructor-admin
 ````
 #### deploy .rules file
 ````
@@ -34,6 +44,7 @@ firebase deploy --only storage
 ````
 firebase emulators:start
 ````
+
 #### ------------------------------------------
 
 #### default storage.rules
