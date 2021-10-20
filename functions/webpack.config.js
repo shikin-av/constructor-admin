@@ -17,6 +17,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Constructor Admin',
+      inject: 'body',
     }),
   ],
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development', // development
