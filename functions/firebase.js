@@ -1,12 +1,11 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
+const FIREBASE_CONFIG = require('../config')
 
-const BUCKET_NAME = 'gs://constructor-2de11.appspot.com'
-
-admin.initializeApp()
+admin.initializeApp(FIREBASE_CONFIG)
 const db = admin.firestore()
 const storage = admin.storage()
-const bucket = storage.bucket(BUCKET_NAME)
+const bucket = storage.bucket(FIREBASE_CONFIG.storageBucket)
 
 module.exports = {
   functions,

@@ -3,12 +3,15 @@
 #### local
 http://localhost:5001/constructor-2de11/us-central1/api
 
-http://localhost:8080/
+http://localhost:3000/
 
 #### production
 https://us-central1-constructor-2de11.cloudfunctions.net/api
 
 https://constructor-admin.web.app/
+
+#### artifact bucket
+https://console.cloud.google.com/storage/browser?project=constructor-2de11
 
 #### ------------------------------------------
 
@@ -22,6 +25,8 @@ firebase login
 
 firebase use constructor-2de11
 ````
+#### ------------------------------------------
+
 #### deploy Functions
 ````
 firebase deploy --only functions:FUNCTION_NAME
@@ -45,6 +50,21 @@ firebase deploy --only storage
 firebase emulators:start
 ````
 
+#### Local API
+````
+firebase emulators:start --only functions
+````
+
+#### Local APP
+````
+npm run app
+````
+
+#### Build
+````
+npm run build
+````
+
 #### ------------------------------------------
 
 #### default storage.rules
@@ -63,5 +83,3 @@ service firebase.storage {
 ````
 Set-ExecutionPolicy Unrestricted
 ````
-#### artifact bucket
-https://console.cloud.google.com/storage/browser?project=constructor-2de11
