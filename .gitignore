@@ -1,5 +1,7 @@
-desktop.ini
+config.js
 public/
+desktop.ini
+functions/admin/app/node_modules/
 
 # Logs
 logs
