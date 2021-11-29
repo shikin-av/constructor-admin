@@ -1,38 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css';
-
-const API_URL = 'http://localhost:5001/constructor-2de11/us-central1/api'
+import Login from './Login'
+import Home from './Home'
 
 function App() {
-
-  useEffect(() => {
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(resilt => {
-        console.log(resilt)
-      })
-  }, [])
-
-
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <Routes>
+          <Route path={"/"} element = {<Home />} />
+          <Route path={"/login"} element = {<Login />} />          
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
 
-export default App;
+export default App

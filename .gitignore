@@ -1,7 +1,8 @@
-config.js
 public/
 desktop.ini
 functions/admin/app/node_modules/
+functions/.env
+functions/admin/app/.env
 
 # Logs
 logs
