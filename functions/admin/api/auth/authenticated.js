@@ -1,28 +1,25 @@
 const { admin } = require('../../../firebase')
 
 module.exports = async function isAuthenticated(req, res, next) {
-   const { authorization } = req.headers
+    const unauthorized = () => res.status(401).send({ message: 'Unauthorized' })
 
-   if (!authorization)
-       return res.status(401).send({ message: 'Unauthorized' })
+   const { token } = req.headers
 
-   if (!authorization.startsWith('Bearer'))
-       return res.status(401).send({ message: 'Unauthorized' })
+   if (!token) return unauthorized()
 
-   const split = authorization.split('Bearer ')
-   if (split.length !== 2)
-       return res.status(401).send({ message: 'Unauthorized' })
+   if (!token.startsWith('Bearer')) return unauthorized()
 
-   const token = split[1]
+   const split = token.split('Bearer ')
+   if (split.length !== 2) return unauthorized()
 
    try {
-       const decodedToken = await admin.auth().verifyIdToken(token);
-       console.log('decodedToken', JSON.stringify(decodedToken))
+       const decodedToken = await admin.auth().verifyIdToken(split[1]);
+    //    console.log('decodedToken', JSON.stringify(decodedToken))
        res.locals = { ...res.locals, uid: decodedToken.uid, role: decodedToken.role, email: decodedToken.email }
        return next()
    }
    catch (err) {
        console.error(`${err.code} -  ${err.message}`)
-       return res.status(401).send({ message: 'Unauthorized' })
+       return unauthorized()
    }
 }

@@ -45,11 +45,6 @@ firebase deploy --only storage
 ````
 #### ------------------------------------------
 
-#### local
-````
-firebase emulators:start
-````
-
 #### Local API
 ````
 firebase emulators:start --only functions
@@ -64,6 +59,32 @@ npm run app
 ````
 npm run build
 ````
+
+#### ------------------------------------------
+
+#### config
+##### API: firebase/.env
+FIREBASE_API_KEY
+FIREBASE_AUTH_DOMAIN
+FIREBASE_DATABASE_URL
+FIREBASE_PROJECT_ID
+FIREBASE_STORAGE_BUCKET
+FIREBASE_MESSAGING_SENDER_ID
+FIREBASE_APP_ID
+FIREBASE_MEASUREMENT_ID
+
+##### APP: firebase/admin/app/.anv
+SKIP_PREFLIGHT_CHECK=true
+
+REACT_APP_API_URL=http://localhost:5001/constructor-2de11/us-central1/api
+
+REACT_APP_FIREBASE_API_KEY
+REACT_APP_FIREBASE_AUTH_DOMAIN
+REACT_APP_FIREBASE_PROJECT_ID
+REACT_APP_FIREBASE_STORAGE_BUCKET
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID
+REACT_APP_FIREBASE_APP_ID
+REACT_APP_FIREBASE_MEASUREMENT_ID
 
 #### ------------------------------------------
 
