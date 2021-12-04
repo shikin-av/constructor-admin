@@ -67,7 +67,7 @@ async function patch(req, res) {
      await admin.auth().setCustomUserClaims(id, { role })
      const user = await admin.auth().getUser(id)
 
-     return res.status(204).send({ user: mapUser(user) })
+     return res.status(200).send({ user: mapUser(user) })
  } catch (err) {
      return handleError(res, err)
  }
@@ -77,14 +77,28 @@ async function remove(req, res) {
  try {
      const { id } = req.params
      await admin.auth().deleteUser(id)
-     return res.status(204).send({})
+     return res.status(200).send({})
  } catch (err) {
      return handleError(res, err)
  }
+}
+
+const setRole = async (req, res) => {
+  try {
+    const { email, role } = req.body
+
+    let user = await admin.auth().getUserByEmail(email)
+    await admin.auth().setCustomUserClaims(user.uid, { role })
+
+    user = await admin.auth().getUserByEmail(email)
+    return res.status(200).send({ user: mapUser(user) })
+  } catch (err) {
+    return handleError(res, err)
+  }
 }
 
 function handleError(res, err) {
    return res.status(500).send({ message: `${err.code} - ${err.message}` })
 }
 
-module.exports = { create, all, get, patch, remove }
+module.exports = { create, all, get, patch, remove, setRole }

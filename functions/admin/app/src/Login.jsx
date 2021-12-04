@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as firebase from 'firebase/app'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import './App.css';
+// import './App.css';
 import FIREBASE_CONFIG from './firebaseConfig'
 
 const auth = getAuth(firebase.initializeApp(FIREBASE_CONFIG))
@@ -19,11 +19,12 @@ const Login = () => {
     try {
       const userCredential =  await signInWithEmailAndPassword(auth, email, password)
       const user = userCredential.user    
-      const token = await user.getIdToken(false)
+      const token = await user.getIdToken(true)
       localStorage.setItem('token', `Bearer ${token}`)
       navigate('/')
     } catch (err) {
-      setError('Wrong login or password')
+      console.log(err)
+      setError(JSON.stringify(err))
     }
     
   }
