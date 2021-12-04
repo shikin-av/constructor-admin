@@ -12,8 +12,8 @@ const Home = () => {
   const getServerData = async () => {
       const token = localStorage.getItem('token')
 
-      await fetch(`${process.env.REACT_APP_API_URL}`, {
-        method: 'POST',
+      await fetch(`${process.env.REACT_APP_API_URL}/users`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
           token,
@@ -25,9 +25,13 @@ const Home = () => {
         return await result.json()
       })
       .then(result => {
-        setResponce(result.page)
+        // setResponce(result)
+        console.log(result)
       })
-      .catch(err => navigate('/login'))
+      .catch(err => {
+        // console.log(err)
+        navigate('/login')
+      })
   }
 
   return (
