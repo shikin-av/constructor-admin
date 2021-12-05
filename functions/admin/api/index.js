@@ -1,8 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
-const {functions, admin} = require('../../firebase')
-const {getModels, handleError} = require('./routes')
+const { functions } = require('../../firebase')
+const { getModels, handleError } = require('./routes')
 const { create, all, get, patch, remove, setRole } = require('./users/controller')
 const isAuthenticated = require('./auth/authenticated')
 const isAuthorized = require('./auth/authorized')
@@ -16,10 +16,10 @@ api
   .use(express.json())
   .use(express.urlencoded({extended: false}))
   .use(express.static(path.join(__dirname, 'public')))
-  .use(isAuthorized())
+  .use(isAuthenticated)
 
   .get('/', 
-    isAuthorized({ roles: [ADMIN, MANAGER] }), 
+    isAuthorized({ roles: [ADMIN, MANAGER] }),
     (req, res) => res.json({ page: 'Home, sweet home'})
   )
   .post('/role',
@@ -31,7 +31,7 @@ api
     getModels
   )
   .post('/users',
-  isAuthorized({ roles: [ADMIN] }),
+    isAuthorized({ roles: [ADMIN] }),
     create
   )
   .get('/users', [
