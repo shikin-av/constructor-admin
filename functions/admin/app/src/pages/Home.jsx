@@ -20,7 +20,7 @@ const Home = () => {
         },
       })
       .then(async result => {
-        if (result.status !== 200) throw 'Unauthorized'
+        if (result.status === 403) throw 'Unauthorized'
 
         return await result.json()
       })
