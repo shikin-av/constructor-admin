@@ -1,8 +1,8 @@
 const { functions, db } = require('../firebase')
 
 const saveMyModelPart = functions.https.onCall(async (data, context) => {
-  // TODO: вместо userId спользовать uid
-  let { userId, id, part } = data
+  let { id, part } = data
+  const userId = context.auth.uid
   part = JSON.parse(part)
 
   if (!userId) return Promise.reject(new Error('doesn`t have userId'))
