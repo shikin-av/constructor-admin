@@ -2,8 +2,8 @@ const { functions, db } = require('../firebase')
 const sizeof = require('object-sizeof')
 
 const saveMyModel = functions.https.onCall(async (data, context) => {
-  // TODO: вместо userId спользовать uid
-  let { userId, id, details, colors } = data
+  let { id, details, colors } = data
+  const userId = context.auth.uid
   details = JSON.parse(details)
   colors = JSON.parse(colors)
 
@@ -16,11 +16,6 @@ const saveMyModel = functions.https.onCall(async (data, context) => {
   if (!Array.isArray(colors)) {
     return Promise.reject(new Error(`"colors" must be an array - ${colors}`))
   }
-
-  // const uid = context.auth.uid
-  // const name = context.auth.token.name || null
-  // const picture = context.auth.token.picture || null
-  // const email = context.auth.token.email || null
 
   console.log('=======================================')
   // console.log(data)

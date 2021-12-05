@@ -8,7 +8,7 @@
     "deploy-admin": "firebase deploy --only functions:api",
     "deploy-app": "firebase deploy --only hosting:constructor-admin",
     "deploy-func": "firebase deploy --only functions",
-    "lint": "eslint .",
+    "lint": "eslint",
     "logs": "firebase functions:log",
     "shell": "firebase functions:shell",
     "start-shell": "npm run shell"
@@ -29,5 +29,9 @@
     "object-sizeof": "^1.6.1",
     "uid": "^2.0.0"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "eslint": "^8.4.0",
+    "eslint-plugin-react": "^7.27.1"
+  }
 }
