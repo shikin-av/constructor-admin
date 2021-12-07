@@ -14,11 +14,21 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
       .orderBy('updatedAt', 'desc').get()
 
     const models = snapshot.docs.map(doc => {
-      const { userId, colors } = doc.data()
+      const { 
+        userId, 
+        colors = [],
+        detailsCount = 0,
+        likes = 0,         
+        buildedDetails = 0,
+      } = doc.data()
+
       return {
         id: doc.id,
         userId,        
-        colors: colors || [],
+        colors,
+        detailsCount,
+        likes,
+        buildedDetails,
       }
     })
 

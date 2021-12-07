@@ -39,6 +39,7 @@ const saveMyModel = functions.https.onCall(async (data, context) => {
         colors: [],
         userId,
         published: false,
+        likes: 0,
       }
     } else {
       model = doc.data()
@@ -50,6 +51,7 @@ const saveMyModel = functions.https.onCall(async (data, context) => {
   model.updatedAt = new Date().getTime()
   model.details = details.sort((d1, d2) => d1.q - d2.q)
   model.colors = colors
+  model.detailsCount = details.length
 
   try {
     await db.collection(`models/users/${userId}`).doc(id).set(model)
