@@ -5,7 +5,7 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == userId;
     }
-    match /models/needPusblish/{modelId} {
+    match /needPusblish/{modelId} {
       allow create: if request.auth != null;
       allow read, delete: if request.auth != null && request.auth.token.role == 'admin' || request.auth.token.role == 'manager';
     }

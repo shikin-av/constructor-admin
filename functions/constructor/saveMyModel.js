@@ -38,6 +38,7 @@ const saveMyModel = functions.https.onCall(async (data, context) => {
         details: [],
         colors: [],
         userId,
+        published: false,
       }
     } else {
       model = doc.data()
