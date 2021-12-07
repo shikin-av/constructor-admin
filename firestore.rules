@@ -9,11 +9,11 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow read, delete: if request.auth != null && request.auth.token.role == 'admin' || request.auth.token.role == 'manager';
     }
-    match /models/pusblished/{modelId} {
+    match /storySteps/pusblished/{stepId}/{stepsAndModels=**} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.token.role == 'admin' || request.auth.token.role == 'manager';
     }
-    match /storySteps/{userId}/{stepsAndModels=**} {
+    match /storySteps/users/{userId}/{stepsAndModels=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
