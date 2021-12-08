@@ -39,8 +39,8 @@ const saveMyModel = functions.https.onCall(async (data, context) => {
     await db.collection(`models/users/${userId}`).doc(id).set(model)
 
     return Promise.resolve(JSON.stringify({ id }))
-  } catch (e) {
-    return Promise.reject(new Error(`can't save model ${id} - ${e}`))
+  } catch (err) {
+    return Promise.reject(new Error(`can't save model ${id} - ${err}`))
   }
 })
 

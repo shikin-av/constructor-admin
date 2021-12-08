@@ -34,8 +34,8 @@ const loadMyModelsPage = functions.https.onCall(async (data, context) => {
     // TODO - стартуя с startAt с количеством limit
 
     return Promise.resolve(JSON.stringify({ models }))
-  } catch (e) {
-    return Promise.reject(new Error(`can't load model page with userId:${userId}, startAt:${startAt}, limit:${limit} - ${e}`))
+  } catch (err) {
+    return Promise.reject(new Error(`can't load model page with userId:${userId}, startAt:${startAt}, limit:${limit} - ${err}`))
   }
 })
 

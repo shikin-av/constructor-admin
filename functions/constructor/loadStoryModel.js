@@ -17,8 +17,8 @@ const loadStoryModel = functions.https.onCall(async (data, context) => {
     model.userId = userId
 
     return Promise.resolve(JSON.stringify(model))
-  } catch (e) {
-    return Promise.reject(new Error(`can't load model ${id} - ${e}`))
+  } catch (err) {
+    return Promise.reject(new Error(`can't load model ${id} - ${err}`))
   }  
 })
 

@@ -28,8 +28,8 @@ const publishMyModel = functions.https.onCall(async (data, context) => {
     await db.collection('needPusblish').doc(id).set(publishData)
     
     return Promise.resolve(JSON.stringify({ id }))
-  } catch (e) {
-    return Promise.reject(new Error(`can't publish model ${id} - ${e}`))
+  } catch (err) {
+    return Promise.reject(new Error(`can't publish model ${id} - ${err}`))
   }
 })
 
