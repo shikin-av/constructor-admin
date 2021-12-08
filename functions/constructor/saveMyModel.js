@@ -1,5 +1,4 @@
 const { functions, db } = require('../firebase')
-const sizeof = require('object-sizeof')
 
 const saveMyModel = functions.https.onCall(async (data, context) => {
   let { id, details, colors } = data
@@ -17,47 +16,31 @@ const saveMyModel = functions.https.onCall(async (data, context) => {
     return Promise.reject(new Error(`"colors" must be an array - ${colors}`))
   }
 
-  console.log('=======================================')
-  // console.log(data)
-  // console.log(context)
-  console.log('SIZE data', sizeof(data))
-  console.log('SIZE context', sizeof(context))
-  console.log('=======================================')
-  
-  let model = {}
-
-  //   /* TODO: проверка - если bl с таким id уже есть 
-  //   * => сгенерить новый id и вернуть на клиент
-  //   * return Promise.resolve(JSON.stringify({ id }))
-  //   */
-
   try {
     const doc = await db.collection(`models/users/${userId}`).doc(id).get()
-    if (!doc.exists) { // new
-      model = {
+
+    const model = !!doc.exists
+      ? doc.data()
+      : {
         details: [],
         colors: [],
         userId,
         published: false,
         likes: 0,
       }
-    } else {
-      model = doc.data()
-    }
-  } catch (e) {
-    return Promise.reject(new Error(`can't get model ${userId} ${id} - ${e}`))
-  }
 
-  model.updatedAt = new Date().getTime()
-  model.details = details.sort((d1, d2) => d1.q - d2.q)
-  model.colors = colors
-  model.detailsCount = details.length
+    model.updatedAt = new Date().getTime()
+    model.details = details.sort((d1, d2) => d1.q - d2.q)
+    model.colors = colors
+    model.detailsCount = details.length
+    model.buildedCount = 0  // если в свою модель внести изменения - то "собирать" нужно заного
+    model.buildedLastDetails = []
 
-  try {
     await db.collection(`models/users/${userId}`).doc(id).set(model)
+
     return Promise.resolve(JSON.stringify({ id }))
-  } catch (e) {
-    return Promise.reject(new Error(`can't save model ${id} - ${e}`))
+  } catch (err) {
+    return Promise.reject(new Error(`can't save model ${id} - ${err}`))
   }
 })
 

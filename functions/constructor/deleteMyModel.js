@@ -10,12 +10,8 @@ const deleteMyModel = functions.https.onCall(async (data, context) => {
   // Delete model
   try {
     await db.collection(`models/users/${userId}`).doc(id).delete()
-
-    console.log('=======================================')
-    console.log('Delete model = ', id)
-
-  } catch (e) {
-    return Promise.reject(new Error(`can't delete model ${id} - ${e}`))
+  } catch (err) {
+    return Promise.reject(new Error(`can't delete model ${id} - ${err}`))
   }
 
   const imagePath = `${userId}/${id}.png`
@@ -23,12 +19,8 @@ const deleteMyModel = functions.https.onCall(async (data, context) => {
   try {
     const image = bucket.file(imagePath)
     image.delete()
-
-    console.log('Delete image = ', imagePath)
-    console.log('=======================================')
-
-  } catch (e) {
-    return Promise.reject(new Error(`can't delete image ${imagePath} - ${e}`))
+  } catch (err) {
+    return Promise.reject(new Error(`can't delete image ${imagePath} - ${err}`))
   }
 
   return Promise.resolve(JSON.stringify({ id }))
