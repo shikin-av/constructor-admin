@@ -8,15 +8,17 @@ const publishMyModel = functions.https.onCall(async (data, context) => {
   if (!id) return Promise.reject(new Error('doesn`t have id'))
 
   try {
-    const modelDoc = await db.collection(`models/users/${userId}`).doc(id).get()
-    if (!modelDoc.exists) {
+    const doc = await db.collection(`models/users/${userId}`).doc(id).get()
+    if (!doc.exists) {
       return Promise.reject(new Error(`can't publish model ${id} - ${e}`))
     }
 
-    const model = modelDoc.data()
-    model.published = true
+    const model = doc.data()
 
-    await db.collection(`models/users/${userId}`).doc(id).set(model)
+    if (!model.published) {
+      model.published = true
+      await db.collection(`models/users/${userId}`).doc(id).set(model)
+    }    
 
     const publishData = {
       userId,

@@ -9,19 +9,14 @@ const loadStoryModel = functions.https.onCall(async (data, context) => {
 
   try {
     const doc = await db.collection(`models/users/${userId}`).doc(id).get()
-
     if (!doc.exists) {
       return Promise.reject(new Error(`No such document! ${id}`))
-    } else {
-      const model = doc.data()
-      model.userId = userId
-
-      console.log('=======================================')
-      console.log('BLUEPRINT = ', JSON.stringify(model))
-      console.log('=======================================')
-
-      return Promise.resolve(JSON.stringify(model))
     }
+
+    const model = doc.data()
+    model.userId = userId
+
+    return Promise.resolve(JSON.stringify(model))
   } catch (e) {
     return Promise.reject(new Error(`can't load model ${id} - ${e}`))
   }  
