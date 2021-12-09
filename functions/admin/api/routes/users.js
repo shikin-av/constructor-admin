@@ -1,6 +1,37 @@
+const express = require('express')
 const { admin } = require('../../../firebase')
+const { error500 } = require('../utils/handleErrors')
+const isAuthorized = require('../auth/authorized')
+const { ROLES: { ADMIN, MANAGER } } = require('../auth/constants')
 
-async function create(req, res) {
+const usersRouter = express.Router()
+usersRouter
+  .post('/',
+    isAuthorized({ roles: [ADMIN] }),
+    create
+  )
+  .get('/', [
+    isAuthorized({ roles: [ADMIN] }),
+    all
+  ])
+  .get('/:id', [
+    isAuthorized({ roles: [ADMIN, MANAGER], allowSameUser: true }),
+    get
+  ])
+  .patch('/:id', [
+    isAuthorized({ roles: [ADMIN] }),
+    patch
+  ])
+  .delete('/:id', [
+    isAuthorized({ roles: [ADMIN] }),
+    remove
+  ])
+  .post('/role',
+    isAuthorized({ roles: [ADMIN] }),
+    setRole
+  )
+
+  async function create(req, res) {
    try {
        const { displayName, password, email, role } = req.body
 
@@ -17,7 +48,7 @@ async function create(req, res) {
 
        return res.status(201).send({ uid })
    } catch (err) {
-       return handleError(res, err)
+       return error500(res, err)
    }
 }
 
@@ -27,7 +58,7 @@ async function all(req, res) {
       const users = listUsers.users.map(mapUser)
       return res.status(200).send({ users })
   } catch (err) {
-      return handleError(res, err)
+      return error500(res, err)
   }
 }
 
@@ -50,7 +81,7 @@ async function get(req, res) {
      const user = await admin.auth().getUser(id)
      return res.status(200).send({ user: mapUser(user) })
  } catch (err) {
-     return handleError(res, err)
+     return error500(res, err)
  }
 }
 
@@ -69,7 +100,7 @@ async function patch(req, res) {
 
      return res.status(200).send({ user: mapUser(user) })
  } catch (err) {
-     return handleError(res, err)
+     return error500(res, err)
  }
 }
 
@@ -79,11 +110,11 @@ async function remove(req, res) {
      await admin.auth().deleteUser(id)
      return res.status(200).send({})
  } catch (err) {
-     return handleError(res, err)
+     return error500(res, err)
  }
 }
 
-const setRole = async (req, res) => {
+async function setRole(req, res) {
   try {
     const { email, role } = req.body
 
@@ -93,12 +124,8 @@ const setRole = async (req, res) => {
     user = await admin.auth().getUserByEmail(email)
     return res.status(200).send({ user: mapUser(user) })
   } catch (err) {
-    return handleError(res, err)
+    return error500(res, err)
   }
 }
 
-function handleError(res, err) {
-   return res.status(500).send({ message: `${err.code} - ${err.message}` })
-}
-
-module.exports = { create, all, get, patch, remove, setRole }
+module.exports = usersRouter

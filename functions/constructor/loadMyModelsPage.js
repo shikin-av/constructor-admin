@@ -1,7 +1,7 @@
 const { functions, db } = require('../firebase')
 
 const loadMyModelsPage = functions.https.onCall(async (data, context) => {
-  const { startAt, limit } = data
+  const { startAt, limit } = data   // TODO:
   const userId = context.auth.uid
 
   if (!userId) return Promise.reject(new Error('doesn`t have userId'))
@@ -9,10 +9,10 @@ const loadMyModelsPage = functions.https.onCall(async (data, context) => {
   if (isNaN(limit)) return Promise.reject(new Error('limit is NaN'))
 
   try {
-    const snapshot = await db.collection(`models/users/${userId}`)
+    const collection = await db.collection(`models/users/${userId}`)
       .orderBy('updatedAt', 'desc').get()
 
-    const models = snapshot.docs.map(doc => {
+    const models = collection.docs.map(doc => {
       const { 
         userId, 
         colors = [],

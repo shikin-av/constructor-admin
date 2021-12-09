@@ -10,10 +10,10 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
   if (isNaN(limit)) return Promise.reject(new Error('limit is NaN'))
 
   try {
-    const snapshot = await db.collection(`models/users/${userId}`)
+    const collection = await db.collection(`models/users/${userId}`)
       .orderBy('updatedAt', 'desc').get()
 
-    const models = snapshot.docs.map(doc => {
+    const models = collection.docs.map(doc => {
       const { 
         userId, 
         colors = [],
