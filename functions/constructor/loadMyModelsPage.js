@@ -1,7 +1,7 @@
 const { functions, db } = require('../firebase')
 
 const loadMyModelsPage = functions.https.onCall(async (data, context) => {
-  const { startAt, limit } = data   // TODO:
+  const { startAt, limit } = data
   const userId = context.auth.uid
 
   if (!userId) return Promise.reject(new Error('doesn`t have userId'))
@@ -10,7 +10,10 @@ const loadMyModelsPage = functions.https.onCall(async (data, context) => {
 
   try {
     const collection = await db.collection(`models/users/${userId}`)
-      .orderBy('updatedAt', 'desc').get()
+      .orderBy('updatedAt', 'desc')
+      .startAt(startAt)
+      .limit(limit)
+      .get()
 
     const models = collection.docs.map(doc => {
       const { 
