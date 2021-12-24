@@ -41,7 +41,7 @@ async function getNeedPublishModels(req, res) {
   try {
     const collection = await db.collection('needPusblish')
       .orderBy('updatedAt', 'desc')
-      .startAt(startAt)
+      .offset(startAt)
       .limit(limit)
       .get()
 
