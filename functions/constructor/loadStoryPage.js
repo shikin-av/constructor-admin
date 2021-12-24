@@ -12,7 +12,7 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
   try {
     const collection = await db.collection(`models/users/${userId}`)
       .orderBy('updatedAt', 'desc')
-      .startAt(startAt)
+      .offset(startAt)
       .limit(limit)
       .get()
 

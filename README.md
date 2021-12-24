@@ -10,7 +10,7 @@ https://us-central1-constructor-2de11.cloudfunctions.net/api
 
 https://constructor-admin.web.app/
 
-#### artifact bucket
+#### artifacts bucket
 https://console.cloud.google.com/storage/browser?project=constructor-2de11
 
 #### ------------------------------------------
