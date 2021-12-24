@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Layout from '../components/Layout'
 
 const Home = () => {
   const navigate = useNavigate()
@@ -35,10 +36,10 @@ const Home = () => {
   }
 
   return (
-    <div>
+    <Layout>
       <h1>Home</h1>
       <p>{responce}</p>
-    </div>
+    </Layout>
   )
 }
 

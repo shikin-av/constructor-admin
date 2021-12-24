@@ -37,7 +37,7 @@ firebase deploy --only functions:api
 ````
 #### deploy Admin
 ````
-firebas deploy --only hosting:constructor-admin
+firebase deploy --only hosting:constructor-admin
 ````
 #### deploy .rules file
 ````
