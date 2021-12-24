@@ -36,11 +36,14 @@ async function getUserModels (req, res) {
 }
 
 async function getNeedPublishModels(req, res) {
-  const { startAt, limit } = req.params   // TODO:
+  const { startAt, limit } = req.params
 
   try {
     const collection = await db.collection('needPusblish')
-    .orderBy('updatedAt', 'desc').get()
+      .orderBy('updatedAt', 'desc')
+      .startAt(startAt)
+      .limit(limit)
+      .get()
 
     const models = collection.docs.map(doc => {
       return doc.data()

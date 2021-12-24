@@ -17,14 +17,25 @@ code {
   height: 100% !important;
 }
 
-.App {
-  height: 100% !important;
-}
-
 .ant-layout {
   height: 100% !important;
 }
 
 .full-height {
   height: 100% !important;
+}
+
+#app {
+  height: 100% !important;
+}
+
+#header {
+  align-items: center;
+  height: 45px !important;
+  background-color: #00152912;
+}
+
+#header-title {
+  /* color: white !important; */
+  padding-top: 6px;
 }
