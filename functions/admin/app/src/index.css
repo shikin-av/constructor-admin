@@ -22,7 +22,14 @@ code {
 }
 
 .full-height {
+  display: flex;
+  height: 100% !important;  
+}
+
+.content {
   height: 100% !important;
+  padding: 20px;
+  padding-top: 10px;
 }
 
 #app {
@@ -31,11 +38,22 @@ code {
 
 #header {
   align-items: center;
-  height: 45px !important;
+  /* height: 45px !important; */
   background-color: #00152912;
 }
 
 #header-title {
   /* color: white !important; */
   padding-top: 6px;
+}
+
+#main-menu {
+  justify-content: center;
+  background: none;
+}
+
+.alert-container { 
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
