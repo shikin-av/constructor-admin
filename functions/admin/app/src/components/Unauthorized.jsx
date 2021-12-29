@@ -9,16 +9,14 @@ const Unauthorized = () => {
 
   return (
     <div className='full-height alert-container'>
-      <div>
-        <Alert 
-          message="You don't have enough rights" 
-          type="error"
-          showIcon
-          action={
-            <Button size="small" danger onClick={() => navigate(`/${MENU_ITEMS.LOGIN}`)}>Login</Button>
-          }
-        />
-      </div>
+      <Alert 
+        message="You don't have enough rights" 
+        type="error"
+        showIcon
+        action={
+          <Button size="small" danger onClick={() => navigate(`/${MENU_ITEMS.LOGIN}`)}>Login</Button>
+        }
+      />
     </div>
   )
 }

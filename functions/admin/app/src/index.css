@@ -38,12 +38,10 @@ code {
 
 #header {
   align-items: center;
-  /* height: 45px !important; */
   background-color: #00152912;
 }
 
 #header-title {
-  /* color: white !important; */
   padding-top: 6px;
 }
 

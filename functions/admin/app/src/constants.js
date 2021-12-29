@@ -13,3 +13,7 @@ export const LOADING = {
   ERROR: 'error',
   UNAUTHORIZED: 'unauthorized'
 }
+
+export const HEADERS = {
+  'Content-Type': 'application/json;charset=utf-8',
+}

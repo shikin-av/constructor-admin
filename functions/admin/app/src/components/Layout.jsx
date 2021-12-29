@@ -16,7 +16,7 @@ const LayoutComponent = ({ children, menuItem }) => {
             <Title level={4} id="header-title">Constructor</Title>
           </Col>
           <Col span={12}>
-            {location.pathname != '/login' && <Menu currentItem={menuItem} />}            
+            {location.pathname !== '/login' && <Menu currentItem={menuItem} />}            
           </Col>
           <Col span={6}></Col>
         </Row>
