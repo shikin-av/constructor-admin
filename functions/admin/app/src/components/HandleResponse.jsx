@@ -13,7 +13,7 @@ const HandleResponse = ({ res, render }) => {
 
   const handle = async (res) => {
     if (!res) return
-
+    console.log('res', res.status)
     const { status } = res
     if (status) {
       if (status >= 200 && status <= 299) {
@@ -36,7 +36,7 @@ const HandleResponse = ({ res, render }) => {
       } else {
         setData({
           status: LOADING.ERROR,
-          error: res.message || res,
+          error: res.message || res.statusText || JSON.stringify(res),
         })
       }
     } else {
