@@ -6,9 +6,11 @@ http://localhost:5001/constructor-2de11/us-central1/api
 http://localhost:3000/
 
 #### production
+Admin API
 https://us-central1-constructor-2de11.cloudfunctions.net/api
 
-https://constructor-admin.web.app/
+Admin APP
+constructor-admin.firebaseapp.com
 
 #### artifacts bucket
 https://console.cloud.google.com/storage/browser?project=constructor-2de11
