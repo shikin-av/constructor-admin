@@ -52,7 +52,7 @@ const HandleResponse = ({ res, render }) => {
       {data.status === LOADING.SUCCESS && render(data.payload)}
       {data.status === LOADING.UNAUTHORIZED && <Unauthorized />}
       {data.status === LOADING.ERROR && <Error message={data.error} />}
-      {console.log('DATA', data)}
+      {console.log('Loaded', data)}
     </>
   )
 }

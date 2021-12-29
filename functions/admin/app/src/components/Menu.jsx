@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Menu } from 'antd'
 import { MENU_ITEMS } from '../constants'
+import i18n from '../i18n'
 
 const MenuComponent = ({ currentItem }) => {
   const navigate = useNavigate()
@@ -24,9 +25,9 @@ const MenuComponent = ({ currentItem }) => {
 
   return (
     <Menu onClick={itemClick} selectedKeys={[current]} mode="horizontal" id="main-menu">
-      <Menu.Item key={MENU_ITEMS.HOME}>Home</Menu.Item>
-      <Menu.Item key={MENU_ITEMS.STEPS}>Story Steps</Menu.Item>
-      <Menu.Item key={MENU_ITEMS.MANAGERS}>Managers</Menu.Item>
+      <Menu.Item key={MENU_ITEMS.HOME}>{i18n.MAIN_MENU.HOME}</Menu.Item>
+      <Menu.Item key={MENU_ITEMS.STEPS}>{i18n.MAIN_MENU.STEPS}</Menu.Item>
+      <Menu.Item key={MENU_ITEMS.MANAGERS}>{i18n.MAIN_MENU.MANAGERS}</Menu.Item>
     </Menu>
   )
 }
