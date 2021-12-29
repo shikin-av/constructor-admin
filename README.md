@@ -35,13 +35,14 @@ firebase deploy --only functions:FUNCTION_NAME
 ````
 firebase deploy --only functions:api
 ````
-#### deploy Admin
+#### deploy Admin Panel
 ````
 firebase deploy --only hosting:constructor-admin
 ````
 #### deploy .rules file
 ````
 firebase deploy --only storage
+firebase deploy --only firestore:rules
 ````
 #### ------------------------------------------
 
