@@ -14,7 +14,7 @@ const MenuComponent = ({ currentItem }) => {
   }, [currentItem])
 
   const navigateTo = (item) => {
-    navigate(item == MENU_ITEMS.HOME ? '/' : `/${item}`)
+    navigate(item === MENU_ITEMS.HOME ? '/' : `/${item}`)
   }
 
   const itemClick = e => {
