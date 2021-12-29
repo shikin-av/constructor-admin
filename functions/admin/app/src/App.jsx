@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { MENU_ITEMS } from './constants'
 import Login from './pages/Login'
 import Home from './pages/Home'
-import Steps from './pages/Steps'
+import CreateStep from './pages/Steps/CreateSteps'
 import Managers from './pages/Managers'
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
       <Routes>
         <Route path={'/'} element = {<Home />} />
         <Route path={`/${MENU_ITEMS.LOGIN}`} element = {<Login />} />
-        <Route path={`/${MENU_ITEMS.STEPS}`} element = {<Steps />} />
+        <Route path={`/${MENU_ITEMS.STEPS}`} element = {<CreateStep />} />
         <Route path={`/${MENU_ITEMS.MANAGERS}`} element = {<Managers />} />
       </Routes>
     </BrowserRouter>

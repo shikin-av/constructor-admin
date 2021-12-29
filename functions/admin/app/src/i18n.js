@@ -1,6 +1,6 @@
 export const LANG = {
-  ENG: 'eng',
-  RUS: 'rus',
+  ENG: 'en',
+  RUS: 'ru',
 }
 
 window.lang = LANG.RUS
