@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Alert, Button } from 'antd'
 import { MENU_ITEMS } from '../constants'
+import i18n from '../i18n'
 
 
 const Unauthorized = () => {
@@ -10,11 +11,13 @@ const Unauthorized = () => {
   return (
     <div className='full-height alert-container'>
       <Alert 
-        message="You don't have enough rights" 
+        message={i18n.ERROR.UNAUTHORIZED}
         type="error"
         showIcon
         action={
-          <Button size="small" danger onClick={() => navigate(`/${MENU_ITEMS.LOGIN}`)}>Login</Button>
+          <Button size="small" danger onClick={() => navigate(`/${MENU_ITEMS.LOGIN}`)}>
+            {i18n.AUTH.LOGIN_BUTTON}
+          </Button>
         }
       />
     </div>

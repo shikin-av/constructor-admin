@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
 import { MENU_ITEMS, HEADERS } from '../constants'
 import HandleResponse from '../components/HandleResponse'
+import i18n from '../i18n'
 
 const Home = () => {
   const [responce, setResponce] = useState()
@@ -24,7 +25,7 @@ const Home = () => {
   const Content = ({ result: { users } }) => {
     return (
       <>
-        <h1>Home</h1>
+        <h1>{i18n.HOME.TITLE}</h1>
         {users.map(user => (
           <div key={user.uid}>
             <p>{user.uid}</p>

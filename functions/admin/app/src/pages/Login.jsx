@@ -5,6 +5,7 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { Form, Input, Button, Alert, Row, Col, Typography } from 'antd'
 import FIREBASE_CONFIG from '../firebaseConfig'
 import Layout from '../components/Layout'
+import i18n from '../i18n'
 const { Title } = Typography
 
 const auth = getAuth(firebase.initializeApp(FIREBASE_CONFIG))
@@ -32,7 +33,7 @@ const Login = () => {
       <Row align="middle" className="full-height">
         <Col span={8}></Col>
         <Col span={8}>
-          <Title style={{ textAlign: "center" }}>Sign In</Title>
+          <Title style={{ textAlign: "center" }}>{i18n.AUTH.TITLE}</Title>
           <Form
             onFinish={handleSubmit}
             autoComplete="on"
@@ -42,21 +43,21 @@ const Login = () => {
           >
             <Form.Item 
               name="email" 
-              label="Email" 
-              rules={[{ required: true, message: 'Please input your email' }]}
+              label={i18n.AUTH.EMAIL_INPUT}
+              rules={[{ required: true, message: i18n.AUTH.EMAIL_PLACEHOLDER }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               name="password"
-              label="Password"            
-              rules={[{ required: true, message: 'Please input your password' }]}
+              label={i18n.AUTH.PASSWORD_INPUT}           
+              rules={[{ required: true, message: i18n.AUTH.PASSWORD_PLACEHOLDER }]}
             >
               <Input.Password />
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                Sign In
+                {i18n.AUTH.LOGIN_BUTTON}
               </Button>
             </Form.Item>
           </Form>
