@@ -3,7 +3,7 @@
   "description": "",
   "scripts": {
     "api": "firebase emulators:start --only functions",
-    "app": "cd admin/app && npm start",
+    "app": "SET NODE_ENV='development' && cd admin/app && npm start",
     "build": "SET NODE_ENV='production' && webpack",
     "deploy-admin": "firebase deploy --only functions:api",
     "deploy-app": "firebase deploy --only hosting:constructor-admin",

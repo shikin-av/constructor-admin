@@ -81,7 +81,8 @@ FIREBASE_MEASUREMENT_ID
 ````
 SKIP_PREFLIGHT_CHECK=true
 
-REACT_APP_API_URL=http://localhost:5001/constructor-2de11/us-central1/api
+REACT_APP_API_URL_LOCAL=http://localhost:5001/constructor-2de11/us-central1/api
+REACT_APP_API_URL=https://us-central1-constructor-2de11.cloudfunctions.net/api
 
 REACT_APP_FIREBASE_API_KEY
 REACT_APP_FIREBASE_AUTH_DOMAIN

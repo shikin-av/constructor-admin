@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { MENU_ITEMS, HEADERS } from '../../constants'
+import { MENU_ITEMS, HEADERS, API_URL } from '../../constants'
 import i18n from '../../i18n'
 import Layout from '../../components/Layout'
 import HandleResponse from '../../components/HandleResponse'
@@ -17,9 +17,9 @@ const CreateSteps = () => {
   const getServerData = async () => {
     const token = localStorage.getItem('token')
 
-    console.log(`>>> ${process.env.REACT_APP_API_URL}/models/needPublishModels/${startAt}/${limit}`)
+    console.log(`>>> ${API_URL}/models/needPublishModels/${startAt}/${limit}`)
 
-    await fetch(`${process.env.REACT_APP_API_URL}/models/needPublishModels/${startAt}/${limit}`, {
+    await fetch(`${API_URL}/models/needPublishModels/${startAt}/${limit}`, {
       method: 'GET',
       headers: { ...HEADERS, token },
     })

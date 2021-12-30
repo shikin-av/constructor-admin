@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
-import { MENU_ITEMS, HEADERS } from '../constants'
+import { MENU_ITEMS, HEADERS, API_URL } from '../constants'
 import HandleResponse from '../components/HandleResponse'
 import i18n from '../i18n'
 
@@ -14,7 +14,7 @@ const Home = () => {
   const getServerData = async () => {
     const token = localStorage.getItem('token')
 
-    await fetch(`${process.env.REACT_APP_API_URL}/users`, {
+    await fetch(`${API_URL}/users`, {
       method: 'GET',
       headers: { ...HEADERS, token },
     })
