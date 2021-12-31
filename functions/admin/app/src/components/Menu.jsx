@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Menu } from 'antd'
 import { MENU_ITEMS } from '../constants'
-import i18n from '../i18n'
+import i18n from './Lang/i18n'
 
 const MenuComponent = ({ currentItem }) => {
   const navigate = useNavigate()

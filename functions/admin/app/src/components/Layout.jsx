@@ -2,7 +2,7 @@ import React from 'react'
 import { useLocation } from 'react-router-dom'
 import { Layout, Typography, Row, Col } from 'antd'
 import Menu from './Menu'
-import i18n from '../i18n'
+import i18n from './Lang/i18n'
 const { Header, Content } = Layout
 const { Title } = Typography
 
