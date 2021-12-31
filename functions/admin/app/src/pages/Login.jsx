@@ -1,9 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import * as firebase from 'firebase/app'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { Form, Input, Button, Alert, Row, Col, Typography, Select } from 'antd'
-import FIREBASE_CONFIG from '../firebaseConfig'
+import { auth, signInWithEmailAndPassword } from '../firebase'
 import Layout from '../components/Layout'
 import i18n, { LANG } from '../components/Lang/i18n'
 import { LangContext } from  '../components/Lang/LangContext'
@@ -11,7 +9,6 @@ import Lang from '../components/Lang/Lang'
 const { Title } = Typography
 const { Option } = Select
 
-const auth = getAuth(firebase.initializeApp(FIREBASE_CONFIG))
 
 const Login = () => {
   const navigate = useNavigate()

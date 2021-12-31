@@ -5,7 +5,7 @@ export const LANG = {
 
 const { ENG, RUS } = LANG
 
-export default {
+const i18n = {
   HEADER: {
     TITLE: {
       [ENG]: 'Constructor',
@@ -85,3 +85,5 @@ export default {
     },
   },
 }
+
+export default i18n

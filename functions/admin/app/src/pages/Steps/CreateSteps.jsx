@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { MENU_ITEMS, HEADERS, API_URL } from '../../constants'
+import { dateFormat, timeFormat } from '../../utils/date'
 import i18n from '../../components/Lang/i18n'
 import Lang from '../../components/Lang/Lang'
 import Layout from '../../components/Layout'
 import HandleResponse from '../../components/HandleResponse'
-import { dateFormat, timeFormat } from '../../utils/date'
+import ModelCard from '../../components/ModelCard'
+
 
 const CreateSteps = () => {
   const [responce, setResponce] = useState()
   const [startAt, setStartAt] = useState(0)
   const [limit, setLimit] = useState(4)
 
-  useEffect(() => {
-    getServerData()
-  }, [])
-
-  const getServerData = async () => {
+  const getServerData = useCallback(async () => {
     const token = localStorage.getItem('token')
 
     console.log(`>>> ${API_URL}/models/needPublishModels/${startAt}/${limit}`)
@@ -26,12 +24,14 @@ const CreateSteps = () => {
     })
     .then(res => setResponce(res))
     .catch(err => setResponce(err))
-  }
+  }, [startAt, limit])
+
+  useEffect(() => {
+    getServerData()
+  }, [getServerData])
 
   const Content = ({ result }) => {
     const { models } = result
-
-    console.log(result)    
 
     return (
       <>
@@ -46,6 +46,7 @@ const CreateSteps = () => {
               <p>{formattedDate}</p>
               <p>{modelId}</p>
               <p>{userId}</p>
+              <ModelCard userId={userId} modelId={modelId} />
               <hr />
             </div>
           )
