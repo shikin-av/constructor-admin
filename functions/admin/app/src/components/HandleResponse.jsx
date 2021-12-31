@@ -13,7 +13,7 @@ const HandleResponse = ({ res, render }) => {
 
   const handle = async (res) => {
     if (!res) return
-    console.log('res', res.status)
+
     const { status } = res
     if (status) {
       if (status >= 200 && status <= 299) {
@@ -52,7 +52,7 @@ const HandleResponse = ({ res, render }) => {
       {data.status === LOADING.SUCCESS && render(data.payload)}
       {data.status === LOADING.UNAUTHORIZED && <Unauthorized />}
       {data.status === LOADING.ERROR && <Error message={data.error} />}
-      {console.log('Loaded', data)}
+      {console.log(res.status, data)}
     </>
   )
 }
