@@ -1,7 +1,7 @@
 import React from 'react'
 import Layout from '../components/Layout'
 import { MENU_ITEMS } from '../constants'
-import i18n from '../i18n'
+import i18n from '../components/Lang/i18n'
 
 const Managers = () => {
   return (

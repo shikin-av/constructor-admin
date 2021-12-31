@@ -5,7 +5,7 @@ export const LANG = {
 
 window.lang = LANG.RUS
 
-const TEXTS = {
+export const TEXTS = {
   HEADER: {
     TITLE: {
       [LANG.ENG]: 'Constructor',
@@ -57,6 +57,14 @@ const TEXTS = {
       [LANG.ENG]: 'Please input your password',
       [LANG.RUS]: 'Введите свой пароль',
     },
+    LANGUAGE_SELECT: {
+      [LANG.ENG]: 'Language',
+      [LANG.RUS]: 'Язык',
+    },
+    LANGUAGE_SELECT_PLACEHOLDER: {
+      [LANG.ENG]: 'Please select language',
+      [LANG.RUS]: 'Выберите язык',
+    }
   },
   HOME: {
     TITLE: {
