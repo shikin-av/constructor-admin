@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { MENU_ITEMS, HEADERS, API_URL } from '../../constants'
 import i18n from '../../components/Lang/i18n'
+import Lang from '../../components/Lang/Lang'
 import Layout from '../../components/Layout'
 import HandleResponse from '../../components/HandleResponse'
 import { dateFormat, timeFormat } from '../../utils/date'
@@ -34,7 +35,9 @@ const CreateSteps = () => {
 
     return (
       <>
-        <h1>{i18n.STEPS.TITLE}</h1>
+        <h1>
+          <Lang text={i18n.STEPS.TITLE} />
+        </h1>
         {models.map(model => {
           const { date, modelId, userId } = model
           const formattedDate = `${dateFormat(date)}  |  ${timeFormat(date)}`

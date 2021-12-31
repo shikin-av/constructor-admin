@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Alert, Button } from 'antd'
 import { MENU_ITEMS } from '../constants'
 import i18n from './Lang/i18n'
+import Lang from './Lang/Lang'
 
 
 const Unauthorized = () => {
@@ -11,12 +12,12 @@ const Unauthorized = () => {
   return (
     <div className='full-height alert-container'>
       <Alert 
-        message={i18n.ERROR.UNAUTHORIZED}
+        message={<Lang text={i18n.ERROR.UNAUTHORIZED} />}
         type="error"
         showIcon
         action={
           <Button size="small" danger onClick={() => navigate(`/${MENU_ITEMS.LOGIN}`)}>
-            {i18n.AUTH.LOGIN_BUTTON}
+            <Lang text={i18n.AUTH.LOGIN_BUTTON} />
           </Button>
         }
       />

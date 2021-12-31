@@ -5,7 +5,7 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { Form, Input, Button, Alert, Row, Col, Typography, Select } from 'antd'
 import FIREBASE_CONFIG from '../firebaseConfig'
 import Layout from '../components/Layout'
-import i18n, { LANG, TEXTS } from '../components/Lang/i18n'
+import i18n, { LANG } from '../components/Lang/i18n'
 import { LangContext } from  '../components/Lang/LangContext'
 import Lang from '../components/Lang/Lang'
 const { Title } = Typography
@@ -19,7 +19,6 @@ const Login = () => {
   const [error, setError] = useState(null)
 
   const handleSubmit = async ({ email, password, lang }) => {
-    console.log(email, password, lang)
     try {
       setError(null)
       const userCredential =  await signInWithEmailAndPassword(auth, email, password)
@@ -42,7 +41,7 @@ const Login = () => {
         <Col span={8}></Col>
         <Col span={8}>
           <Title style={{ textAlign: "center" }}>
-            <Lang text={TEXTS.AUTH.TITLE} />
+            <Lang text={i18n.AUTH.TITLE} />
           </Title>
           <Form
             onFinish={handleSubmit}
@@ -54,20 +53,20 @@ const Login = () => {
           >
             <Form.Item 
               name="email" 
-              label={<Lang text={TEXTS.AUTH.EMAIL_INPUT} />}
+              label={<Lang text={i18n.AUTH.EMAIL_INPUT} />}
               rules={[{ 
                 required: true, 
-                message: <Lang text={TEXTS.AUTH.EMAIL_PLACEHOLDER} /> 
+                message: <Lang text={i18n.AUTH.EMAIL_PLACEHOLDER} /> 
               }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               name="password"
-              label={<Lang text={TEXTS.AUTH.PASSWORD_INPUT} />}
+              label={<Lang text={i18n.AUTH.PASSWORD_INPUT} />}
               rules={[{ 
                 required: true, 
-                message: <Lang text={TEXTS.AUTH.PASSWORD_PLACEHOLDER} />
+                message: <Lang text={i18n.AUTH.PASSWORD_PLACEHOLDER} />
               }]}
             >
               <Input.Password />
@@ -75,10 +74,10 @@ const Login = () => {
 
             <Form.Item
               name="lang"
-              label={<Lang text={TEXTS.AUTH.LANGUAGE_SELECT} />}
+              label={<Lang text={i18n.AUTH.LANGUAGE_SELECT} />}
               rules={[{
                 required: true,
-                message: <Lang text={TEXTS.AUTH.LANGUAGE_SELECT_PLACEHOLDER} />
+                message: <Lang text={i18n.AUTH.LANGUAGE_SELECT_PLACEHOLDER} />
               }]}
             >
               <Select onChange={setLang}>
@@ -89,7 +88,7 @@ const Login = () => {
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                <Lang text={TEXTS.AUTH.LOGIN_BUTTON} />
+                <Lang text={i18n.AUTH.LOGIN_BUTTON} />
               </Button>
             </Form.Item>
           </Form>
