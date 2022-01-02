@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { MENU_ITEMS, HEADERS, API_URL } from '../../constants'
-import { dateFormat, timeFormat } from '../../utils/date'
 import i18n from '../../components/Lang/i18n'
 import Lang from '../../components/Lang/Lang'
 import Layout from '../../components/Layout'
@@ -38,19 +37,11 @@ const CreateSteps = () => {
         <h1>
           <Lang text={i18n.STEPS.TITLE} />
         </h1>
-        {models.map(model => {
-          const { date, modelId, userId } = model
-          const formattedDate = `${dateFormat(date)}  |  ${timeFormat(date)}`
-          return (
-            <div key={modelId}>
-              <p>{formattedDate}</p>
-              <p>{modelId}</p>
-              <p>{userId}</p>
-              <ModelCard userId={userId} modelId={modelId} />
-              <hr />
-            </div>
-          )
-          })}
+        <div className="models-list">
+        {models.map(model =>
+          <ModelCard model={model} key={model.modelId} />
+        )}
+        </div>
       </>
     )
   }
