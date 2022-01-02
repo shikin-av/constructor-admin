@@ -1,9 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, createRef } from 'react'
 import { storage, ref, getDownloadURL } from '../firebase'
-import { Skeleton, Image } from 'antd'
+import { Skeleton  } from 'antd'
+import { dateFormat, timeFormat } from '../utils/date'
 
-const ModelCard = ({ userId, modelId }) => {
+const ModelCard = ({ model }) => {
+  const { date, modelId, userId } = model
+  const formattedDate = `${dateFormat(date)}  |  ${timeFormat(date)}`
   const [imageUrl, setImageUrl] = useState()
+  const [imageLoaded, setImageLoaded] = useState(false)
 
   const loadImage = useCallback(async () => {
     try {
@@ -14,14 +18,43 @@ const ModelCard = ({ userId, modelId }) => {
     }
   }, [userId, modelId])
 
+  const onImageLoad = () => {
+    setImageLoaded(true)
+  }
+
   useEffect(() => {
     if (!imageUrl) {
       loadImage()
     }
   }, [imageUrl])
 
+  const loaded = imageUrl && imageLoaded
+
   return (
-    <>{imageUrl && <Image src={imageUrl} width={300} />}</>
+    <div className="models-card shadow">
+      <img
+        src={imageUrl}
+        onLoad={onImageLoad}
+        className={loaded ? 'loaded-image' : 'unloaded-image'}
+      />
+      {
+        !loaded &&
+        <Skeleton.Image 
+          className="loaded-image"
+        />
+      }
+      {
+        loaded
+        ? <div className="models-card-description">
+            <p>{formattedDate}</p>
+            <p>{modelId}</p>
+            <p>{userId}</p>
+          </div>
+        : <>
+            <Skeleton paragraph={{ rows: 2 }} />
+          </>
+      }
+    </div>
   )
 }
 
