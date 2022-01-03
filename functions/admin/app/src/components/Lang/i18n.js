@@ -78,6 +78,12 @@ const i18n = {
       [RUS]: 'Этапы истории',
     },
   },
+  CREATE_STEP: {
+    TITLE: {
+      [ENG]: 'Create Story Step',
+      [RUS]: 'Создание этапа истории',
+    },
+  },
   MANAGERS: {
     TITLE: {
       [ENG]: 'Managers',

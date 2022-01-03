@@ -7,14 +7,18 @@ const { ROLES: { ADMIN, MANAGER } } = require('../auth/constants')
 
 const modelsRouter = express.Router()
 modelsRouter
-  .get('/:userId',
+  .get('/getNeedPublishModelsCount',
     isAuthorized({ roles: [ADMIN, MANAGER] }),
-    getUserModels
+    getNeedPublishModelsCount
   )
   .get('/needPublishModels/:startAt/:limit',
     isAuthorized({ roles: [ADMIN, MANAGER] }),
     getNeedPublishModels
   )
+  .get('/:userId',
+    isAuthorized({ roles: [ADMIN, MANAGER] }),
+    getUserModels
+  )  
 
 async function getUserModels (req, res) {
   const { userId } = req.params
@@ -59,7 +63,18 @@ async function getNeedPublishModels(req, res) {
 
     return Promise.resolve(res.json({ models }))
   } catch (err) {
-    return Promise.reject(new Error(`can't load need publish model page with userId:${userId} - ${JSON.stringify(err)}`))
+    return Promise.reject(new Error(`can't load need publish models page with startAt:${startAt} and limit:${limit} - ${JSON.stringify(err)}`))
+  }
+}
+
+async function getNeedPublishModelsCount(req, res) {
+  try {
+    const collection = await db.collection('needPusblish').get()
+    const modelsCount = collection.docs.length
+
+    return Promise.resolve(res.json({ modelsCount }))
+  } catch (err) {
+    return Promise.reject(new Error(`can't load need publish models count - ${JSON.stringify(err)}`))
   }
 }
 
