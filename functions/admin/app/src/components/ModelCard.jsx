@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, createRef } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { storage, ref, getDownloadURL } from '../firebase'
 import { Skeleton  } from 'antd'
 import { dateFormat, timeFormat } from '../utils/date'
@@ -26,7 +26,7 @@ const ModelCard = ({ model }) => {
     if (!imageUrl) {
       loadImage()
     }
-  }, [imageUrl])
+  }, [imageUrl, loadImage])
 
   const loaded = imageUrl && imageLoaded
 
@@ -36,6 +36,7 @@ const ModelCard = ({ model }) => {
         src={imageUrl}
         onLoad={onImageLoad}
         className={loaded ? 'loaded-image' : 'unloaded-image'}
+        alt={modelId}
       />
       {
         !loaded &&
