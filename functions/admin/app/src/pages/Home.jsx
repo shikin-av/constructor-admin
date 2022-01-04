@@ -51,6 +51,8 @@ const Home = () => {
 
   return !response ? <Loader /> :
     <>
+      {response.status === LOADING.NONE && null}
+      {response.status === LOADING.PROGRESS && <Loader />}
       {response.status === LOADING.UNAUTHORIZED && <Unauthorized />}
       {response.status === LOADING.ERROR && <Error message={response.error} />}
       {response.status === LOADING.SUCCESS && renderContent()}

@@ -1,34 +1,42 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { storage, ref, getDownloadURL } from '../firebase'
 import { Skeleton  } from 'antd'
+import { observer } from 'mobx-react-lite'
+import { createStepStore as store } from '../pages/Steps/CreateStepStore'
 import { dateFormat, timeFormat } from '../utils/date'
 
-const ModelCard = ({ model }) => {
-  const { date, modelId, userId } = model
-  const formattedDate = `${dateFormat(date)}  |  ${timeFormat(date)}`
+const ModelCard = observer(({ modelId }) => {
+  const [model, setModel] = useState()
   const [imageUrl, setImageUrl] = useState()
   const [imageLoaded, setImageLoaded] = useState(false)
 
   const loadImage = useCallback(async () => {
     try {
-      const url = await getDownloadURL(ref(storage, `${userId}/${modelId}.png`))
+      const url = await store.loadModelImage(model.userId, modelId)
       setImageUrl(url)
     } catch(err) {
       console.log(err)
     }
-  }, [userId, modelId])
+  }, [model, modelId])
 
   const onImageLoad = () => {
     setImageLoaded(true)
   }
 
   useEffect(() => {
-    if (!imageUrl) {
+    const m = store.getModelById(modelId)
+    setModel({
+      ...m,
+      formattedDate: `${dateFormat(m.date)}  |  ${timeFormat(m.date)}`
+    })
+  }, [modelId])
+
+  useEffect(() => {
+    if (model && !imageUrl) {
       loadImage()
     }
-  }, [imageUrl, loadImage])
+  }, [imageUrl, model, loadImage])
 
-  const loaded = imageUrl && imageLoaded
+  const loaded = model && imageUrl && imageLoaded
 
   return (
     <div className="models-card shadow">
@@ -47,9 +55,9 @@ const ModelCard = ({ model }) => {
       {
         loaded
         ? <div className="models-card-description">
-            <p>{formattedDate}</p>
+            <p>{model.formattedDate}</p>
             <p>{modelId}</p>
-            <p>{userId}</p>
+            <p>{model.userId}</p>
           </div>
         : <>
             <Skeleton paragraph={{ rows: 2 }} />
@@ -57,6 +65,6 @@ const ModelCard = ({ model }) => {
       }
     </div>
   )
-}
+})
 
 export default ModelCard
