@@ -1,31 +1,40 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
+import { MENU_ITEMS, HEADERS, API_URL, LOADING } from '../constants'
+import { handleResponse } from '../utils/response'
 import Layout from '../components/Layout'
-import { MENU_ITEMS, HEADERS, API_URL } from '../constants'
-import HandleResponse from '../components/HandleResponse'
 import i18n from '../components/Lang/i18n'
 import Lang from '../components/Lang/Lang'
+import Unauthorized from '../components/Unauthorized'
+import Error from '../components/Error'
+import Loader from '../components/Loader'
 
 const Home = () => {
-  const [responce, setResponce] = useState()
+  const token = localStorage.getItem('token')
+  const [response, setResponse] = useState()
 
-  useEffect(() => {
-    getServerData()
-  }, [])
-
-  const getServerData = async () => {
-    const token = localStorage.getItem('token')
-
+  const getServerData = useCallback(async () => {
     await fetch(`${API_URL}/users`, {
       method: 'GET',
       headers: { ...HEADERS, token },
     })
-    .then(res => setResponce(res))
-    .catch(err => setResponce(err))
-  }
+    .then(async res => {
+      const handledResponse = await handleResponse(res)
+      setResponse(handledResponse)
+    })
+    .catch(async err => {
+      const handledResponse = await handleResponse(err)
+      setResponse(handledResponse)
+    })
+  }, [token])
 
-  const Content = ({ result: { users } }) => {
+  useEffect(() => {
+    getServerData()
+  }, [getServerData])
+
+  const renderContent = useCallback(() => {
+    const { users } = response.payload
     return (
-      <>
+      <Layout menuItem={MENU_ITEMS.HOME}>
         <h1>
           <Lang text={i18n.HOME.TITLE} />
         </h1>
@@ -36,15 +45,16 @@ const Home = () => {
             <hr />
           </div>
         ))}
-      </>
+      </Layout>
     )
-  }
+  }, [response])
 
-  return (
-    <Layout menuItem={MENU_ITEMS.HOME}>
-      <HandleResponse res={responce} render={result => <Content result={result} />}/>
-    </Layout>
-  )
+  return !response ? <Loader /> :
+    <>
+      {response.status === LOADING.UNAUTHORIZED && <Unauthorized />}
+      {response.status === LOADING.ERROR && <Error message={response.error} />}
+      {response.status === LOADING.SUCCESS && renderContent()}
+    </>
 }
 
 export default Home
