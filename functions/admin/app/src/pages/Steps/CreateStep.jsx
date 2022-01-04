@@ -1,74 +1,50 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Pagination } from 'antd'
-import { MENU_ITEMS, HEADERS, API_URL } from '../../constants'
+import { MENU_ITEMS, HEADERS, API_URL, LOADING } from '../../constants'
+import { handleResponse, getPageNumber, getStartAt } from '../../utils/response'
 import i18n from '../../components/Lang/i18n'
 import Lang from '../../components/Lang/Lang'
 import Layout from '../../components/Layout'
-import HandleResponse from '../../components/HandleResponse'
 import ModelCard from '../../components/ModelCard'
-
+import Unauthorized from '../../components/Unauthorized'
+import Error from '../../components/Error'
+import Loader from '../../components/Loader'
 
 const CreateStep = () => {
-  const token = localStorage.getItem('token')
   const LIMIT = 4
+  const token = localStorage.getItem('token')
   const [startAt, setStartAt] = useState(0)
-  const [modelsResponse, setModelsResponse] = useState()
-  const [modelsCountResponse, setModelsCountResponse] = useState()
-  const [pageNumber, setPageNumber] = useState(1)
+  const [response, setResponse] = useState()
 
-  const loadPage = useCallback(async () => {
+  const loadPage = useCallback(async (startAt) => {
     console.log(`>>> ${API_URL}/models/needPublishModels/${startAt}/${LIMIT}`)
 
     await fetch(`${API_URL}/models/needPublishModels/${startAt}/${LIMIT}`, {
       method: 'GET',
       headers: { ...HEADERS, token },
     })
-    .then(res => setModelsResponse(res))
-    .catch(err => setModelsResponse(err))
-  }, [startAt, LIMIT, token])
-
-  const loadModelsCount = useCallback(async () => {
-    console.log(`>>> ${API_URL}/models/getNeedPublishModelsCount`)
-
-    await fetch(`${API_URL}/models/getNeedPublishModelsCount`, {
-      method: 'GET',
-      headers: { ...HEADERS, token },
+    .then(async res => {
+      const handledResponse = await handleResponse(res)
+      setResponse(handledResponse)
     })
-    .then(async res => setModelsCountResponse(res))
-    .catch(err => setModelsCountResponse(err))
+    .catch(async err => {
+      const handledResponse = await handleResponse(err)
+      setResponse(handledResponse)
+    })
   }, [token])
 
   const paginationChange = (page) => {
-    const start = page === 1 ? 0 : LIMIT * (page - 1)
-    setStartAt(start)
-    setPageNumber(page)
+    setStartAt(getStartAt(page, LIMIT))
   }
 
   useEffect(() => {
-    loadModelsCount()
-    loadPage()
-  }, [loadPage, loadModelsCount])
+    loadPage(startAt)
+  }, [startAt, loadPage])
 
-  useEffect(() => {
-  }, [modelsCountResponse])
-
-  const PaginationContent = ({ result }) => {
-    const { modelsCount } = result
-
+  const renderContent = useCallback(() => {
+    const { models, allModelsCount } = response.payload
     return (
-      <Pagination
-        onChange={paginationChange}
-        total={modelsCount}
-        pageSize={LIMIT}
-        current={pageNumber}
-      />
-    )
-  }
-
-  const ModelsContent = ({ result }) => {
-    const { models } = result
-    return (
-      <>
+      <Layout menuItem={MENU_ITEMS.STEPS}>
         <h1>
           <Lang text={i18n.CREATE_STEP.TITLE} />
         </h1>
@@ -77,19 +53,22 @@ const CreateStep = () => {
           <ModelCard model={model} key={model.modelId} />
         )}
         </div>
-        
-      </>
+        <Pagination
+          onChange={paginationChange}
+          total={allModelsCount}
+          pageSize={LIMIT}
+          current={getPageNumber(startAt, LIMIT)}
+        />
+      </Layout>
     )
-  }
+  }, [response, startAt])
 
-  return (
-    <Layout menuItem={MENU_ITEMS.STEPS}>
-      <HandleResponse res={modelsResponse} render={result => <ModelsContent result={result} />}/>
-      <div style={{ height: 50 }}>
-        <HandleResponse res={modelsCountResponse} render={result => <PaginationContent result={result} />}/>
-      </div>
-    </Layout>
-  )
+  return !response ? <Loader /> :
+    <>
+      {response.status === LOADING.UNAUTHORIZED && <Unauthorized />}
+      {response.status === LOADING.ERROR && <Error message={response.error} />}
+      {response.status === LOADING.SUCCESS && renderContent()}
+    </>
 }
 
 export default CreateStep
