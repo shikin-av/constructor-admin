@@ -7,11 +7,12 @@ class CreateStepStore {
   token = localStorage.getItem('token')
   status = LOADING.NONE
   error = null
+  allModelsCount = 0
   LIMIT = 4
   startAt = 0
   pageNumber = 1
-  models = []
-  allModelsCount = 0
+  pageModels = []
+  selectedModels = []  
 
   constructor() {
     makeAutoObservable(this)
@@ -35,11 +36,11 @@ class CreateStepStore {
       this.status = parsed.status
 
       if (this.status == LOADING.SUCCESS) {
-        this.models = parsed.payload.models
+        this.pageModels = parsed.payload.models
         this.allModelsCount = parsed.payload.allModelsCount
         this.error = null
       } else {
-        this.models = []
+        this.pageModels = []
         this.allModelsCount = 0
         this.error = parsed.error
       }
@@ -55,7 +56,22 @@ class CreateStepStore {
     this.pageNumber = getPageNumber(this.startAt, this.LIMIT)
   }
 
-  getModelById = (modelId) => this.models.find(m => m.modelId === modelId)
+  getModelById = (modelId) => this.pageModels.find(m => m.modelId === modelId)
+
+  selectModel = (modelId) => {
+    const selected = this.selectedModels.find(m => m.modelId == modelId)
+
+    if (selected) {
+      this.selectedModels = this.selectedModels.filter(m => m.modelId !== modelId)
+    } else {
+      const model = this.pageModels.find(m => m.modelId == modelId)
+      if (model) {
+        this.selectedModels.push(model)
+      }      
+    }
+  }
+
+  isSelected = (modelId) => !!this.selectedModels.find(m => m.modelId == modelId)
 }
 
 export const createStepStore = new CreateStepStore()
