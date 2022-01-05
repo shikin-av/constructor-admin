@@ -25,7 +25,7 @@ const publishMyModel = functions.https.onCall(async (data, context) => {
       modelId: id,
       date: new Date(),
     }
-    await db.collection('needPusblish').doc(id).set(publishData)
+    await db.collection('needPublish').doc(id).set(publishData)
     
     return Promise.resolve(JSON.stringify({ id }))
   } catch (err) {

@@ -41,7 +41,7 @@ async function getNeedPublishModels(req, res) {
   const limit   = +req.params.limit
 
   try {
-    const collection = await db.collection('needPusblish')
+    const collection = await db.collection('needPublish')
       .orderBy('date', 'desc')
       .offset(startAt)
       .limit(limit)
@@ -57,7 +57,7 @@ async function getNeedPublishModels(req, res) {
       }
     })
 
-    const fullCollection = await db.collection('needPusblish').get()
+    const fullCollection = await db.collection('needPublish').get()
     const allModelsCount = fullCollection.docs.length
 
     return Promise.resolve(res.json({ models, allModelsCount }))
