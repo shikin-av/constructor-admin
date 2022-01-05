@@ -83,6 +83,14 @@ const i18n = {
       [ENG]: 'Create Story Step',
       [RUS]: 'Создание этапа истории',
     },
+    MODELS_TITLE: {
+      [ENG]: 'Models for publish',
+      [RUS]: 'Модели для публикации',
+    },
+    STEP_BLOCK_TITLE: {
+      [ENG]: 'Story Step',
+      [RUS]: 'Этап истории',
+    },
   },
   MANAGERS: {
     TITLE: {

@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { LOADING, API_URL, HEADERS } from '../../constants'
-import { storage, ref, getDownloadURL } from '../../firebase'
-import { handleResponse, getStartAt, getPageNumber } from '../../utils/response'
+import { LOADING, API_URL, HEADERS } from '../../../constants'
+import { storage, ref, getDownloadURL } from '../../../firebase'
+import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
 
 class CreateStepStore {
   status = LOADING.NONE
@@ -17,7 +17,7 @@ class CreateStepStore {
     makeAutoObservable(this)
   }
 
-  loadPage = async () => {
+  loadModelsPage = async () => {
     const token = localStorage.getItem('token')
     this.status = LOADING.PROGRESS
 

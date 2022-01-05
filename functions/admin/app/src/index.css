@@ -14,6 +14,20 @@ code {
     monospace;
 }
 
+.ant-divider-horizontal.ant-divider-with-text {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.ant-pagination {
+  padding-bottom: 20px;
+}
+
+.shadow {
+  border-color: transparent;
+  box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
+}
+
 #root {
   height: 100% !important;
 }
@@ -59,8 +73,6 @@ code {
 
 .loaded-image {
   display: block;
-  width: 341px !important;
-  height: 341px !important;
 }
 
 .unloaded-image {
@@ -92,7 +104,18 @@ code {
   border: 10px solid seagreen;
 }
 
-.shadow {
-  border-color: transparent;
-  box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
+.step-block {
+  min-height: 800px;
+  border: 1px solid darkgray;
+  padding: 10px;
+  padding-top: 0px;
+}
+
+.step-block-models {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.step-models-card {
+  margin: 4px;
 }
