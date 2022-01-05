@@ -6,7 +6,7 @@ import { MENU_ITEMS, LOADING } from '../../constants'
 import i18n from '../../components/Lang/i18n'
 import Lang from '../../components/Lang/Lang'
 import Layout from '../../components/Layout'
-import ModelCard from '../../components/ModelCard'
+import { ModelCard, MODEL_CARD_SIZE as SIZE } from './ModelCard'
 import Unauthorized from '../../components/Unauthorized'
 import Error from '../../components/Error'
 import Loader from '../../components/Loader'
@@ -23,8 +23,19 @@ const CreateStep = observer(() => {
           <Lang text={i18n.CREATE_STEP.TITLE} />
         </h1>
         <div className="models-list">
-        {store.models.map(model =>
-          <ModelCard modelId={model.modelId} key={model.modelId} />
+        {store.pageModels.map(model => {
+          const { modelId } = model
+          const selected = store.isSelected(modelId)
+          return (
+            <ModelCard
+              modelId={modelId}
+              key={modelId}
+              size={SIZE.BIG}
+              onSelect={() => store.selectModel(modelId)}
+              selected={selected}
+            />
+          )
+        }
         )}
         </div>
         <Pagination
@@ -35,7 +46,7 @@ const CreateStep = observer(() => {
         />
       </Layout>
     )
-  }, [store.models, store.allModelsCount, store.LIMIT, store.pageNumber])
+  }, [store.pageModels, store.allModelsCount, store.LIMIT, store.pageNumber])
 
   return (
     <>
