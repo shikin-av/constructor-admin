@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Skeleton  } from 'antd'
 import { observer } from 'mobx-react-lite'
@@ -55,63 +56,94 @@ export const ModelCard = observer(({ modelId, size, onSelect, selected }) => {
     if (!loaded) return
 
     onSelect(modelId)
-  }, [loaded, selected, modelId])
-
-  const renderBigCard = useCallback(() => (
-    <div
-      className={`models-card shadow ${selected ? 'selected-card' : ''}`}
-      onClick={onClick}
-    >
-      <img
-        src={imageUrl}
-        onLoad={onImageLoad}
-        className={imageClass}
-        alt={modelId}
-      />
-      {
-        !loaded &&
-        <Skeleton.Image 
-          className="loaded-image"
-        />
-      }
-      {
-        loaded
-        ? <div className="models-card-description">
-            <p>{model.formattedDate}</p>
-            <p>{model.modelId}</p>
-            <p>{model.userId}</p>
-          </div>
-        : <>
-            <Skeleton paragraph={{ rows: 2 }} />
-          </>
-      }
-    </div>
-  ), [size, imageUrl, loaded, onImageLoad, model])
-
-  const renderSmallCard = useCallback(() => (
-    <div
-      className={`models-card shadow ${selected ? 'selected-card' : ''}`}
-      onClick={onClick}
-    >
-      <img
-        src={imageUrl}
-        onLoad={onImageLoad}
-        className={imageClass}
-        alt={modelId}
-      />
-      {
-        !loaded &&
-        <Skeleton.Image 
-          className="loaded-image"
-        />
-      }
-    </div>
-  ), [size, imageUrl, loaded, onImageLoad, model])
+  }, [loaded, modelId, onSelect])
 
   return (
     <>
-      {size === MODEL_CARD_SIZE.BIG && renderBigCard()}
-      {size === MODEL_CARD_SIZE.SMALL && renderSmallCard()}
+      {size === MODEL_CARD_SIZE.BIG &&
+        <BigCard
+          model={model}
+          imageUrl={imageUrl}
+          loaded={loaded}
+          onImageLoad={onImageLoad}
+          onClick={onClick}
+          selected={selected}
+          imageClass={imageClass}
+        />
+      }
+      {size === MODEL_CARD_SIZE.SMALL &&
+        <SmallCard
+          model={model}
+          imageUrl={imageUrl}
+          loaded={loaded}
+          onImageLoad={onImageLoad}
+          onClick={onClick}
+          selected={selected}
+          imageClass={imageClass}
+        />
+      }
     </>
   )
 })
+
+const BigCard = ({ 
+  model,
+  imageUrl,
+  loaded,
+  onImageLoad,
+  onClick,
+  selected,
+  imageClass,
+}) => (
+  <div
+    className={`models-card shadow ${selected ? 'selected-card' : ''}`}
+    onClick={onClick}
+  >
+    <img
+      src={imageUrl}
+      onLoad={onImageLoad}
+      className={imageClass}
+      alt={model?.modelId}
+    />
+    {!loaded &&
+      <Skeleton.Image 
+        className="loaded-image"
+      />
+    }
+    {loaded
+      ? <div className="models-card-description">
+          <p>{model?.formattedDate}</p>
+          <p>{model?.modelId}</p>
+          <p>{model?.userId}</p>
+        </div>
+      : <Skeleton paragraph={{ rows: 2 }} />
+    }
+  </div>
+)
+
+const SmallCard = ({
+  model,
+  imageUrl,
+  loaded,
+  onImageLoad,
+  onClick,
+  selected,
+  imageClass,
+}) => (
+  <div
+    className={`models-card shadow ${selected ? 'selected-card' : ''}`}
+    onClick={onClick}
+  >
+    <img
+      src={imageUrl}
+      onLoad={onImageLoad}
+      className={imageClass}
+      alt={model?.modelId}
+    />
+    {!loaded &&
+      <Skeleton.Image 
+        className="loaded-image"
+      />
+    }
+  </div>
+)
