@@ -4,7 +4,6 @@ import { storage, ref, getDownloadURL } from '../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../utils/response'
 
 class CreateStepStore {
-  token = localStorage.getItem('token')
   status = LOADING.NONE
   error = null
   allModelsCount = 0
@@ -19,11 +18,12 @@ class CreateStepStore {
   }
 
   loadPage = async () => {
+    const token = localStorage.getItem('token')
     this.status = LOADING.PROGRESS
 
     await fetch(`${API_URL}/models/needPublishModels/${this.startAt}/${this.LIMIT}`, {
       method: 'GET',
-      headers: { ...HEADERS, token: this.token },
+      headers: { ...HEADERS, token},
     })
     .then(async res => this.parseResponse(res))
     .catch(async err => this.parseResponse(err))
@@ -35,7 +35,7 @@ class CreateStepStore {
     runInAction(() => {
       this.status = parsed.status
 
-      if (this.status == LOADING.SUCCESS) {
+      if (this.status === LOADING.SUCCESS) {
         this.pageModels = parsed.payload.models
         this.allModelsCount = parsed.payload.allModelsCount
         this.error = null
@@ -59,19 +59,19 @@ class CreateStepStore {
   getModelById = (modelId) => this.pageModels.find(m => m.modelId === modelId)
 
   selectModel = (modelId) => {
-    const selected = this.selectedModels.find(m => m.modelId == modelId)
+    const selected = this.selectedModels.find(m => m.modelId === modelId)
 
     if (selected) {
       this.selectedModels = this.selectedModels.filter(m => m.modelId !== modelId)
     } else {
-      const model = this.pageModels.find(m => m.modelId == modelId)
+      const model = this.pageModels.find(m => m.modelId === modelId)
       if (model) {
         this.selectedModels.push(model)
       }      
     }
   }
 
-  isSelected = (modelId) => !!this.selectedModels.find(m => m.modelId == modelId)
+  isSelected = (modelId) => !!this.selectedModels.find(m => m.modelId === modelId)
 }
 
 export const createStepStore = new CreateStepStore()
