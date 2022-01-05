@@ -3,11 +3,21 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Skeleton  } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { createStepStore as store } from './CreateStepStore'
-import { dateFormat, timeFormat } from '../../utils/date'
+import { dateFormat, timeFormat } from '../../../utils/date'
 
 export const MODEL_CARD_SIZE = {
   BIG: 'big',
   SMALL: 'small',
+}
+
+const BIG_IMAGE_STYLE = {
+  width: 341,
+  height: 341,
+}
+
+const SMALL_IMAGE_STYLE = {
+  width: 150,
+  height: 150,
 }
 
 export const ModelCard = observer(({ modelId, size, onSelect, selected }) => {
@@ -104,10 +114,12 @@ const BigCard = ({
       onLoad={onImageLoad}
       className={imageClass}
       alt={model?.modelId}
+      style={BIG_IMAGE_STYLE}
     />
     {!loaded &&
       <Skeleton.Image 
         className="loaded-image"
+        style={BIG_IMAGE_STYLE}
       />
     }
     {loaded
@@ -131,7 +143,8 @@ const SmallCard = ({
   imageClass,
 }) => (
   <div
-    className={`models-card shadow ${selected ? 'selected-card' : ''}`}
+    className={`step-models-card ${selected ? 'selected-card' : ''}`}
+    style={SMALL_IMAGE_STYLE}
     onClick={onClick}
   >
     <img
@@ -139,10 +152,12 @@ const SmallCard = ({
       onLoad={onImageLoad}
       className={imageClass}
       alt={model?.modelId}
+      style={SMALL_IMAGE_STYLE}
     />
     {!loaded &&
       <Skeleton.Image 
         className="loaded-image"
+        style={SMALL_IMAGE_STYLE}
       />
     }
   </div>
