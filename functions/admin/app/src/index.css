@@ -114,8 +114,19 @@ code {
 .step-block-models {
   display: flex;
   flex-wrap: wrap;
+  min-height: 165px;
+  padding-bottom: 5px;
 }
 
 .step-models-card {
   margin: 4px;
+}
+
+.models-placeholder {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #ff4d4f;
+  color: #ff4d4f;
 }
