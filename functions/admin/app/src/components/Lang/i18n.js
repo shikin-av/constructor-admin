@@ -91,6 +91,50 @@ const i18n = {
       [ENG]: 'Story Step',
       [RUS]: 'Этап истории',
     },
+    FORM: {
+      MODELS_PLACEHOLDER: {
+        [ENG]: 'Please add models',
+        [RUS]: 'Добавьте модели',
+      },
+      TITLE: {
+        [ENG]: 'Title',
+        [RUS]: 'Название',
+      },
+      TITLE_PLACEHOLDER: {
+        [ENG]: 'Please input Story Step title',
+        [RUS]: 'Введите название этапа',
+      },
+      STATUS: {
+        [ENG]: 'Step Status',
+        [RUS]: 'Статус этапа',
+      },
+      STATUSES: {
+        WAIT_APPROVE: {
+          [ENG]: 'Wait approve',
+          [RUS]: 'Ожидает подтверждения',
+        },
+        APPROVED: {
+          [ENG]: 'Published',
+          [RUS]: 'Опубликован',
+        },
+        CLOSED: {
+          [ENG]: 'Closed',
+          [RUS]: 'Закрыт',
+        },
+      },
+      SPECIAL_DATES: {
+        [ENG]: 'Story Step Dates',
+        [RUS]: 'Даты этапа',
+      },
+      SPECIAL_DATES_PLACEHOLDER: {
+        [ENG]: 'Please input Story Step dates',
+        [RUS]: 'Выберите обе даты этапа',
+      },
+      SAVE_STEP_BUTTON: {
+        [ENG]: 'Save Story Step',
+        [RUS]: 'Сохранить этап',
+      }
+    },
   },
   MANAGERS: {
     TITLE: {
