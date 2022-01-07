@@ -7,15 +7,15 @@ const deleteMyModel = functions.https.onCall(async (data, context) => {
   if (!userId) return Promise.reject(new Error('doesn`t have userId'))
   if (!id) return Promise.reject(new Error('doesn`t have id'))
 
-  // Delete model
   try {
     await db.collection(`models/users/${userId}`).doc(id).delete()
+    await db.collection('needPublish').doc(id).delete()
+
   } catch (err) {
     return Promise.reject(new Error(`can't delete model ${id} - ${err}`))
   }
 
   const imagePath = `${userId}/${id}.png`
-  // Delete image
   try {
     const image = bucket.file(imagePath)
     image.delete()
