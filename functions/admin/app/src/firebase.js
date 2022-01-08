@@ -1,6 +1,6 @@
 import * as firebase from 'firebase/app'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { getStorage, ref, getDownloadURL } from "firebase/storage"
+import { getStorage, ref, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage"
 
 const FIREBASE_CONFIG = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -23,6 +23,8 @@ export {
   signInWithEmailAndPassword,
   storage,
   ref,
-  getDownloadURL
+  getDownloadURL,
+  uploadBytes,
+  deleteObject,
 }
   

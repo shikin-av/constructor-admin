@@ -145,6 +145,10 @@ const i18n = {
       SAVE_STEP_BUTTON: {
         [ENG]: 'Save Story Step',
         [RUS]: 'Сохранить этап',
+      },
+      UPLOAD_IMAGE: {
+        [ENG]: 'Story Step image',
+        [RUS]: 'Изображение этапа',
       }
     },
   },
