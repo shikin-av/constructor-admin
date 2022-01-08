@@ -1,18 +1,63 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect } from 'react'
-import { Divider, Form, Input, Select, Button, DatePicker, Space } from 'antd'
-import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import React, { useState } from 'react'
+import { Divider, Form, Input, Select, Button, DatePicker, Space, Upload, Modal } from 'antd'
+import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react-lite'
 import { createStepStore as store, STATUS } from './CreateStepStore'
+import { storage, ref, uploadBytes, deleteObject } from '../../../firebase'
 import i18n from '../../../components/Lang/i18n'
 import Lang from '../../../components/Lang/Lang'
-import SelectedCard from './SelectedCard';
-import { LOADING } from '../../../constants'
+import SelectedCard from './SelectedCard'
 const { Option } = Select
 const { RangePicker } = DatePicker
 const { TextArea } = Input
 
 const StepBlock =  observer(() => {
+  const [previewVisible, setPreviewVisible] = useState(false)
+  const [previewImage, setPreviewImage] = useState('')
+  const [previewTitle, setPreviewTitle] = useState('')
+  const [imageList, setImageList] = useState([])
+
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = error => reject(error)
+    })
+  }
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj)
+    }
+
+    setPreviewImage(file.url || file.preview)
+    setPreviewVisible(true)
+    setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf("/") + 1))
+  }
+
+  const uploadImage = async (val) => {
+    console.log(val)
+    const storageRef = ref(storage, `published/${val.file.name}`)
+    try {
+      await uploadBytes(storageRef, val.file)
+      val.onSuccess()
+    } catch(err) {
+      console.error(err)
+      val.onError(err)
+    }
+  }
+
+  const removeImage = async (file) => {
+    const storageRef = ref(storage, `published/${file.name}`)
+    try {
+      deleteObject(storageRef)
+    } catch(err) {
+      console.error(err)
+    }
+  }
+
   return (
     <div className="step-block shadow">
       <div>
@@ -94,6 +139,7 @@ const StepBlock =  observer(() => {
               </Option>
             </Select>
           </Form.Item>
+
           <Space>
             <Form.Item 
               name="specialDates" 
@@ -112,6 +158,35 @@ const StepBlock =  observer(() => {
                 <Lang text={i18n.CREATE_STEP.FORM.SPECIAL_DATES_ALWAYS} />
               </div>}
           </Space>
+
+          <Space>
+            <Upload
+              listType="picture-card"
+              fileList={imageList}
+              onPreview={handlePreview}
+              onChange={({ fileList }) => setImageList(fileList)}
+              customRequest={uploadImage}
+              onRemove={removeImage}
+            >
+              {imageList.length === 0 &&
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>
+                    <Lang text={i18n.CREATE_STEP.FORM.UPLOAD_IMAGE} />
+                  </div>
+                </div>
+              }              
+            </Upload>
+          </Space>
+
+          <Modal
+            visible={previewVisible}
+            title={previewTitle}
+            footer={null}
+            onCancel={() => setPreviewVisible(false)}
+          >
+            <img alt="example" style={{ width: "100%" }} src={previewImage} />
+          </Modal>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
