@@ -5,7 +5,7 @@ import { LangContext } from './components/Lang/LangContext'
 import { LANG } from './components/Lang/i18n'
 import Login from './pages/Login'
 import Home from './pages/Home'
-import CreateStep from './pages/Steps/CreateStep/CreateStep'
+import CreateStep from './pages/Steps/CreateStep'
 import Managers from './pages/Managers'
 
 const  App = () => {

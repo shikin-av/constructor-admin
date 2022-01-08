@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { Skeleton  } from 'antd'
+import { Skeleton } from 'antd'
+import { LeftSquareFilled, RightSquareFilled, CloseSquareFilled } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite'
 import { createStepStore as store } from './CreateStepStore'
-import { dateFormat, timeFormat } from '../../../utils/date'
 
 const IMAGE_STYLE = {
-  width: 341,
-  height: 341,
+  width: 150,
+  height: 150,
 }
 
-const ModelCard = observer(({ modelId, selected }) => {
+const SelectedCard = observer(({ modelId }) => {
   const [model, setModel] = useState()
   const [imageUrl, setImageUrl] = useState()
   const [imageLoaded, setImageLoaded] = useState(false)
@@ -30,10 +30,7 @@ const ModelCard = observer(({ modelId, selected }) => {
 
   useEffect(() => {
     const m = store.getModelById(modelId)
-    setModel({
-      ...m,
-      formattedDate: `${dateFormat(m.date)}  |  ${timeFormat(m.date)}`
-    })
+    setModel({ ...m })
   }, [modelId])
 
   useEffect(() => {
@@ -45,54 +42,45 @@ const ModelCard = observer(({ modelId, selected }) => {
   const loaded = useMemo(() => (model && imageUrl && imageLoaded),
     [model, imageUrl, imageLoaded])
 
-  const divClass = useMemo(() => {
-    const loadedClass = loaded ? 'cursor-pointer' : ''
-    const selectedClass = selected ? 'selected-big-card' : ''
-
-    return `models-card shadow ${loadedClass} ${selectedClass}`
-  }, [loaded, selected])
-
-  const imageClass = useMemo(() => {
-    const loadedClass = loaded ? 'loaded-image' : 'unloaded-image'
-    const selectedClass = selected ? 'selected-big-card-image' : ''
-
-    return `${loadedClass} ${selectedClass}`
-  }, [loaded, selected])
-
-  const onClick = useCallback(() => {
-    if (!loaded) return
-
-    store.switchSelectModel(modelId)
-  }, [loaded, modelId])
-
   return (
     <div
-      className={divClass}
-      onClick={onClick}
+      className="step-models-card"
+      style={IMAGE_STYLE}
     >
       <img
         src={imageUrl}
         onLoad={onImageLoad}
-        className={imageClass}
+        className={loaded ? 'loaded-image' : 'unloaded-image'}
         alt={model?.modelId}
         style={IMAGE_STYLE}
       />
+      {loaded &&
+        <div className="step-models-card-panel">
+          <div className="step-models-card-arrows">
+            {!store.isFirstSelected(modelId) &&
+              <LeftSquareFilled onClick={() => store.selectedToLeft(modelId)} />
+            }
+            {!store.isLastSelected(modelId) &&
+              <RightSquareFilled onClick={() => store.selectedToRight(modelId)} />
+            }
+          </div>
+
+          <div className="step-models-card-close" >
+            <CloseSquareFilled
+              onClick={() => store.unselectModel(modelId)}
+              style={{ color: '#ff4d4f' }}
+            />
+          </div>
+        </div>
+      }
       {!loaded &&
         <Skeleton.Image 
           className="loaded-image"
           style={IMAGE_STYLE}
         />
       }
-      {loaded
-        ? <div className="models-card-description">
-            <p>{model?.formattedDate}</p>
-            <p>{model?.modelId}</p>
-            <p>{model?.userId}</p>
-          </div>
-        : <Skeleton paragraph={{ rows: 2 }} />
-      }
     </div>
   )
 })
 
-export default ModelCard
+export default SelectedCard

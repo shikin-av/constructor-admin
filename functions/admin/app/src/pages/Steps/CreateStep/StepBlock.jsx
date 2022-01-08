@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
-import moment from 'moment'
-import { Divider, Form, Input, Select, Button, Alert, DatePicker, Space } from 'antd'
+import { Divider, Form, Input, Select, Button, DatePicker, Space } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite'
 import { createStepStore as store, STATUS } from './CreateStepStore'
 import i18n from '../../../components/Lang/i18n'
 import Lang from '../../../components/Lang/Lang'
-import { ModelCard, MODEL_CARD_SIZE as SIZE } from './ModelCard'
+import SelectedCard from './SelectedCard';
 const { Option } = Select
 const { RangePicker } = DatePicker
+const { TextArea } = Input
 
 const StepBlock =  observer(() => {
   return (
@@ -29,12 +29,9 @@ const StepBlock =  observer(() => {
         {store.selectedModels.map(model => {
           const { modelId } = model
           return (
-            <ModelCard
-              modelId={modelId}
+            <SelectedCard
               key={modelId}
-              size={SIZE.SMALL}
-              onSelect={() => {}}
-              selected={false}
+              modelId={modelId}
             />
           )
         })}
@@ -44,8 +41,9 @@ const StepBlock =  observer(() => {
           onFinish={store.saveStoryStep}
           initialValues={{
             title: store.title,
+            description: store.description,
             status: store.status,
-            // specialDates: [moment('2022-01-05'), moment('2022-01-06')]
+            specialDates: store.specialDates,
           }}
         >
           <Form.Item 
@@ -57,6 +55,17 @@ const StepBlock =  observer(() => {
             }]}
           >
             <Input value={store.title} onChange={val => store.title = val}/>
+          </Form.Item>
+
+          <Form.Item 
+            name="description" 
+            label={<Lang text={i18n.CREATE_STEP.FORM.DESCRIPTION} />}
+            rules={[{ 
+              required: false, 
+              message: <Lang text={i18n.CREATE_STEP.FORM.DESCRIPTION_PLACEHOLDER} /> 
+            }]}
+          >
+            <TextArea value={store.description} onChange={val => store.description = val}/>
           </Form.Item>
 
           <Form.Item

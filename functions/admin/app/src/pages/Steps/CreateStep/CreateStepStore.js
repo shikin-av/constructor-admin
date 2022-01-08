@@ -20,6 +20,7 @@ class CreateStepStore {
   selectedModels = []
 
   title
+  description
   status = STATUS.WAIT_APPROVE
   specialDates  // [moment, moment] or null
   image
@@ -73,19 +74,54 @@ class CreateStepStore {
   getModelById = (modelId) => this.pageModels.find(m => m.modelId === modelId)
 
   selectModel = (modelId) => {
-    const selected = this.selectedModels.find(m => m.modelId === modelId)
-
-    if (selected) {
-      this.selectedModels = this.selectedModels.filter(m => m.modelId !== modelId)
-    } else {
-      const model = this.pageModels.find(m => m.modelId === modelId)
-      if (model) {
-        this.selectedModels.push(model)
-      }      
+    const model = this.pageModels.find(m => m.modelId === modelId)
+    if (model) {
+      this.selectedModels.push(model)
     }
   }
 
+  unselectModel = (modelId) => {
+    this.selectedModels = this.selectedModels.filter(m => m.modelId !== modelId)
+  }
+
+  switchSelectModel = (modelId) => {
+    const selected = this.selectedModels.find(m => m.modelId === modelId)
+
+    selected ? this.unselectModel(modelId) : this.selectModel(modelId)
+  }
+
   isSelected = (modelId) => !!this.selectedModels.find(m => m.modelId === modelId)
+
+  swapSelectedPosition = (index1, index2) => {
+    const temp = this.selectedModels[index1]
+  
+      this.selectedModels[index1] = this.selectedModels[index2]
+      this.selectedModels[index2] = temp
+  }
+
+  selectedToLeft = (modelId) => {
+    const index = this.selectedModels.findIndex(m => m.modelId === modelId)
+    if (index === -1 || index === 0) return
+
+    this.swapSelectedPosition(index, index - 1)
+  }
+
+  selectedToRight = (modelId) => {
+    const index = this.selectedModels.findIndex(m => m.modelId === modelId)
+    if (index === -1 || index === this.selectedModels.length - 1) return
+
+    this.swapSelectedPosition(index, index + 1)
+  }
+
+  isFirstSelected = (modelId) => {
+    const index = this.selectedModels.findIndex(m => m.modelId === modelId)
+    return index === 0
+  }
+
+  isLastSelected = (modelId) => {
+    const index = this.selectedModels.findIndex(m => m.modelId === modelId)
+    return index === this.selectedModels.length - 1
+  }
 
   setStatus = (val) => {
     runInAction(() => {
@@ -98,9 +134,10 @@ class CreateStepStore {
     this.specialDates = val
   }
 
-  saveStoryStep = ({ title, models, image, bonus, status, specialDates }) => {
+  saveStoryStep = ({ title, description, status, specialDates }) => {
     console.log('models', toJS(this.selectedModels))
     console.log('title', title)
+    console.log('description', description)
     console.log('status', status)
     console.log('specialDates', specialDates)
   }
