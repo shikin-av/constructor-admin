@@ -138,6 +138,10 @@ const i18n = {
         [ENG]: 'Please input Story Step dates',
         [RUS]: 'Выберите обе даты этапа',
       },
+      SPECIAL_DATES_ALWAYS: {
+        [ENG]: '(Always)',
+        [RUS]: '(Всегда)',
+      },
       SAVE_STEP_BUTTON: {
         [ENG]: 'Save Story Step',
         [RUS]: 'Сохранить этап',

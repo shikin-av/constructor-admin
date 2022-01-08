@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { Divider, Form, Input, Select, Button, DatePicker, Space } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite'
@@ -7,6 +7,7 @@ import { createStepStore as store, STATUS } from './CreateStepStore'
 import i18n from '../../../components/Lang/i18n'
 import Lang from '../../../components/Lang/Lang'
 import SelectedCard from './SelectedCard';
+import { LOADING } from '../../../constants'
 const { Option } = Select
 const { RangePicker } = DatePicker
 const { TextArea } = Input
@@ -93,19 +94,24 @@ const StepBlock =  observer(() => {
               </Option>
             </Select>
           </Form.Item>
-
-          <Form.Item 
-            name="specialDates" 
-            label={<Lang text={i18n.CREATE_STEP.FORM.SPECIAL_DATES} />}
-            rules={[{ 
-              required: false, 
-              message: <Lang text={i18n.CREATE_STEP.FORM.SPECIAL_DATES_PLACEHOLDER} /> 
-            }]}
-          >
-            <RangePicker
-              onChange={store.changeDates}
-            />
-          </Form.Item>
+          <Space>
+            <Form.Item 
+              name="specialDates" 
+              label={<Lang text={i18n.CREATE_STEP.FORM.SPECIAL_DATES} />}
+              rules={[{ 
+                required: false, 
+                message: <Lang text={i18n.CREATE_STEP.FORM.SPECIAL_DATES_PLACEHOLDER} /> 
+              }]}
+            >
+              <RangePicker
+                onChange={store.changeDates}
+              />
+            </Form.Item>
+            {!store.specialDates &&
+              <div className="always">
+                <Lang text={i18n.CREATE_STEP.FORM.SPECIAL_DATES_ALWAYS} />
+              </div>}
+          </Space>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
