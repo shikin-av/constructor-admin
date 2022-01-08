@@ -7,7 +7,7 @@ import Layout from '../../../components/Layout'
 import ModelsList from './ModelsList'
 import StepBlock from './StepBlock'
 
-const CreateStep = () => {
+const CreateStepPage = () => {
   return (
     <Layout menuItem={MENU_ITEMS.STEPS}>
       <Divider>
@@ -27,4 +27,4 @@ const CreateStep = () => {
   )
 }
 
-export default CreateStep
+export default CreateStepPage

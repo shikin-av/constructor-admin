@@ -104,6 +104,14 @@ const i18n = {
         [ENG]: 'Please input Story Step title',
         [RUS]: 'Введите название этапа',
       },
+      DESCRIPTION: {
+        [ENG]: 'Description',
+        [RUS]: 'Описание',
+      },
+      DESCRIPTION_PLACEHOLDER: {
+        [ENG]: 'Please input description',
+        [RUS]: 'Введите описание этапа',
+      },
       STATUS: {
         [ENG]: 'Step Status',
         [RUS]: 'Статус этапа',

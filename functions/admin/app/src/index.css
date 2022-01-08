@@ -95,12 +95,12 @@ code {
   padding: 10px;  
 }
 
-.selected-card {
+.selected-big-card {
   background-color: seagreen;
   color: white !important;
 }
 
-.selected-image {
+.selected-big-card-image {
   border: 10px solid seagreen;
 }
 
@@ -122,6 +122,27 @@ code {
   margin: 4px;
 }
 
+.step-models-card-panel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24px;
+  margin-top: -154px;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.step-models-card-arrows {
+  cursor: pointer;
+}
+
+.step-models-card-arrows .anticon {
+  padding: 2px;
+}
+
+.step-models-card-close {
+  cursor: pointer;  
+}
+
 .models-placeholder {
   width: 100%;
   display: flex;
@@ -129,4 +150,8 @@ code {
   align-items: center;
   border: 2px solid #ff4d4f;
   color: #ff4d4f;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

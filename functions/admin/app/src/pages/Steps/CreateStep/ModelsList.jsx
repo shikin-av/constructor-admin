@@ -9,7 +9,7 @@ import Lang from '../../../components/Lang/Lang'
 import Unauthorized from '../../../components/Unauthorized'
 import Error from '../../../components/Error'
 import Loader from '../../../components/Loader'
-import { ModelCard, MODEL_CARD_SIZE as SIZE } from './ModelCard'
+import ModelCard from './ModelCard'
 
 const ModelsList =  observer(() => {
   useEffect(() => {
@@ -33,10 +33,8 @@ const ModelsList =  observer(() => {
               const selected = store.isSelected(modelId)
               return (
                 <ModelCard
-                  modelId={modelId}
                   key={modelId}
-                  size={SIZE.BIG}
-                  onSelect={() => store.selectModel(modelId)}
+                  modelId={modelId}
                   selected={selected}
                 />
               )
