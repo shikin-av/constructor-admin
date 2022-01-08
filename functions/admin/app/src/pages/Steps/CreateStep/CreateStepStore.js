@@ -22,7 +22,7 @@ class CreateStepStore {
   title
   description
   status = STATUS.WAIT_APPROVE
-  specialDates  // [moment, moment] or null
+  specialDates = null  // [moment, moment] or null
   image
   welcomeBonus
   finalBonus
@@ -130,7 +130,6 @@ class CreateStepStore {
   }
 
   changeDates = (val, dateString) => {
-    // TODO: CHECK DATE ARRAY
     this.specialDates = val
   }
 
