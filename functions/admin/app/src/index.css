@@ -23,6 +23,33 @@ code {
   padding-bottom: 20px;
 }
 
+.ant-upload-list {
+  display: flex;
+  justify-content: center;
+}
+
+.ant-upload.ant-upload-select-picture-card {
+  width: 300px;
+  height: 300px;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.ant-upload-list-picture-card-container {
+  width: 300px;
+  height: 300px;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.ant-upload-list-picture-card .ant-upload-list-item-thumbnail {
+  line-height: 260px;
+}
+
+.ant-upload-list-picture-card .ant-upload-list-item {
+  padding: 0px;
+}
+
 .shadow {
   border-color: transparent;
   box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
@@ -158,4 +185,8 @@ code {
 
 .always {
   margin-top: -24px;
+}
+
+.form-submit-div {
+  margin-top: 5px;
 }

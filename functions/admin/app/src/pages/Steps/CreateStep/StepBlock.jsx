@@ -38,7 +38,6 @@ const StepBlock =  observer(() => {
   }
 
   const uploadImage = async (val) => {
-    console.log(val)
     const storageRef = ref(storage, `published/${val.file.name}`)
     try {
       await uploadBytes(storageRef, val.file)
@@ -159,7 +158,7 @@ const StepBlock =  observer(() => {
               </div>}
           </Space>
 
-          <Space>
+          <div>
             <Upload
               listType="picture-card"
               fileList={imageList}
@@ -177,9 +176,18 @@ const StepBlock =  observer(() => {
                 </div>
               }              
             </Upload>
-          </Space>
+          </div>
+          
+          <div className="form-submit-div">
+            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+              <Button type="primary" htmlType="submit">
+                <Lang text={i18n.CREATE_STEP.FORM.SAVE_STEP_BUTTON} />
+              </Button>
+            </Form.Item>
+          </div>
+        </Form>
 
-          <Modal
+        <Modal
             visible={previewVisible}
             title={previewTitle}
             footer={null}
@@ -187,13 +195,6 @@ const StepBlock =  observer(() => {
           >
             <img alt="example" style={{ width: "100%" }} src={previewImage} />
           </Modal>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              <Lang text={i18n.CREATE_STEP.FORM.SAVE_STEP_BUTTON} />
-            </Button>
-          </Form.Item>
-        </Form>
       </div>
     </div>
   )
