@@ -23,7 +23,7 @@ class CreateStepStore {
   description
   status = STATUS.WAIT_APPROVE
   specialDates = null  // [moment, moment] or null
-  image
+  imageName
   welcomeBonus
   finalBonus
   
@@ -133,12 +133,13 @@ class CreateStepStore {
     this.specialDates = val
   }
 
-  saveStoryStep = ({ title, description, status, specialDates }) => {
+  saveStoryStep = ({ title, description, status, specialDates, imageName }) => {
     console.log('models', toJS(this.selectedModels))
     console.log('title', title)
     console.log('description', description)
     console.log('status', status)
     console.log('specialDates', specialDates)
+    console.log('imageName', imageName)
   }
 }
 
