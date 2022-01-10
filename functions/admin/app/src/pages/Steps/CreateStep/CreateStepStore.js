@@ -1,4 +1,5 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx'
+import moment from 'moment'
 import { LOADING, API_URL, HEADERS } from '../../../constants'
 import { storage, ref, getDownloadURL } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
@@ -10,8 +11,9 @@ export const STATUS = {
 }
 
 class CreateStepStore {
-  loading = LOADING.NONE
-  error = null
+  // Models
+  modelsLoading = LOADING.NONE
+  modelsError = null
   allModelsCount = 0
   LIMIT = 4
   startAt = 0
@@ -19,13 +21,16 @@ class CreateStepStore {
   pageModels = []
   selectedModels = []
 
+  // StoryStep
+  saveLoading = LOADING.NONE
+  saveError = null
   title
   description
   status = STATUS.WAIT_APPROVE
   specialDates = null  // [moment, moment] or null
   imageName
-  welcomeBonus
-  finalBonus
+  welcomeBonus  // TODO:
+  finalBonus    // TODO:
   
 
   constructor() {
@@ -34,36 +39,88 @@ class CreateStepStore {
 
   loadModelsPage = async () => {
     const token = localStorage.getItem('token')
-    this.loading = LOADING.PROGRESS
+    this.modelsLoading = LOADING.PROGRESS
 
     await fetch(`${API_URL}/models/needPublishModels/${this.startAt}/${this.LIMIT}`, {
       method: 'GET',
       headers: { ...HEADERS, token},
     })
-    .then(async res => this.parseResponse(res))
-    .catch(async err => this.parseResponse(err))
+    .then(async res => this.parseModelsPageResponse(res))
+    .catch(async err => this.parseModelsPageResponse(err))
   }
 
-  parseResponse = async (res) => {
+  parseModelsPageResponse = async (res) => {
     const parsed = await handleResponse(res)
 
     runInAction(() => {
-      this.loading = parsed.status
+      this.modelsLoading = parsed.status
 
-      if (this.loading === LOADING.SUCCESS) {
+      if (this.modelsLoading === LOADING.SUCCESS) {
         this.pageModels = parsed.payload.models
         this.allModelsCount = parsed.payload.allModelsCount
-        this.error = null
+        this.modelsError = null
       } else {
         this.pageModels = []
         this.allModelsCount = 0
-        this.error = parsed.error
+        this.modelsError = parsed.error
       }
     })
   }
 
   loadModelImage = async (userId, modelId) => {
     return await getDownloadURL(ref(storage, `${userId}/${modelId}.png`))
+  }
+
+  saveStoryStep = async ({ title, description, status, specialDates }) => {
+    console.log('models', toJS(this.selectedModels))
+    console.log('imageName', this.imageName)
+    console.log('title', title)
+    console.log('description', description)
+    console.log('status', status)
+    console.log('specialDates', specialDates)
+
+    this.saveLoading = LOADING.PROGRESS
+    const token = localStorage.getItem('token')
+    const body = {
+      models: toJS(this.selectedModels),
+      imageName: this.imageName,
+      title,
+      description,
+      status,
+      specialDates: this.formatDates(specialDates),
+    }
+
+    await fetch(`${API_URL}/storySteps`, {
+      method: 'POST',
+      headers: { ...HEADERS, token},
+      body: JSON.stringify(body)
+    })
+    .then(async res => this.parseSaveStepResponse(res))
+    .catch(async err => this.parseSaveStepResponse(err))
+  }
+
+  parseSaveStepResponse = async (res) => {
+    const parsed = await handleResponse(res)
+
+    runInAction(() => {
+      this.saveLoading = parsed.status
+
+      if (this.saveLoading === LOADING.SUCCESS) {
+        this.saveError = null
+
+        // const { selectedModels, imageName, title, description, status, specialDates } = parsed.payload
+        // this.selectedModels = selectedModels
+        // this.imageName = imageName
+        // this.title = title
+        // this.description = description
+        // this.status = status
+        // this.specialDates = (Array.isArray(specialDates) && specialDates.length === 2)
+        //   ? [moment(specialDates[0]), moment(specialDates[1])]
+        //   : null
+      } else {
+        this.saveError = parsed.error
+      }
+    })
   }
 
   paginationChange = (page) => {
@@ -133,13 +190,20 @@ class CreateStepStore {
     this.specialDates = val
   }
 
-  saveStoryStep = ({ title, description, status, specialDates, imageName }) => {
-    console.log('models', toJS(this.selectedModels))
-    console.log('title', title)
-    console.log('description', description)
-    console.log('status', status)
-    console.log('specialDates', specialDates)
-    console.log('imageName', imageName)
+  // [moment, moment] -> [miliseconds, miliseconds]
+  formatDates = (specialDates) => {
+    if (Array.isArray(specialDates) && specialDates.length === 2) {
+      if (moment.isMoment(specialDates[0]) && moment.isMoment(specialDates[1])) {
+        return [specialDates[0].valueOf(), specialDates[1].valueOf()]
+      } else {
+        try {
+          return [new Date(specialDates[0]), new Date(specialDates[1])]
+        } catch (err) {
+          return null
+        }
+      }
+    }
+    return null
   }
 }
 

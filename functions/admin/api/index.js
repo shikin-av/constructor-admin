@@ -6,6 +6,7 @@ const isAuthenticated = require('./auth/authenticated')
 const { error404 } = require('./utils/handleErrors')
 const users = require('./routes/users')
 const models = require('./routes/models')
+const storySteps = require('./routes/storySteps')
 
 const api = express()
 const corsHandler = cors({ origin: true })
@@ -18,6 +19,7 @@ api
   .use(isAuthenticated)
   .use('/users', users)
   .use('/models', models)
+  .use('/storySteps', storySteps)
   .get('*', error404)
 
 module.exports = functions.https.onRequest((req, res) => corsHandler(req, res, () => api(req, res)))

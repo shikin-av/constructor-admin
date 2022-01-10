@@ -18,11 +18,11 @@ const ModelsList =  observer(() => {
 
   return (
     <>
-      {store.loading === LOADING.NONE && null}
-      {store.loading === LOADING.PROGRESS && <Loader />}
-      {store.loading === LOADING.UNAUTHORIZED && <Unauthorized />}
-      {store.loading === LOADING.ERROR && <Error message={store.error} />}
-      {store.loading === LOADING.SUCCESS &&
+      {store.modelsLoading === LOADING.NONE && null}
+      {store.modelsLoading === LOADING.PROGRESS && <Loader />}
+      {store.modelsLoading === LOADING.UNAUTHORIZED && <Unauthorized />}
+      {store.modelsLoading === LOADING.ERROR && <Error message={store.modelsError} />}
+      {store.modelsLoading === LOADING.SUCCESS &&
         <>
           <Divider orientation="left">
             <Lang text={i18n.CREATE_STEP.MODELS_TITLE} />

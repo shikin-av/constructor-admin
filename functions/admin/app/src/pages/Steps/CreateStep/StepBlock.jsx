@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Divider, Form, Input, Select, Button, DatePicker, Space } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react-lite'
@@ -7,15 +8,19 @@ import { createStepStore as store, STATUS } from './CreateStepStore'
 import i18n from '../../../components/Lang/i18n'
 import Lang from '../../../components/Lang/Lang'
 import UploadImage from '../../../components/UploadImage'
+import Error from '../../../components/Error'
+import Unauthorized from '../../../components/Unauthorized'
 import SelectedCard from './SelectedCard'
+import { LOADING } from '../../../constants'
 const { Option } = Select
 const { RangePicker } = DatePicker
 const { TextArea } = Input
 
 const StepBlock =  observer(() => {
-  const saveStep = ({ title, description, status, specialDates }) => {
-    const { imageName } = store
-    store.saveStoryStep({ title, description, status, specialDates, imageName })
+  const navigate = useNavigate()
+
+  const goToStoryStepsPage = () => {
+    navigate('/')  // TODO:
   }
 
   return (
@@ -44,7 +49,7 @@ const StepBlock =  observer(() => {
       </div>
       <div>
         <Form
-          onFinish={saveStep}
+          onFinish={store.saveStoryStep}
           initialValues={{
             title: store.title,
             description: store.description,
@@ -128,10 +133,18 @@ const StepBlock =  observer(() => {
           
           <div className="form-submit-div">
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button type="primary" htmlType="submit">
+              <Button
+                type="primary"
+                htmlType="submit"
+                disabled={store.selectedModels.length === 0}
+                loading={store.saveLoading === LOADING.PROGRESS}
+              >
                 <Lang text={i18n.CREATE_STEP.FORM.SAVE_STEP_BUTTON} />
               </Button>
             </Form.Item>
+            {store.saveLoading === LOADING.ERROR && <Error message={store.modelsError} />}
+            {store.saveLoading === LOADING.UNAUTHORIZED && <Unauthorized />}
+            {store.saveLoading === LOADING.SUCCESS && goToStoryStepsPage()}
           </div>
         </Form>
       </div>

@@ -31,25 +31,25 @@ usersRouter
     setRole
   )
 
-  async function create(req, res) {
-   try {
-       const { displayName, password, email, role } = req.body
+async function create(req, res) {
+  try {
+    const { displayName, password, email, role } = req.body
 
-       if (!displayName || !password || !email || !role) {
-           return res.status(400).send({ message: 'Missing fields' })
-       }
+    if (!displayName || !password || !email || !role) {
+      return res.status(400).send({ message: 'Missing fields' })
+    }
 
-       const { uid } = await admin.auth().createUser({
-           displayName,
-           password,
-           email
-       })
-       await admin.auth().setCustomUserClaims(uid, { role })
+    const { uid } = await admin.auth().createUser({
+      displayName,
+      password,
+      email
+    })
+    await admin.auth().setCustomUserClaims(uid, { role })
 
-       return res.status(201).send({ uid })
-   } catch (err) {
-       return error500(res, err)
-   }
+    return res.status(201).send({ uid })
+  } catch (err) {
+    return error500(res, err)
+  }
 }
 
 async function all(req, res) {
