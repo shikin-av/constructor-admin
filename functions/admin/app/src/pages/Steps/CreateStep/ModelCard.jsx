@@ -4,6 +4,7 @@ import { Skeleton  } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { createStepStore as store } from './CreateStepStore'
 import { dateFormat, timeFormat } from '../../../utils/date'
+import { LOADING } from '../../../constants'
 
 const IMAGE_STYLE = {
   width: 341,
@@ -60,7 +61,7 @@ const ModelCard = observer(({ modelId, selected }) => {
   }, [loaded, selected])
 
   const onClick = useCallback(() => {
-    if (!loaded) return
+    if (!loaded || store.saveLoading === LOADING.PROGRESS) return
 
     store.switchSelectModel(modelId)
   }, [loaded, modelId])

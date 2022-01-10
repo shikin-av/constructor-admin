@@ -7,7 +7,6 @@ export const MENU_ITEMS = {
 
 export const LOADING = {
   NONE: null,
-  START: 'start',
   PROGRESS: 'progress',
   SUCCESS: 'success',
   ERROR: 'error',
