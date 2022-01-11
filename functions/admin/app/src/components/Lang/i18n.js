@@ -151,6 +151,16 @@ const i18n = {
         [RUS]: 'Изображение этапа',
       }
     },
+    MESSAGES: {
+      SAVE_SUCCESS: {
+        [ENG]: 'Successful Story Step saving',
+        [RUS]: 'Этап сохранен',
+      },
+      SAVE_ERROR: {
+        [ENG]: 'Error Story Step saving',
+        [RUS]: 'Ошибка сохранения этапа',
+      },
+    },
   },
   MANAGERS: {
     TITLE: {

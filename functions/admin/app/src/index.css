@@ -201,3 +201,11 @@ code {
 .ipload-image {
   margin-top: 19px;
 }
+
+.step-block-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-items: center;
+  min-height: 700px;
+}
