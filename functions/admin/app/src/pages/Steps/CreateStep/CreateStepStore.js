@@ -11,31 +11,49 @@ export const STATUS = {
 }
 
 class CreateStepStore {
-  // Models
-  modelsLoading = LOADING.NONE
-  modelsError = null
-  allModelsCount = 0
-  LIMIT = 4
-  startAt = 0
-  pageNumber = 1
-  pageModels = []
-  selectedModels = []
-
-  // StoryStep
-  saveLoading = LOADING.NONE
-  saveError = null
-  title
-  description
-  status = STATUS.WAIT_APPROVE
-  specialDates = null  // [moment, moment] or null
-  imageName
-  welcomeBonus  // TODO:
-  finalBonus    // TODO:
-  
-
   constructor() {
+    this.resetAll()
     makeAutoObservable(this)
   }
+
+  resetModels = () => {
+    runInAction(() => {
+      this.modelsLoading = LOADING.NONE
+      this.modelsError = null
+      this.allModelsCount = 0
+      this.LIMIT = 4
+      this.startAt = 0
+      this.pageNumber = 1
+      this.pageModels = []
+      this.selectedModels = []
+    })
+  }
+
+  resetStep = () => {
+    runInAction(() => {
+      this.stepId = null
+      this.saveLoading = LOADING.NONE
+      this.saveError = null
+      this.title = ''
+      this.description = ''
+      this.status = STATUS.WAIT_APPROVE
+      this.specialDates = null  // [moment, moment] or null
+      this.imageName = null
+      this.welcomeBonus = null  // TODO:
+      this.finalBonus = null    // TODO:
+    })
+  }
+
+  resetAll = () => {
+    this.resetModels()
+    this.resetStep()
+  }
+
+  setTitle = (e) => this.title = e.target.value
+  setDescription = (e) => this.description = e.target.value
+  setStatus = (val) => this.status = val
+  setSpecialDates = (val, dateString) => this.specialDates = val
+  setImageName = (val) => this.imageName = val
 
   loadModelsPage = async () => {
     const token = localStorage.getItem('token')
@@ -71,23 +89,24 @@ class CreateStepStore {
     return await getDownloadURL(ref(storage, `${userId}/${modelId}.png`))
   }
 
-  saveStoryStep = async ({ title, description, status, specialDates }) => {
+  saveStoryStep = async () => {
     console.log('models', toJS(this.selectedModels))
     console.log('imageName', this.imageName)
-    console.log('title', title)
-    console.log('description', description)
-    console.log('status', status)
-    console.log('specialDates', specialDates)
+    console.log('title', this.title)
+    console.log('description', this.description)
+    console.log('status', this.status)
+    console.log('specialDates', this.specialDates)
 
     this.saveLoading = LOADING.PROGRESS
     const token = localStorage.getItem('token')
     const body = {
+      stepId: this.stepId,
       models: toJS(this.selectedModels),
       imageName: this.imageName,
-      title,
-      description,
-      status,
-      specialDates: this.formatDates(specialDates),
+      title: this.title,
+      description: this.description,
+      status: this.status,
+      specialDates: this.formatDates(this.specialDates),
     }
 
     await fetch(`${API_URL}/storySteps`, {
@@ -104,24 +123,25 @@ class CreateStepStore {
 
     runInAction(() => {
       this.saveLoading = parsed.status
-
+      
       if (this.saveLoading === LOADING.SUCCESS) {
         this.saveError = null
-
-        // const { selectedModels, imageName, title, description, status, specialDates } = parsed.payload
-        // this.selectedModels = selectedModels
-        // this.imageName = imageName
-        // this.title = title
-        // this.description = description
-        // this.status = status
-        // this.specialDates = (Array.isArray(specialDates) && specialDates.length === 2)
-        //   ? [moment(specialDates[0]), moment(specialDates[1])]
-        //   : null
       } else {
         this.saveError = parsed.error
       }
     })
   }
+
+  // TODO: for Load StoryStep:
+  // const { selectedModels, imageName, title, description, status, specialDates } = parsed.payload
+  // this.selectedModels = selectedModels
+  // this.imageName = imageName
+  // this.title = title
+  // this.description = description
+  // this.status = status
+  // this.specialDates = (Array.isArray(specialDates) && specialDates.length === 2)
+  //   ? [moment(specialDates[0]), moment(specialDates[1])]
+  //   : null
 
   paginationChange = (page) => {
     this.startAt = getStartAt(page, this.LIMIT)
@@ -178,16 +198,6 @@ class CreateStepStore {
   isLastSelected = (modelId) => {
     const index = this.selectedModels.findIndex(m => m.modelId === modelId)
     return index === this.selectedModels.length - 1
-  }
-
-  setStatus = (val) => {
-    runInAction(() => {
-      this.status = val
-    })
-  }
-
-  changeDates = (val, dateString) => {
-    this.specialDates = val
   }
 
   // [moment, moment] -> [miliseconds, miliseconds]

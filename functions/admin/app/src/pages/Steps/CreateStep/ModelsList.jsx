@@ -13,8 +13,20 @@ import ModelCard from './ModelCard'
 
 const ModelsList =  observer(() => {
   useEffect(() => {
+    store.resetModels()
+    store.loadModelsPage()
+  }, [])
+
+  useEffect(() => {
     store.loadModelsPage()
   }, [store.startAt, store.token])
+
+  useEffect(() => {
+    if (store.saveLoading === LOADING.SUCCESS) {
+      store.resetModels()
+      store.loadModelsPage()
+    }    
+  }, [store.saveLoading])
 
   return (
     <>
