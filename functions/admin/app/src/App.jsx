@@ -18,6 +18,7 @@ const  App = () => {
           <Route path={'/'} element = {<Home />} />
           <Route path={`/${MENU_ITEMS.LOGIN}`} element = {<Login />} />
           <Route path={`/${MENU_ITEMS.STEPS}`} element = {<CreateStep />} />
+          <Route path={`/${MENU_ITEMS.STEPS}/:stepId`} element = {<CreateStep />} />
           <Route path={`/${MENU_ITEMS.MANAGERS}`} element = {<Managers />} />
         </Routes>
       </BrowserRouter>

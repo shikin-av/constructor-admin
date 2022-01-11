@@ -126,6 +126,7 @@ class CreateStepStore {
       
       if (this.saveLoading === LOADING.SUCCESS) {
         this.saveError = null
+        this.stepId = parsed.payload.stepId
       } else {
         this.saveError = parsed.error
       }

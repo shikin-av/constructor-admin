@@ -14,7 +14,7 @@ storyStepsRouter
 
 async function create(req, res) {
   try {
-    const { selectedModels, title, description, status, specialDates, imageName } = req.body
+    const { models, title, description, status, specialDates, imageName } = req.body
     const stepId = uuidv4()
 
     if (!title || !status) {
@@ -27,6 +27,7 @@ async function create(req, res) {
       status,
       specialDates,
       imageName,
+      models,
     })
 
     // TODO: selectedModels
