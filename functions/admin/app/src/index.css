@@ -184,9 +184,20 @@ code {
 }
 
 .always {
-  margin-top: -24px;
+  margin-top: -4px;
 }
 
 .form-submit-div {
-  margin-top: 5px;
+  margin: 5px;
+  margin-bottom: 13px;
+  display: flex;
+  justify-content: center;
+}
+
+.input {
+  margin-bottom: 10px;
+}
+
+.ipload-image {
+  margin-top: 19px;
 }
