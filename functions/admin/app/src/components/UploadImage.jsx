@@ -55,7 +55,7 @@ const UploadImage = ({ imageName, setImageName }) => {
           <div>
             <PlusOutlined />
             <div style={{ marginTop: 8 }}>
-              <Lang text={i18n.CREATE_STEP.FORM.UPLOAD_IMAGE} />
+              <Lang text={i18n.EDIT_STEP.FORM.UPLOAD_IMAGE} />
             </div>
           </div>
         }

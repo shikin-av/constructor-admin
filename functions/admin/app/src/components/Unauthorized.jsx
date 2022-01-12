@@ -10,7 +10,7 @@ const Unauthorized = () => {
   const navigate = useNavigate()
 
   return (
-    <div className='full-height alert-container'>
+    <div className="full-center alert-container">
       <Alert 
         message={<Lang text={i18n.ERROR.UNAUTHORIZED} />}
         type="error"

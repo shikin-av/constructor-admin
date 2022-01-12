@@ -10,7 +10,7 @@ export const STATUS = {
   CLOSED: 'closed',
 }
 
-class CreateStepStore {
+class EditStepStore {
   constructor() {
     this.resetAll()
     makeAutoObservable(this)
@@ -218,4 +218,4 @@ class CreateStepStore {
   }
 }
 
-export const createStepStore = new CreateStepStore()
+export const editStepStore = new EditStepStore()

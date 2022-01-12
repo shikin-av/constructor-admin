@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Skeleton  } from 'antd'
 import { observer } from 'mobx-react-lite'
-import { createStepStore as store } from './CreateStepStore'
+import { editStepStore as store } from './EditStepStore'
 import { dateFormat, timeFormat } from '../../../utils/date'
 import { LOADING } from '../../../constants'
 

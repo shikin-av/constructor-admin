@@ -2,7 +2,7 @@
 import React, { useEffect }  from 'react'
 import { Pagination, Divider } from 'antd'
 import { observer } from 'mobx-react-lite'
-import { createStepStore as store } from './CreateStepStore'
+import { editStepStore as store } from './EditStepStore'
 import { LOADING } from '../../../constants'
 import i18n from '../../../components/Lang/i18n'
 import Lang from '../../../components/Lang/Lang'
@@ -37,7 +37,7 @@ const ModelsList =  observer(() => {
       {store.modelsLoading === LOADING.SUCCESS &&
         <>
           <Divider orientation="left">
-            <Lang text={i18n.CREATE_STEP.MODELS_TITLE} />
+            <Lang text={i18n.EDIT_STEP.MODELS_TITLE} />
           </Divider>
           <div className="models-list">
             {store.pageModels.map(model => {
