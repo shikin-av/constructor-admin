@@ -107,6 +107,7 @@ class EditStepStore {
       description: this.description,
       status: this.status,
       specialDates: this.formatDates(this.specialDates),
+      updatedAt: new Date().getTime(),
     }
 
     await fetch(`${API_URL}/storySteps`, {
@@ -208,7 +209,10 @@ class EditStepStore {
         return [specialDates[0].valueOf(), specialDates[1].valueOf()]
       } else {
         try {
-          return [new Date(specialDates[0]), new Date(specialDates[1])]
+          return [
+            new Date(specialDates[0]).getTime(),
+            new Date(specialDates[1]).getTime()
+          ]
         } catch (err) {
           return null
         }
