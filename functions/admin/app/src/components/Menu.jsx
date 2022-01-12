@@ -4,6 +4,7 @@ import { Menu } from 'antd'
 import { MENU_ITEMS } from '../constants'
 import i18n from './Lang/i18n'
 import Lang from './Lang/Lang'
+const { SubMenu } = Menu
 
 const MenuComponent = ({ currentItem }) => {
   const navigate = useNavigate()
@@ -29,10 +30,14 @@ const MenuComponent = ({ currentItem }) => {
       <Menu.Item key={MENU_ITEMS.HOME}>
         <Lang text={i18n.MAIN_MENU.HOME} />
       </Menu.Item>
-      <Menu.Item key={MENU_ITEMS.STEPS}>
-        <Lang text={i18n.MAIN_MENU.STEPS} />
-        {/* TODO: CREATE STEP as Submenu */}
-      </Menu.Item>
+      <SubMenu key="steps-submenu" title={<Lang text={i18n.MAIN_MENU.STEPS.TITLE} />}>
+        <Menu.Item key={MENU_ITEMS.STEPS}>
+          <Lang text={i18n.MAIN_MENU.STEPS.LIST} />
+        </Menu.Item>
+        <Menu.Item key={MENU_ITEMS.CREATE_STEP}>
+          <Lang text={i18n.MAIN_MENU.STEPS.CREATE} />
+        </Menu.Item>
+      </SubMenu>
       <Menu.Item key={MENU_ITEMS.MANAGERS}>
         <Lang text={i18n.MAIN_MENU.MANAGERS} />
       </Menu.Item>

@@ -18,8 +18,18 @@ const i18n = {
       [RUS]: 'Главная',
     },
     STEPS: {
-      [ENG]: 'Story Steps',
-      [RUS]: 'История',
+      TITLE: {
+        [ENG]: 'Story Steps',
+        [RUS]: 'История',
+      },
+      LIST: {
+        [ENG]: 'Story Step List',
+        [RUS]: 'Этапы истории',
+      },
+      CREATE: {
+        [ENG]: 'Create Story Step',
+        [RUS]: 'Создать этап',
+      },
     },
     MANAGERS: {
       [ENG]: 'Managers',
