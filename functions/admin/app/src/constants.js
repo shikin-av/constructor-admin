@@ -2,6 +2,7 @@ export const MENU_ITEMS = {
   HOME: 'home',
   LOGIN: 'login',
   STEPS: 'steps',
+  CREATE_STEP: 'steps/create',
   MANAGERS: 'managers',
 }
 
