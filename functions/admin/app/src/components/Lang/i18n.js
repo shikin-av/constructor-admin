@@ -78,10 +78,14 @@ const i18n = {
       [RUS]: 'Этапы истории',
     },
   },
-  CREATE_STEP: {
-    TITLE: {
+  EDIT_STEP: {
+    CREATE_TITLE: {
       [ENG]: 'Create Story Step',
       [RUS]: 'Создание этапа истории',
+    },
+    EDIT_TITLE: {
+      [ENG]: 'Edit Story Step',
+      [RUS]: 'Редактирование этапа истории',
     },
     MODELS_TITLE: {
       [ENG]: 'Models for publish',
@@ -161,6 +165,12 @@ const i18n = {
         [RUS]: 'Ошибка сохранения этапа',
       },
     },
+  },
+  STEPS_LIST: {
+    TITLE: {
+      [ENG]: 'Story Steps',
+      [RUS]: 'Этапы истории',
+    }
   },
   MANAGERS: {
     TITLE: {

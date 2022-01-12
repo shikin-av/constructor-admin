@@ -31,6 +31,7 @@ const MenuComponent = ({ currentItem }) => {
       </Menu.Item>
       <Menu.Item key={MENU_ITEMS.STEPS}>
         <Lang text={i18n.MAIN_MENU.STEPS} />
+        {/* TODO: CREATE STEP as Submenu */}
       </Menu.Item>
       <Menu.Item key={MENU_ITEMS.MANAGERS}>
         <Lang text={i18n.MAIN_MENU.MANAGERS} />

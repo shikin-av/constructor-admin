@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { Divider, Input, Select, Button, DatePicker, Space, message } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react-lite'
-import { createStepStore as store, STATUS } from './CreateStepStore'
+import { editStepStore as store, STATUS } from './EditStepStore'
 import i18n from '../../../components/Lang/i18n'
 import Lang from '../../../components/Lang/Lang'
 import { LangContext } from '../../../components/Lang/LangContext'
@@ -18,7 +18,7 @@ const { Option } = Select
 const { RangePicker } = DatePicker
 const { TextArea } = Input
 
-const StepBlock =  observer(() => {
+const StepBlock =  observer(({ mode }) => {
   const navigate = useNavigate()
   const [lang] = useContext(LangContext)
   const { stepId } = useParams()
@@ -29,14 +29,14 @@ const StepBlock =  observer(() => {
 
   useEffect(() => {
     if (store.saveLoading === LOADING.SUCCESS) {
-      message.success(i18n.CREATE_STEP.MESSAGES.SAVE_SUCCESS[lang])
+      message.success(i18n.EDIT_STEP.MESSAGES.SAVE_SUCCESS[lang])
 
       const id = store.stepId + ''
       store.resetStep() 
       navigate(`/steps/${id || ''}`)
 
     } else if (store.saveLoading === LOADING.ERROR) {
-      message.error(store.saveError || i18n.CREATE_STEP.MESSAGES.SAVE_ERROR[lang])
+      message.error(store.saveError || i18n.EDIT_STEP.MESSAGES.SAVE_ERROR[lang])
     }
   }, [store.saveLoading])
 
@@ -46,7 +46,7 @@ const StepBlock =  observer(() => {
     <div className="step-block shadow">
       <div>
         <Divider>
-          <Lang text={i18n.CREATE_STEP.STEP_BLOCK_TITLE} />
+          <Lang text={i18n.EDIT_STEP.STEP_BLOCK_TITLE} />
         </Divider>
       </div>
 
@@ -65,7 +65,7 @@ const StepBlock =  observer(() => {
           <div className="step-block-models">
             {!store.selectedModels.length
               ? <div className="models-placeholder warning-text">
-                  <Lang text={i18n.CREATE_STEP.FORM.MODELS_PLACEHOLDER} />
+                  <Lang text={i18n.EDIT_STEP.FORM.MODELS_PLACEHOLDER} />
                 </div>
               : null
             }
@@ -83,39 +83,39 @@ const StepBlock =  observer(() => {
           <div>       
             <div className="input">
               <div className="label">
-                * <Lang text={i18n.CREATE_STEP.FORM.TITLE} />
+                * <Lang text={i18n.EDIT_STEP.FORM.TITLE} />
               </div>
               <Input value={store.title} onChange={store.setTitle}/>          
             </div>
 
             <div className="input">
               <div className="label">
-                <Lang text={i18n.CREATE_STEP.FORM.DESCRIPTION} />
+                <Lang text={i18n.EDIT_STEP.FORM.DESCRIPTION} />
               </div>
               <TextArea value={store.description} onChange={store.setDescription}/>
             </div> 
             
             <div className="input">
               <div className="label">
-                * <Lang text={i18n.CREATE_STEP.FORM.STATUS} />
+                * <Lang text={i18n.EDIT_STEP.FORM.STATUS} />
               </div>
               <Select defaultValue={store.status} onChange={store.setStatus}>
                 <Option value={STATUS.WAIT_APPROVE}>
                   <Space>
                     <ClockCircleOutlined style={{ color: '#e9b41e' }} />
-                    <Lang text={i18n.CREATE_STEP.FORM.STATUSES.WAIT_APPROVE} />
+                    <Lang text={i18n.EDIT_STEP.FORM.STATUSES.WAIT_APPROVE} />
                   </Space>                
                 </Option>
                 <Option value={STATUS.APPROVED}>
                   <Space>
                     <CheckCircleOutlined style={{ color: '#52c41a' }} />
-                    <Lang text={i18n.CREATE_STEP.FORM.STATUSES.APPROVED} />
+                    <Lang text={i18n.EDIT_STEP.FORM.STATUSES.APPROVED} />
                   </Space>
                 </Option>
                 <Option value={STATUS.CLOSED}>
                   <Space>
                     <CloseCircleOutlined style={{ color: '#ff4d4f' }} />
-                    <Lang text={i18n.CREATE_STEP.FORM.STATUSES.CLOSED} />
+                    <Lang text={i18n.EDIT_STEP.FORM.STATUSES.CLOSED} />
                   </Space>
                 </Option>
               </Select>
@@ -123,7 +123,7 @@ const StepBlock =  observer(() => {
 
             <div className="input">
               <div className="label">
-                <Lang text={i18n.CREATE_STEP.FORM.SPECIAL_DATES} />
+                <Lang text={i18n.EDIT_STEP.FORM.SPECIAL_DATES} />
               </div>
               <Space>
                 <RangePicker
@@ -133,7 +133,7 @@ const StepBlock =  observer(() => {
                 />
                 {!store.specialDates &&
                   <div className="always">
-                    <Lang text={i18n.CREATE_STEP.FORM.SPECIAL_DATES_ALWAYS} />
+                    <Lang text={i18n.EDIT_STEP.FORM.SPECIAL_DATES_ALWAYS} />
                   </div>}
               </Space>
             </div>
@@ -153,7 +153,7 @@ const StepBlock =  observer(() => {
                 loading={store.saveLoading === LOADING.PROGRESS}
                 onClick={store.saveStoryStep}
               >
-                <Lang text={i18n.CREATE_STEP.FORM.SAVE_STEP_BUTTON} />
+                <Lang text={i18n.EDIT_STEP.FORM.SAVE_STEP_BUTTON} />
               </Button>
             </div>
           </div>

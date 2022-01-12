@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import { LeftSquareFilled, RightSquareFilled, CloseSquareFilled } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite'
-import { createStepStore as store } from './CreateStepStore'
+import { editStepStore as store } from './EditStepStore'
 
 const IMAGE_STYLE = {
   width: 150,
