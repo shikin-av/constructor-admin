@@ -34,11 +34,11 @@ const StepsListPage =  observer(() => {
         {store.stepsLoading === LOADING.UNAUTHORIZED && <Unauthorized />}
         {store.stepsLoading === LOADING.ERROR && <Error message={store.stepsError} />}
         {store.stepsLoading === LOADING.SUCCESS &&
-          <>
+          <div>
             <div className="steps-list">
               {store.pageSteps.map(step => {
                 return (
-                  <p>{step.title}</p>
+                  <p key={step.stepId}>{step.title}</p>
                 )
               })}
             </div>
@@ -48,7 +48,7 @@ const StepsListPage =  observer(() => {
               pageSize={store.LIMIT}
               current={store.pageNumber}
             />
-          </>
+          </div>
         }
       </Row>
     </Layout>

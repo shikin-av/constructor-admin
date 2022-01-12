@@ -23,13 +23,24 @@ async function list(req, res) {
 
   try {
     const collection = await db.collection('publishedStorySteps')
-      .orderBy('date', 'desc')
+      .orderBy('updatedAt', 'desc')
       .offset(startAt)
       .limit(limit)
       .get()
 
     const steps = collection.docs.map(doc => {
-      return doc.data()
+      const { title, description, status, models, imageName, specialDates, updatedAt, stepId } = doc.data()
+
+      return {
+        stepId,
+        title,
+        description,
+        status,
+        models,
+        imageName,
+        specialDates,
+        updatedAt,
+      }
     })
 
     const fullCollection = await db.collection('publishedStorySteps').get()
@@ -44,7 +55,7 @@ async function list(req, res) {
 
 async function create(req, res) {
   try {
-    const { models, title, description, status, specialDates, imageName } = req.body
+    const { models, title, description, status, specialDates, imageName, updatedAt } = req.body
     const stepId = uuidv4()
 
     if (!title || !status) {
@@ -52,12 +63,14 @@ async function create(req, res) {
     }
 
     await db.collection('publishedStorySteps').doc(stepId).set({
+      stepId,
       title,
       description,
       status,
       specialDates,
       imageName,
       models,
+      updatedAt,
     })
 
     // TODO: selectedModels
