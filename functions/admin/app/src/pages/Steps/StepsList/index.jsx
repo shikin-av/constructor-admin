@@ -1,9 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect }  from 'react'
-import { Pagination, Divider, Table, Tag, Space, Row } from 'antd'
+import React, { useEffect, useMemo, useContext }  from 'react'
+import { Pagination, Divider, Table, Tag, Row } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { stepsStore as store } from './StepsStore'
 import { LOADING, MENU_ITEMS } from '../../../constants'
+import { getStatusColor } from '../../../utils/steps'
+import { dateFormat } from '../../../utils/date'
+import { LangContext } from '../../../components/Lang/LangContext'
 import Layout from '../../../components/Layout'
 import i18n from '../../../components/Lang/i18n'
 import Lang from '../../../components/Lang/Lang'
@@ -12,6 +15,52 @@ import Error from '../../../components/Error'
 import Loader from '../../../components/Loader'
 
 const StepsListPage =  observer(() => {
+  const [lang] = useContext(LangContext)
+
+  const columns = useMemo(() => [
+    {
+      title: i18n.STEPS_LIST.COLUMNS.IMAGE[lang],
+      dataIndex: 'imageName',
+      key: 'imageName',
+      // render
+    },
+    {
+      title: i18n.STEPS_LIST.COLUMNS.STATUS[lang],
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => <Tag color={getStatusColor(status)}>{status}</Tag>
+    },
+    {
+      title: i18n.STEPS_LIST.COLUMNS.TITLE[lang],
+      dataIndex: 'title',
+      key: 'title',
+    },
+    {
+      title: i18n.STEPS_LIST.COLUMNS.DESCRIPTION[lang],
+      dataIndex: 'description',
+      key: 'description',
+    },
+    {
+      title: i18n.STEPS_LIST.COLUMNS.MODELS_COUNT[lang],
+      dataIndex: 'models',
+      key: 'models',
+      render: (models) => models.length
+    },
+    {
+      title: i18n.STEPS_LIST.COLUMNS.SPECIAL_DATES[lang],
+      dataIndex: 'specialDates',
+      key: 'specialDates',
+      render: (dates) => {
+        if (!dates || !dates.length || dates.length !== 2) return null
+        
+        return <>
+          <p>{dateFormat(dates[0])}</p>
+          <p>{dateFormat(dates[1])}</p>
+        </>
+      }
+    },
+  ], []) 
+
   useEffect(() => {
     store.reset()
     store.loadStepsPage()
@@ -36,11 +85,11 @@ const StepsListPage =  observer(() => {
         {store.stepsLoading === LOADING.SUCCESS &&
           <div>
             <div className="steps-list">
-              {store.pageSteps.map(step => {
-                return (
-                  <p key={step.stepId}>{step.title}</p>
-                )
-              })}
+            <Table
+              columns={columns}
+              dataSource={store.pageSteps}
+              pagination={false}
+            />
             </div>
             <Pagination
               onChange={store.paginationChange}
