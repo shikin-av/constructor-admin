@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { Divider, Input, Select, Button, DatePicker, Space, message } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react-lite'
-import { editStepStore as store, STATUS } from './EditStepStore'
+import { editStepStore as store } from './EditStepStore'
 import i18n from '../../../components/Lang/i18n'
 import Lang from '../../../components/Lang/Lang'
 import { LangContext } from '../../../components/Lang/LangContext'
@@ -13,7 +13,7 @@ import UploadImage from '../../../components/UploadImage'
 import Unauthorized from '../../../components/Unauthorized'
 import Loader from '../../../components/Loader'
 import SelectedCard from './SelectedCard'
-import { LOADING } from '../../../constants'
+import { LOADING, STEP_STATUS } from '../../../constants'
 const { Option } = Select
 const { RangePicker } = DatePicker
 const { TextArea } = Input
@@ -100,19 +100,19 @@ const StepBlock =  observer(({ mode }) => {
                 * <Lang text={i18n.EDIT_STEP.FORM.STATUS} />
               </div>
               <Select defaultValue={store.status} onChange={store.setStatus}>
-                <Option value={STATUS.WAIT_APPROVE}>
+                <Option value={STEP_STATUS.WAIT_APPROVE}>
                   <Space>
                     <ClockCircleOutlined style={{ color: '#e9b41e' }} />
                     <Lang text={i18n.EDIT_STEP.FORM.STATUSES.WAIT_APPROVE} />
                   </Space>                
                 </Option>
-                <Option value={STATUS.APPROVED}>
+                <Option value={STEP_STATUS.APPROVED}>
                   <Space>
                     <CheckCircleOutlined style={{ color: '#52c41a' }} />
                     <Lang text={i18n.EDIT_STEP.FORM.STATUSES.APPROVED} />
                   </Space>
                 </Option>
-                <Option value={STATUS.CLOSED}>
+                <Option value={STEP_STATUS.CLOSED}>
                   <Space>
                     <CloseCircleOutlined style={{ color: '#ff4d4f' }} />
                     <Lang text={i18n.EDIT_STEP.FORM.STATUSES.CLOSED} />

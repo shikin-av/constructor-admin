@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx'
 import moment from 'moment'
-import { LOADING, API_URL, HEADERS } from '../../../constants'
+import { LOADING, API_URL, HEADERS, LIMITS } from '../../../constants'
 import { storage, ref, getDownloadURL } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
 
@@ -15,7 +15,7 @@ class StepsStore {
       this.stepsLoading = LOADING.NONE
       this.stepsError = null
       this.allStepsCount = 0
-      this.LIMIT = 4
+      this.LIMIT = LIMITS.STEPS
       this.startAt = 0
       this.pageNumber = 1
       this.pageSteps = []
@@ -41,7 +41,7 @@ class StepsStore {
       this.stepsLoading = parsed.status
 
       if (this.stepsLoading === LOADING.SUCCESS) {
-        this.pageSteps = parsed.payload.steps
+        this.pageSteps = parsed.payload.steps.map(step => ({ ...step, key: step.stepId}))
         this.allStepsCount = parsed.payload.allStepsCount
         this.stepsError = null
       } else {

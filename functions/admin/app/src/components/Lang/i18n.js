@@ -180,7 +180,33 @@ const i18n = {
     TITLE: {
       [ENG]: 'Story Steps',
       [RUS]: 'Этапы истории',
-    }
+    },
+    COLUMNS: {
+      IMAGE: {
+        [ENG]: 'Image',
+        [RUS]: 'Изображение',
+      },
+      STATUS: {
+        [ENG]: 'Status',
+        [RUS]: 'Статус',
+      },
+      TITLE: {
+        [ENG]: 'Title',
+        [RUS]: 'Название',
+      },
+      DESCRIPTION: {
+        [ENG]: 'Description',
+        [RUS]: 'Описание',
+      },
+      MODELS_COUNT: {
+        [ENG]: 'Models',
+        [RUS]: 'Модели',
+      },
+      SPECIAL_DATES: {
+        [ENG]: 'Dates',
+        [RUS]: 'Даты',
+      },
+    },
   },
   MANAGERS: {
     TITLE: {

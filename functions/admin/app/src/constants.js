@@ -1,3 +1,8 @@
+export const LIMITS = {
+  MODELS: 4,
+  STEPS: 4,
+}
+
 export const MENU_ITEMS = {
   HOME: 'home',
   LOGIN: 'login',
@@ -25,4 +30,10 @@ export const API_URL = process.env.NODE_ENV === 'production'
 export const MODES = {
   CREATE: 'create',
   EDIT: 'EDIT',
+}
+
+export const STEP_STATUS = {
+  WAIT_APPROVE: 'wait approve',
+  APPROVED: 'approved',
+  CLOSED: 'closed',
 }

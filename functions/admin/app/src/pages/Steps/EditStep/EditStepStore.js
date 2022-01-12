@@ -1,14 +1,8 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx'
 import moment from 'moment'
-import { LOADING, API_URL, HEADERS } from '../../../constants'
+import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS } from '../../../constants'
 import { storage, ref, getDownloadURL } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
-
-export const STATUS = {
-  WAIT_APPROVE: 'wait approve',
-  APPROVED: 'approved',
-  CLOSED: 'closed',
-}
 
 class EditStepStore {
   constructor() {
@@ -21,7 +15,7 @@ class EditStepStore {
       this.modelsLoading = LOADING.NONE
       this.modelsError = null
       this.allModelsCount = 0
-      this.LIMIT = 4
+      this.LIMIT = LIMITS.MODELS
       this.startAt = 0
       this.pageNumber = 1
       this.pageModels = []
@@ -36,7 +30,7 @@ class EditStepStore {
       this.saveError = null
       this.title = ''
       this.description = ''
-      this.status = STATUS.WAIT_APPROVE
+      this.status = STEP_STATUS.WAIT_APPROVE
       this.specialDates = null  // [moment, moment] or null
       this.imageName = null
       this.welcomeBonus = null  // TODO:
