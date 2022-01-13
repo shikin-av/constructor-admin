@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useContext }  from 'react'
 import { Pagination, Divider, Table, Tag, Row } from 'antd'
 import { observer } from 'mobx-react-lite'
-import { stepsStore as store } from './StepsStore'
+import { stepsListStore as store } from './StepsListStore'
 import { LOADING, MENU_ITEMS } from '../../../constants'
 import { getStatusColor } from '../../../utils/steps'
 import { dateFormat } from '../../../utils/date'
@@ -13,6 +13,7 @@ import Lang from '../../../components/Lang/Lang'
 import Unauthorized from '../../../components/Unauthorized'
 import Error from '../../../components/Error'
 import Loader from '../../../components/Loader'
+import StepImage from './StepImage'
 
 const StepsListPage =  observer(() => {
   const [lang] = useContext(LangContext)
@@ -22,13 +23,19 @@ const StepsListPage =  observer(() => {
       title: i18n.STEPS_LIST.COLUMNS.IMAGE[lang],
       dataIndex: 'imageName',
       key: 'imageName',
-      // render
+      render: (imageName) => <StepImage imageName={imageName} />
     },
     {
       title: i18n.STEPS_LIST.COLUMNS.STATUS[lang],
       dataIndex: 'status',
       key: 'status',
       render: (status) => <Tag color={getStatusColor(status)}>{status}</Tag>
+    },
+    {
+      title: i18n.STEPS_LIST.COLUMNS.MODELS_COUNT[lang],
+      dataIndex: 'models',
+      key: 'models',
+      render: (models) => models.length
     },
     {
       title: i18n.STEPS_LIST.COLUMNS.TITLE[lang],
@@ -41,25 +48,18 @@ const StepsListPage =  observer(() => {
       key: 'description',
     },
     {
-      title: i18n.STEPS_LIST.COLUMNS.MODELS_COUNT[lang],
-      dataIndex: 'models',
-      key: 'models',
-      render: (models) => models.length
-    },
-    {
       title: i18n.STEPS_LIST.COLUMNS.SPECIAL_DATES[lang],
       dataIndex: 'specialDates',
       key: 'specialDates',
       render: (dates) => {
         if (!dates || !dates.length || dates.length !== 2) return null
-        
         return <>
           <p>{dateFormat(dates[0])}</p>
           <p>{dateFormat(dates[1])}</p>
         </>
       }
     },
-  ], []) 
+  ], [lang]) 
 
   useEffect(() => {
     store.reset()
