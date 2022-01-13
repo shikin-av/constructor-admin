@@ -182,6 +182,10 @@ const i18n = {
       [RUS]: 'Этапы истории',
     },
     COLUMNS: {
+      EDIT: {
+        [ENG]: 'Edit',
+        [RUS]: 'Редактировать',
+      },
       IMAGE: {
         [ENG]: 'Image',
         [RUS]: 'Изображение',
@@ -210,7 +214,11 @@ const i18n = {
     NO_IMAGE: {
       [ENG]: 'No image',
       [RUS]: 'Нет изображения',
-    }
+    },
+    DELETE_STEP_QUESTION: {
+      [ENG]: 'Sure to delete step?',
+      [RUS]: 'Удалить этап?',
+    },
   },
   MANAGERS: {
     TITLE: {

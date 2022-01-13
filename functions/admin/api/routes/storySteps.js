@@ -28,20 +28,7 @@ async function list(req, res) {
       .limit(limit)
       .get()
 
-    const steps = collection.docs.map(doc => {
-      const { title, description, status, models, imageName, specialDates, updatedAt, stepId } = doc.data()
-
-      return {
-        stepId,
-        title,
-        description,
-        status,
-        models,
-        imageName,
-        specialDates,
-        updatedAt,
-      }
-    })
+    const steps = collection.docs.map(doc => doc.data())
 
     const fullCollection = await db.collection('publishedStorySteps').get()
     const allStepsCount = fullCollection.docs.length
@@ -71,6 +58,7 @@ async function create(req, res) {
       imageName,
       models,
       updatedAt,
+      usedByUser: false,
     })
 
     // TODO: selectedModels
