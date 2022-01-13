@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useContext }  from 'react'
-import { Pagination, Divider, Table, Tag, Row } from 'antd'
+import { useNavigate } from 'react-router-dom'
+import { Pagination, Divider, Table, Tag, Row, Popconfirm } from 'antd'
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite'
 import { stepsListStore as store } from './StepsListStore'
 import { LOADING, MENU_ITEMS } from '../../../constants'
@@ -16,9 +18,54 @@ import Loader from '../../../components/Loader'
 import StepImage from './StepImage'
 
 const StepsListPage =  observer(() => {
+  const navigate = useNavigate()
   const [lang] = useContext(LangContext)
 
+  const editStep = (stepId) => {
+    navigate(`/${MENU_ITEMS.STEPS}/${stepId}`)
+  }
+
+  const deleteStep = (stepId) => {
+    const step = store.getStepById(stepId)
+    console.log('DELETE', { ...step })
+  }
+
+  const EditComlumn = ({ stepId }) => {
+    return (
+      <div className="edit-step-div">
+        <p>
+          <EditOutlined
+            onClick={() => editStep(stepId)}
+            style={{ fontSize: 20, color: '#1890ff' }} />
+        </p>
+        <Popconfirm
+          onConfirm={() => deleteStep(stepId)}
+          title={<Lang text={i18n.STEPS_LIST.DELETE_STEP_QUESTION} />}          
+        >
+          <p className="delete-icon">
+            <DeleteOutlined style={{ fontSize: 20, color: 'red' }} />
+          </p>
+        </Popconfirm>
+      </div>
+    )
+  }
+
+  useEffect(() => {
+    store.reset()
+    store.loadStepsPage()
+  }, [])
+
+  useEffect(() => {
+    store.loadStepsPage()
+  }, [store.startAt, store.token])
+
   const columns = useMemo(() => [
+    {
+      title: i18n.STEPS_LIST.COLUMNS.EDIT[lang],
+      dataIndex: 'stepId',
+      key: 'stepId',
+      render: (stepId) => <EditComlumn stepId={stepId} />
+    },
     {
       title: i18n.STEPS_LIST.COLUMNS.IMAGE[lang],
       dataIndex: 'imageName',
@@ -60,15 +107,6 @@ const StepsListPage =  observer(() => {
       }
     },
   ], [lang]) 
-
-  useEffect(() => {
-    store.reset()
-    store.loadStepsPage()
-  }, [])
-
-  useEffect(() => {
-    store.loadStepsPage()
-  }, [store.startAt, store.token])
 
   return (
     <Layout menuItem={MENU_ITEMS.STEPS}>

@@ -226,3 +226,24 @@ code {
   justify-content: center;
   background: rgba(190, 190, 190, 0.2);
 }
+
+.link {
+  cursor: pointer;
+}
+
+.red-text {
+  color: 'red' !important;
+}
+
+.edit-step-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding-top: 10px;
+}
+
+.delete-icon {
+  margin-top: 15px;
+  cursor: pointer;
+}

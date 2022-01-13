@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Skeleton } from 'antd'
-import { LeftSquareFilled, RightSquareFilled, CloseSquareFilled } from '@ant-design/icons';
+import { LeftSquareFilled, RightSquareFilled, CloseSquareFilled } from '@ant-design/icons'
 import { observer } from 'mobx-react-lite'
 import { editStepStore as store } from './EditStepStore'
 
