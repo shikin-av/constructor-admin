@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useContext }  from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Pagination, Divider, Table, Tag, Row, Popconfirm } from 'antd'
+import { Pagination, Divider, Table, Tag, Row, Popconfirm, Tooltip } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite'
 import { stepsListStore as store } from './StepsListStore'
@@ -31,6 +31,9 @@ const StepsListPage =  observer(() => {
   }
 
   const EditComlumn = ({ stepId }) => {
+    const step = store.getStepById(stepId)
+    const disabled = step.usedByUser
+
     return (
       <div className="edit-step-div">
         <p>
@@ -40,11 +43,15 @@ const StepsListPage =  observer(() => {
         </p>
         <Popconfirm
           onConfirm={() => deleteStep(stepId)}
+          disabled={disabled}
           title={<Lang text={i18n.STEPS_LIST.DELETE_STEP_QUESTION} />}          
         >
-          <p className="delete-icon">
-            <DeleteOutlined style={{ fontSize: 20, color: 'red' }} />
-          </p>
+          {disabled
+            ? <Tooltip title={<Lang text={i18n.STEPS_LIST.DELETE_DISABLED_DESCRIPTION} />}>
+                <DeleteOutlined className="delete-icon-disabled"/>
+              </Tooltip>
+            : <DeleteOutlined className="delete-icon"/>
+          }
         </Popconfirm>
       </div>
     )

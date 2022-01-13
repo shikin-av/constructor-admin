@@ -219,6 +219,10 @@ const i18n = {
       [ENG]: 'Sure to delete step?',
       [RUS]: 'Удалить этап?',
     },
+    DELETE_DISABLED_DESCRIPTION: {
+      [ENG]: 'Disabled because users uses this step',
+      [RUS]: 'Недоступно, т.к. этап используется игроками',
+    }
   },
   MANAGERS: {
     TITLE: {
