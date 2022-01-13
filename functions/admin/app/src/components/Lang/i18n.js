@@ -207,6 +207,10 @@ const i18n = {
         [RUS]: 'Даты',
       },
     },
+    NO_IMAGE: {
+      [ENG]: 'No image',
+      [RUS]: 'Нет изображения',
+    }
   },
   MANAGERS: {
     TITLE: {

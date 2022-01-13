@@ -1,10 +1,9 @@
-import { makeAutoObservable, runInAction, toJS } from 'mobx'
-import moment from 'moment'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { LOADING, API_URL, HEADERS, LIMITS } from '../../../constants'
 import { storage, ref, getDownloadURL } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
 
-class StepsStore {
+class StepsListStore {
   constructor() {
     this.reset()
     makeAutoObservable(this)
@@ -56,6 +55,12 @@ class StepsStore {
     this.startAt = getStartAt(page, this.LIMIT)
     this.pageNumber = getPageNumber(this.startAt, this.LIMIT)
   }
+
+  loadStepImage = async (imageName) => {
+    return await getDownloadURL(ref(storage, `published/${imageName}`))
+  }
+
+  getStepById = (stepId) => this.pageSteps.find(s => s.stepId === stepId)
 }
 
-export const stepsStore = new StepsStore()
+export const stepsListStore = new StepsListStore()
