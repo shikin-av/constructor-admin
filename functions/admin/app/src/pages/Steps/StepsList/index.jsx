@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useContext }  from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Pagination, Divider, Table, Tag, Row, Popconfirm, Tooltip } from 'antd'
+import { Pagination, Divider, Table, Tag, Row, Popconfirm, Tooltip, message } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite'
 import { stepsListStore as store } from './StepsListStore'
@@ -26,8 +26,7 @@ const StepsListPage =  observer(() => {
   }
 
   const deleteStep = (stepId) => {
-    const step = store.getStepById(stepId)
-    console.log('DELETE', { ...step })
+    store.deleteStep(stepId)
   }
 
   const EditComlumn = ({ stepId }) => {
@@ -65,6 +64,14 @@ const StepsListPage =  observer(() => {
   useEffect(() => {
     store.loadStepsPage()
   }, [store.startAt, store.token])
+
+  useEffect(() => {
+    if (store.deleteLoading === LOADING.SUCCESS) {
+      message.success(i18n.STEPS_LIST.MESSAGES.DELETE_SUCCESS[lang])
+    } else if (store.deleteLoading === LOADING.ERROR) {
+      message.error(store.saveError || i18n.STEPS_LIST.MESSAGES.DELETE_ERROR[lang])
+    }
+  }, [store.deleteLoading])
 
   const columns = useMemo(() => [
     {

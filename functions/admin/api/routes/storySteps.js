@@ -1,6 +1,5 @@
 const express = require('express')
-const { v4: uuidv4 } = require('uuid')
-const { db } = require('../../../firebase')
+const { db, bucket } = require('../../../firebase')
 const { error500 } = require('../utils/handleErrors')
 const { firebaseDate } = require('../utils/date')
 const isAuthorized = require('../auth/authorized')
@@ -15,6 +14,10 @@ storyStepsRouter
   .post('/',
     isAuthorized({ roles: [ADMIN, MANAGER] }),
     create
+  )
+  .delete('/:stepId',
+    isAuthorized({ roles: [ADMIN, MANAGER] }),
+    remove
   )
 
 async function list(req, res) {
@@ -33,20 +36,18 @@ async function list(req, res) {
     const fullCollection = await db.collection('publishedStorySteps').get()
     const allStepsCount = fullCollection.docs.length
 
-    return Promise.resolve(res.json({ steps, allStepsCount }))
+    return res.json({ steps, allStepsCount })
   } catch(err) {
-    return Promise.reject(new Error(`can't load story steps page with startAt:${startAt} and limit:${limit} - ${JSON.stringify(err)}`))
-  }
-  
+    return error500(res, err)
+  }  
 }
 
 async function create(req, res) {
   try {
-    const { models, title, description, status, specialDates, imageName, updatedAt } = req.body
-    const stepId = uuidv4()
+    const { stepId, models, title, description, status, specialDates, imageName, updatedAt } = req.body
 
     if (!title || !status) {
-      return Promise.reject(new Error('doesn\'t have required params'))
+      return res.status(400).send({ message: 'doesn\'t have required params' })
     }
 
     await db.collection('publishedStorySteps').doc(stepId).set({
@@ -61,10 +62,40 @@ async function create(req, res) {
       usedByUser: false,
     })
 
-    // TODO: selectedModels
-
     res.json({ stepId })
 
+  } catch(err) {
+    return error500(res, err)
+  }
+}
+
+async function remove(req, res) {
+  try {
+    const { stepId } = req.params
+
+    if (!stepId) {
+      return res.status(400).send({ message: 'doesn\'t have required params' })
+    }
+
+    const doc = await db.collection('publishedStorySteps').doc(stepId).get()
+    if (!doc.exists) {
+      return res.status(400).send({ message: `No such document! ${stepId}` })
+    }
+
+    const step = doc.data()
+    const { usedByUser, imageName } = step
+
+    if (usedByUser) {
+      return res.status(400).send({ message: `It is not possible to delete a step that is used by players! ${stepId}` })
+    }
+
+    await db.collection('publishedStorySteps').doc(stepId).delete()
+
+    if (imageName) {
+      bucket.file(imageName).delete()
+    }    
+
+    return res.json({ stepId })
   } catch(err) {
     return error500(res, err)
   }

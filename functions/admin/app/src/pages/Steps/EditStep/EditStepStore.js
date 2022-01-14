@@ -43,6 +43,7 @@ class EditStepStore {
     this.resetStep()
   }
 
+  setStepId = val => this.stepId = val
   setTitle = (e) => this.title = e.target.value
   setDescription = (e) => this.description = e.target.value
   setStatus = (val) => this.status = val
