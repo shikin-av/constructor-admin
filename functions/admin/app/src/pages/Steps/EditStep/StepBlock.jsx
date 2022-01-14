@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { useNavigate } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid'
 import { Divider, Input, Select, Button, DatePicker, Space, message } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react-lite'
@@ -13,7 +14,7 @@ import UploadImage from '../../../components/UploadImage'
 import Unauthorized from '../../../components/Unauthorized'
 import Loader from '../../../components/Loader'
 import SelectedCard from './SelectedCard'
-import { LOADING, STEP_STATUS } from '../../../constants'
+import { LOADING, STEP_STATUS, MODES } from '../../../constants'
 const { Option } = Select
 const { RangePicker } = DatePicker
 const { TextArea } = Input
@@ -21,10 +22,16 @@ const { TextArea } = Input
 const StepBlock =  observer(({ mode }) => {
   const navigate = useNavigate()
   const [lang] = useContext(LangContext)
-  const { stepId } = useParams()
+  const { stepId: navStepId } = useParams()
 
   useEffect(() => {
     store.resetStep()
+
+    if (mode === MODES.CREATE) {
+      store.setStepId(uuidv4())
+    } else if (mode === MODES.EDIT && navStepId) {
+      store.setStepId(navStepId)
+    }
   }, [])
 
   useEffect(() => {
@@ -140,6 +147,7 @@ const StepBlock =  observer(({ mode }) => {
 
             <div className="ipload-image">
               <UploadImage
+                id={store.stepId}
                 imageName={store.imageName}
                 setImageName={store.setImageName}
               />

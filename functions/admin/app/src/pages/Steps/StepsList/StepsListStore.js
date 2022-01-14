@@ -13,6 +13,8 @@ class StepsListStore {
     runInAction(() => {
       this.stepsLoading = LOADING.NONE
       this.stepsError = null
+      this.deleteloading = LOADING.NONE      
+      this.deleteError = null
       this.allStepsCount = 0
       this.LIMIT = LIMITS.STEPS
       this.startAt = 0
@@ -51,13 +53,42 @@ class StepsListStore {
     })
   }
 
+  deleteStep = async (stepId) => {
+    const token = localStorage.getItem('token')
+    this.deleteloading = LOADING.PROGRESS
+
+    await fetch(`${API_URL}/storySteps/${stepId}`, {
+      method: 'DELETE',
+      headers: { ...HEADERS, token},
+    })
+    .then(async res => this.parseDeleteStepResponse(res))
+    .catch(async err => this.parseDeleteStepResponse(err))
+  }
+
+  parseDeleteStepResponse = async (res) => {
+    const parsed = await handleResponse(res)
+    console.log('parsed', parsed)
+    runInAction(() => {
+      this.deleteLoading = parsed.status
+
+      if (this.deleteLoading === LOADING.SUCCESS) {
+        const { stepId } = parsed.payload
+        this.pageSteps = this.pageSteps.filter(s => s.stepId !== stepId)
+        this.allStepsCount = this.allStepsCount - 1
+        this.deleteError = null
+      } else {
+        this.deleteError = parsed.error
+      }
+    })
+  }
+
   paginationChange = (page) => {
     this.startAt = getStartAt(page, this.LIMIT)
     this.pageNumber = getPageNumber(this.startAt, this.LIMIT)
   }
 
   loadStepImage = async (imageName) => {
-    return await getDownloadURL(ref(storage, `published/${imageName}`))
+    return await getDownloadURL(ref(storage, imageName))
   }
 
   getStepById = (stepId) => this.pageSteps.find(s => s.stepId === stepId)

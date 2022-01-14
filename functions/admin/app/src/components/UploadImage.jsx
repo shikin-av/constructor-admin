@@ -5,7 +5,7 @@ import { storage, ref, uploadBytes, deleteObject } from '../firebase'
 import i18n from './Lang/i18n'
 import Lang from './Lang/Lang'
 
-const UploadImage = ({ imageName, setImageName }) => {
+const UploadImage = ({ id, imageName, setImageName }) => {
   const [previewVisible, setPreviewVisible] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
   const [imageList, setImageList] = useState([])
@@ -19,12 +19,24 @@ const UploadImage = ({ imageName, setImageName }) => {
     setPreviewVisible(true)
   }
 
+  const getFilePath = (file) => {
+    if (imageName) {
+      return imageName
+    } else if (!imageName && id) {
+      const fileExtension = file.name.split('.').pop()
+      return `published/${id}.${fileExtension}`
+    } else {
+      throw new Error('Wrong filename', id, imageName)
+    }
+  }
+
   const uploadImage = async (val) => {
-    const storageRef = ref(storage, `published/${val.file.name}`)
+    const filePath = getFilePath(val.file)
+    const storageRef = ref(storage, filePath)
     try {
       await uploadBytes(storageRef, val.file)
       val.onSuccess()
-      setImageName(val.file.name || val.file.url.substring(val.file.url.lastIndexOf("/") + 1))
+      setImageName(filePath)
     } catch(err) {
       console.error(err)
       val.onError(err)
@@ -32,7 +44,8 @@ const UploadImage = ({ imageName, setImageName }) => {
   }
 
   const removeImage = async (file) => {
-    const storageRef = ref(storage, `published/${file.name}`)
+    const filePath = getFilePath(file)
+    const storageRef = ref(storage, filePath)
     try {
       deleteObject(storageRef)
       setImageName(null)

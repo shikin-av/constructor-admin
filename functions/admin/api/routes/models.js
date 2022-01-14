@@ -30,9 +30,9 @@ async function getUserModels (req, res) {
       }
     })
 
-    return Promise.resolve(res.json({ models }))
+    return res.json({ models })
   } catch (err) {
-    return Promise.reject(new Error(`can't load model page with userId:${userId} - ${JSON.stringify(err)}`))
+    return error500(res, err)
   }
 }
 
@@ -60,9 +60,9 @@ async function getNeedPublishModels(req, res) {
     const fullCollection = await db.collection('needPublish').get()
     const allModelsCount = fullCollection.docs.length
 
-    return Promise.resolve(res.json({ models, allModelsCount }))
+    return res.json({ models, allModelsCount })
   } catch (err) {
-    return Promise.reject(new Error(`can't load need publish models page with startAt:${startAt} and limit:${limit} - ${JSON.stringify(err)}`))
+    return error500(res, err)
   }
 }
 

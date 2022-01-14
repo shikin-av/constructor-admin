@@ -167,11 +167,11 @@ const i18n = {
     },
     MESSAGES: {
       SAVE_SUCCESS: {
-        [ENG]: 'Successful Story Step saving',
+        [ENG]: 'Saving Story Step success',
         [RUS]: 'Этап сохранен',
       },
       SAVE_ERROR: {
-        [ENG]: 'Error Story Step saving',
+        [ENG]: 'Saving Story Step error',
         [RUS]: 'Ошибка сохранения этапа',
       },
     },
@@ -222,7 +222,17 @@ const i18n = {
     DELETE_DISABLED_DESCRIPTION: {
       [ENG]: 'Disabled because users uses this step',
       [RUS]: 'Недоступно, т.к. этап используется игроками',
-    }
+    },
+    MESSAGES: {
+      DELETE_SUCCESS: {
+        [ENG]: 'Deleting Story Step success',
+        [RUS]: 'Этап удален',
+      },
+      DELETE_ERROR: {
+        [ENG]: 'Deleting Story Step error',
+        [RUS]: 'Ошибка удаления этапа',
+      },
+    },
   },
   MANAGERS: {
     TITLE: {
