@@ -33,8 +33,8 @@ class EditStepStore {
       this.imageFile = null
       this.welcomeBonus = null  // TODO:
       this.finalBonus = null    // TODO:
-      this.title = EMPTY_LANG_INPUTS
-      this.description = EMPTY_LANG_INPUTS
+      this.titles = EMPTY_LANG_INPUTS
+      this.descriptions = EMPTY_LANG_INPUTS
     })
   }
 
@@ -46,11 +46,11 @@ class EditStepStore {
   setStepId = val => this.stepId = val
   setStatus = (val) => this.status = val
   setSpecialDates = (val, dateString) => this.specialDates = val
-  setTitle = (val, KEY) => {
-    this.title = { ...this.title, [KEY]: val }
+  setTitles = (val, KEY) => {
+    this.titles = { ...this.titles, [KEY]: val }
   }
-  setDescription = (val, KEY) => {
-    this.description = { ...this.description, [KEY]: val }
+  setDescriptions = (val, KEY) => {
+    this.descriptions = { ...this.descriptions, [KEY]: val }
   }
 
   loadModelsPage = async () => {
@@ -132,8 +132,13 @@ class EditStepStore {
     console.log('imageFile', imageName)
     console.log('status', this.status)
     console.log('specialDates', this.specialDates)
-    console.log('title', toJS(this.title))
-    console.log('description', toJS(this.description))
+    console.log('titles', toJS(this.titles))
+    console.log('descriptions', toJS(this.descriptions))
+
+    // const redusedTitles = toJS(this.titles)
+    // for () {
+
+    // }
 
     this.saveLoading = LOADING.PROGRESS
     const token = localStorage.getItem('token')
@@ -141,8 +146,8 @@ class EditStepStore {
       stepId: this.stepId,
       models: toJS(this.selectedModels),
       imageName,
-      title: this.title,
-      description: this.description,
+      titles: this.titles,
+      descriptions: this.descriptions,
       status: this.status,
       specialDates: this.formatDates(this.specialDates),
       updatedAt: new Date().getTime(),

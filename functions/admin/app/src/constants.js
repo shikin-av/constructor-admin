@@ -7,7 +7,7 @@ export const FOLDERS = {
   PUBLISHED: 'published',
 }
 
-// For Steps title, description
+// For Steps titles, descriptions
 export const EMPTY_LANG_INPUTS = {
   ENG: '',
   RUS: '',
