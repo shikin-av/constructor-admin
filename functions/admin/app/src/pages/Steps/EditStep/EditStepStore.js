@@ -126,19 +126,15 @@ class EditStepStore {
       }
     }
 
-    console.log('stepId', this.stepId)
-    console.log('models', toJS(this.selectedModels))
-    console.log('imageName', this.stepId)
-    console.log('imageFile', imageName)
-    console.log('status', this.status)
-    console.log('specialDates', this.specialDates)
-    console.log('titles', toJS(this.titles))
-    console.log('descriptions', toJS(this.descriptions))
+    const redusedTitles = toJS(this.titles)
+    for (const [key, val] of Object.entries(redusedTitles)) {
+      if (!val) delete redusedTitles[key]
+    }
 
-    // const redusedTitles = toJS(this.titles)
-    // for () {
-
-    // }
+    const redusedDescriptions = toJS(this.descriptions)
+    for (const [key, val] of Object.entries(redusedDescriptions)) {
+      if (!val) delete redusedDescriptions[key]
+    }
 
     this.saveLoading = LOADING.PROGRESS
     const token = localStorage.getItem('token')
@@ -146,12 +142,14 @@ class EditStepStore {
       stepId: this.stepId,
       models: toJS(this.selectedModels),
       imageName,
-      titles: this.titles,
-      descriptions: this.descriptions,
+      titles: redusedTitles,
+      descriptions: redusedDescriptions,
       status: this.status,
       specialDates: this.formatDates(this.specialDates),
       updatedAt: new Date().getTime(),
     }
+
+    console.log('save body', body)
 
     await fetch(`${API_URL}/storySteps`, {
       method: 'POST',
