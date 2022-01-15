@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { LOADING, API_URL, HEADERS, LIMITS, FOLDERS } from '../../../constants'
+import { LOADING, API_URL, HEADERS, LIMITS, FOLDERS, EMPTY_LANG_INPUTS } from '../../../constants'
 import { storage, ref, getDownloadURL } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
 
@@ -42,7 +42,13 @@ class StepsListStore {
       this.stepsLoading = parsed.status
 
       if (this.stepsLoading === LOADING.SUCCESS) {
-        this.pageSteps = parsed.payload.steps.map(step => ({ ...step, key: step.stepId}))
+        this.pageSteps = parsed.payload.steps.map(step => ({
+          ...step,
+          key: step.stepId,
+          titles: { ...EMPTY_LANG_INPUTS, ...step.titles },
+          descriptions: { ...EMPTY_LANG_INPUTS, ...step.descriptions }
+        }))
+        
         this.allStepsCount = parsed.payload.allStepsCount
         this.stepsError = null
       } else {
