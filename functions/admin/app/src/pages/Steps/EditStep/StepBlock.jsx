@@ -147,9 +147,8 @@ const StepBlock =  observer(({ mode }) => {
 
             <div className="ipload-image">
               <UploadImage
-                id={store.stepId}
-                imageName={store.imageName}
-                setImageName={store.setImageName}
+                chooseImage={store.chooseImage}
+                removeImage={store.removeImage}                
               />
             </div>
               

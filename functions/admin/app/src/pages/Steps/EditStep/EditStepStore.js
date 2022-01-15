@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx'
 import moment from 'moment'
-import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS } from '../../../constants'
-import { storage, ref, getDownloadURL } from '../../../firebase'
+import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS, FOLDERS } from '../../../constants'
+import { storage, ref, getDownloadURL, uploadBytes, deleteObject } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
 
 class EditStepStore {
@@ -32,7 +32,7 @@ class EditStepStore {
       this.description = ''
       this.status = STEP_STATUS.WAIT_APPROVE
       this.specialDates = null  // [moment, moment] or null
-      this.imageName = null
+      this.imageFile = null
       this.welcomeBonus = null  // TODO:
       this.finalBonus = null    // TODO:
     })
@@ -48,7 +48,6 @@ class EditStepStore {
   setDescription = (e) => this.description = e.target.value
   setStatus = (val) => this.status = val
   setSpecialDates = (val, dateString) => this.specialDates = val
-  setImageName = (val) => this.imageName = val
 
   loadModelsPage = async () => {
     const token = localStorage.getItem('token')
@@ -84,9 +83,49 @@ class EditStepStore {
     return await getDownloadURL(ref(storage, `${userId}/${modelId}.png`))
   }
 
+  getFileName = (file) => {
+    const fileExtension = file.name.split('.').pop()
+    return `${this.stepId}.${fileExtension}`
+  }
+
+  chooseImage = (val) => {
+    this.imageFile = val.file
+    val.onSuccess()
+  }
+
+  uploadImage = async (file) => {
+    const fileName = this.getFileName(file)
+    const storageRef = ref(storage, `${FOLDERS.PUBLISHED}/${fileName}`)
+    await uploadBytes(storageRef, file)
+  }
+
+  removeImage = async (file) => {
+    const fileName = this.getFileName(file)
+    const storageRef = ref(storage, `${FOLDERS.PUBLISHED}/${fileName}`)
+    try {
+      deleteObject(storageRef)
+      this.imageFile = null
+    } catch(err) {
+      console.error(err)
+    }
+  }
+
   saveStoryStep = async () => {
+    let imageName = null
+    if (this.imageFile) {
+      try {
+        await this.uploadImage(this.imageFile)
+        imageName = this.getFileName(this.imageFile)
+      } catch(err) {
+        console.error(err)
+        // TODO: м.б. message.error()
+      }
+    }
+
+    console.log('stepId', this.stepId)
     console.log('models', toJS(this.selectedModels))
-    console.log('imageName', this.imageName)
+    console.log('imageName', this.stepId)
+    console.log('imageFile', imageName)
     console.log('title', this.title)
     console.log('description', this.description)
     console.log('status', this.status)
@@ -97,7 +136,7 @@ class EditStepStore {
     const body = {
       stepId: this.stepId,
       models: toJS(this.selectedModels),
-      imageName: this.imageName,
+      imageName,
       title: this.title,
       description: this.description,
       status: this.status,
@@ -128,17 +167,6 @@ class EditStepStore {
       }
     })
   }
-
-  // TODO: for Load StoryStep:
-  // const { selectedModels, imageName, title, description, status, specialDates } = parsed.payload
-  // this.selectedModels = selectedModels
-  // this.imageName = imageName
-  // this.title = title
-  // this.description = description
-  // this.status = status
-  // this.specialDates = (Array.isArray(specialDates) && specialDates.length === 2)
-  //   ? [moment(specialDates[0]), moment(specialDates[1])]
-  //   : null
 
   paginationChange = (page) => {
     this.startAt = getStartAt(page, this.LIMIT)

@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import { Upload, Modal } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { storage, ref, uploadBytes, deleteObject } from '../firebase'
 import i18n from './Lang/i18n'
 import Lang from './Lang/Lang'
 
-const UploadImage = ({ id, imageName, setImageName }) => {
+const UploadImage = ({ chooseImage, removeImage }) => {
   const [previewVisible, setPreviewVisible] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
   const [imageList, setImageList] = useState([])
@@ -19,41 +18,6 @@ const UploadImage = ({ id, imageName, setImageName }) => {
     setPreviewVisible(true)
   }
 
-  const getFilePath = (file) => {
-    if (imageName) {
-      return imageName
-    } else if (!imageName && id) {
-      const fileExtension = file.name.split('.').pop()
-      return `published/${id}.${fileExtension}`
-    } else {
-      throw new Error('Wrong filename', id, imageName)
-    }
-  }
-
-  const uploadImage = async (val) => {
-    const filePath = getFilePath(val.file)
-    const storageRef = ref(storage, filePath)
-    try {
-      await uploadBytes(storageRef, val.file)
-      val.onSuccess()
-      setImageName(filePath)
-    } catch(err) {
-      console.error(err)
-      val.onError(err)
-    }
-  }
-
-  const removeImage = async (file) => {
-    const filePath = getFilePath(file)
-    const storageRef = ref(storage, filePath)
-    try {
-      deleteObject(storageRef)
-      setImageName(null)
-    } catch(err) {
-      console.error(err)
-    }
-  }
-
   return (
     <>
       <Upload
@@ -61,7 +25,7 @@ const UploadImage = ({ id, imageName, setImageName }) => {
         fileList={imageList}
         onPreview={handlePreview}
         onChange={({ fileList }) => setImageList(fileList)}
-        customRequest={uploadImage}
+        customRequest={chooseImage}
         onRemove={removeImage}
       >
         {imageList.length === 0 &&
@@ -76,7 +40,6 @@ const UploadImage = ({ id, imageName, setImageName }) => {
 
       <Modal
         visible={previewVisible}
-        title={imageName}
         footer={null}
         onCancel={() => setPreviewVisible(false)}
       >

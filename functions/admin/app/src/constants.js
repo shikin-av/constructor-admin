@@ -3,6 +3,10 @@ export const LIMITS = {
   STEPS: 4,
 }
 
+export const FOLDERS = {
+  PUBLISHED: 'published',
+}
+
 export const MENU_ITEMS = {
   HOME: 'home',
   LOGIN: 'login',
