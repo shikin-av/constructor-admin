@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx'
 import moment from 'moment'
-import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS, FOLDERS } from '../../../constants'
+import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS, FOLDERS, EMPTY_LANG_INPUTS } from '../../../constants'
 import { storage, ref, getDownloadURL, uploadBytes, deleteObject } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
 
@@ -28,13 +28,13 @@ class EditStepStore {
       this.stepId = null
       this.saveLoading = LOADING.NONE
       this.saveError = null
-      this.title = ''
-      this.description = ''
       this.status = STEP_STATUS.WAIT_APPROVE
       this.specialDates = null  // [moment, moment] or null
       this.imageFile = null
       this.welcomeBonus = null  // TODO:
       this.finalBonus = null    // TODO:
+      this.title = EMPTY_LANG_INPUTS
+      this.description = EMPTY_LANG_INPUTS
     })
   }
 
@@ -44,10 +44,14 @@ class EditStepStore {
   }
 
   setStepId = val => this.stepId = val
-  setTitle = (e) => this.title = e.target.value
-  setDescription = (e) => this.description = e.target.value
   setStatus = (val) => this.status = val
   setSpecialDates = (val, dateString) => this.specialDates = val
+  setTitle = (val, KEY) => {
+    this.title = { ...this.title, [KEY]: val }
+  }
+  setDescription = (val, KEY) => {
+    this.description = { ...this.description, [KEY]: val }
+  }
 
   loadModelsPage = async () => {
     const token = localStorage.getItem('token')
@@ -126,10 +130,10 @@ class EditStepStore {
     console.log('models', toJS(this.selectedModels))
     console.log('imageName', this.stepId)
     console.log('imageFile', imageName)
-    console.log('title', this.title)
-    console.log('description', this.description)
     console.log('status', this.status)
     console.log('specialDates', this.specialDates)
+    console.log('title', toJS(this.title))
+    console.log('description', toJS(this.description))
 
     this.saveLoading = LOADING.PROGRESS
     const token = localStorage.getItem('token')

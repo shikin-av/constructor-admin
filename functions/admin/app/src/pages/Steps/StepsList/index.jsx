@@ -5,7 +5,7 @@ import { Pagination, Divider, Table, Tag, Row, Popconfirm, Tooltip, message } fr
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite'
 import { stepsListStore as store } from './StepsListStore'
-import { LOADING, MENU_ITEMS } from '../../../constants'
+import { LOADING, MENU_ITEMS, EMPTY_LANG_INPUTS } from '../../../constants'
 import { getStatusColor } from '../../../utils/steps'
 import { dateFormat } from '../../../utils/date'
 import { LangContext } from '../../../components/Lang/LangContext'
@@ -56,6 +56,56 @@ const StepsListPage =  observer(() => {
     )
   }
 
+  const LangInputsColumn = ({ inputs }) => {
+    const MAX_NUMBER = 3
+    let filledObj = {}
+    for (const [key, val] of Object.entries({ ...inputs })) {
+      if (val) {
+        filledObj = { ...filledObj, [key]: val }
+      }
+    }
+    const filledValues = Object.values(filledObj).filter(val => !!val)
+    const count = filledValues.length
+    const allCount = Object.values(EMPTY_LANG_INPUTS).length
+    const bigger = count > MAX_NUMBER
+
+    // Order by lang
+    let rendered = []
+    if (filledObj.ENG) {
+      rendered = [{ lang: 'ENG', text: filledObj.ENG }]
+      delete filledObj.ENG
+    }
+    if (filledObj.DAT) {
+      rendered = [{ lang: 'DAT', text: filledObj.DAT }]
+      delete filledObj.DAT
+    }
+    if (filledObj.RUS) {
+      rendered = [ ...rendered, { lang: 'RUS', text: filledObj.RUS }]
+      delete filledObj.RUS
+    }
+    
+    for (const [key, val] of Object.entries({ ...filledObj })) {
+      if (rendered.length < MAX_NUMBER) {
+        rendered = [ ...rendered, { lang: key, text: val }]
+      } else {
+        break
+      }
+    }
+   
+    return (
+      <div className="lang-inputs-column">
+        <p className="bold">{`[ ${count} / ${allCount} ]`}</p>
+        {rendered.map(({ lang, text }) => (
+          <p key={lang}>
+            <span className="bold">{lang}: </span>
+            <span>{text}</span>
+          </p>
+        ))}
+        {bigger && <span className="bold">. . .</span>}
+      </div>
+    )
+  }
+
   useEffect(() => {
     store.reset()
     store.loadStepsPage()
@@ -102,11 +152,23 @@ const StepsListPage =  observer(() => {
       title: i18n.STEPS_LIST.COLUMNS.TITLE[lang],
       dataIndex: 'title',
       key: 'title',
+      render: (title) => {
+        return {
+          props: { style: { verticalAlign: 'top' } },
+          children: <LangInputsColumn inputs={title} />
+        }
+      },
     },
     {
       title: i18n.STEPS_LIST.COLUMNS.DESCRIPTION[lang],
       dataIndex: 'description',
       key: 'description',
+      render: (description) => {
+        return {
+          props: { style: { verticalAlign: 'top' } },
+          children: <LangInputsColumn inputs={description} />
+        }
+      },
     },
     {
       title: i18n.STEPS_LIST.COLUMNS.SPECIAL_DATES[lang],

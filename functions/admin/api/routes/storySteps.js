@@ -46,7 +46,7 @@ async function create(req, res) {
   try {
     const { stepId, models, title, description, status, specialDates, imageName, updatedAt } = req.body
 
-    if (!title || !status) {
+    if (!status) {
       return res.status(400).send({ message: 'doesn\'t have required params' })
     }
 
