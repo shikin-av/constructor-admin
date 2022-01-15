@@ -92,7 +92,7 @@ async function remove(req, res) {
     await db.collection('publishedStorySteps').doc(stepId).delete()
 
     if (imageName) {
-      bucket.file(imageName).delete()
+      bucket.file(`published/${imageName}`).delete()
     }    
 
     return res.json({ stepId })
