@@ -44,7 +44,7 @@ async function list(req, res) {
 
 async function create(req, res) {
   try {
-    const { stepId, models, title, description, status, specialDates, imageName, updatedAt } = req.body
+    const { stepId, models, titles, descriptions, status, specialDates, imageName, updatedAt } = req.body
 
     if (!status) {
       return res.status(400).send({ message: 'doesn\'t have required params' })
@@ -52,8 +52,8 @@ async function create(req, res) {
 
     await db.collection('publishedStorySteps').doc(stepId).set({
       stepId,
-      title,
-      description,
+      titles,
+      descriptions,
       status,
       specialDates,
       imageName,

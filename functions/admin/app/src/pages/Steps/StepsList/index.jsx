@@ -146,27 +146,27 @@ const StepsListPage =  observer(() => {
       title: i18n.STEPS_LIST.COLUMNS.MODELS_COUNT[lang],
       dataIndex: 'models',
       key: 'models',
-      render: (models) => models.length
+      render: (models) => <span className="bold">{models.length}</span>
     },
     {
       title: i18n.STEPS_LIST.COLUMNS.TITLE[lang],
-      dataIndex: 'title',
-      key: 'title',
-      render: (title) => {
+      dataIndex: 'titles',
+      key: 'titles',
+      render: (titles) => {
         return {
-          props: { style: { verticalAlign: 'top' } },
-          children: <LangInputsColumn inputs={title} />
+          props: { style: { verticalAlign: 'top', minWidth: 300 } },
+          children: <LangInputsColumn inputs={titles} />
         }
       },
     },
     {
       title: i18n.STEPS_LIST.COLUMNS.DESCRIPTION[lang],
-      dataIndex: 'description',
-      key: 'description',
-      render: (description) => {
+      dataIndex: 'descriptions',
+      key: 'descriptions',
+      render: (descriptions) => {
         return {
-          props: { style: { verticalAlign: 'top' } },
-          children: <LangInputsColumn inputs={description} />
+          props: { style: { verticalAlign: 'top', minWidth: 400 } },
+          children: <LangInputsColumn inputs={descriptions} />
         }
       },
     },
