@@ -1,10 +1,24 @@
-export const LIMITS = {
+export const LIMITS = {  // TODO: set real limits
   MODELS: 4,
   STEPS: 4,
 }
 
 export const FOLDERS = {
   PUBLISHED: 'published',
+}
+
+// For Steps title, description
+export const EMPTY_LANG_INPUTS = {
+  ENG: '',
+  RUS: '',
+  DAT: '',
+  FRA: '',
+  SPA: '',
+  POR: '',
+  JAP: '',
+  CHI: '',
+  HIN: '',
+  ARA: '',
 }
 
 export const MENU_ITEMS = {

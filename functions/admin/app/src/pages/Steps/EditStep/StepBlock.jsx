@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
-import { Divider, Input, Select, Button, DatePicker, Space, message } from 'antd'
+import { Divider, Select, Button, DatePicker, Space, message } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react-lite'
 import { editStepStore as store } from './EditStepStore'
@@ -14,10 +14,10 @@ import UploadImage from '../../../components/UploadImage'
 import Unauthorized from '../../../components/Unauthorized'
 import Loader from '../../../components/Loader'
 import SelectedCard from './SelectedCard'
+import DescriptionsBlock from './DescriptionBlock'
 import { LOADING, STEP_STATUS, MODES } from '../../../constants'
 const { Option } = Select
 const { RangePicker } = DatePicker
-const { TextArea } = Input
 
 const StepBlock =  observer(({ mode }) => {
   const navigate = useNavigate()
@@ -47,7 +47,7 @@ const StepBlock =  observer(({ mode }) => {
     }
   }, [store.saveLoading])
 
-  const disableSubmit = store.selectedModels.length === 0 || store.title.length === 0
+  const disableSubmit = store.selectedModels.length === 0
 
   return (
     <div className="step-block shadow">
@@ -87,21 +87,7 @@ const StepBlock =  observer(({ mode }) => {
             })}
           </div>
 
-          <div>       
-            <div className="input">
-              <div className="label">
-                * <Lang text={i18n.EDIT_STEP.FORM.TITLE} />
-              </div>
-              <Input value={store.title} onChange={store.setTitle}/>          
-            </div>
-
-            <div className="input">
-              <div className="label">
-                <Lang text={i18n.EDIT_STEP.FORM.DESCRIPTION} />
-              </div>
-              <TextArea value={store.description} onChange={store.setDescription}/>
-            </div> 
-            
+          <div>            
             <div className="input">
               <div className="label">
                 * <Lang text={i18n.EDIT_STEP.FORM.STATUS} />
@@ -151,6 +137,8 @@ const StepBlock =  observer(({ mode }) => {
                 removeImage={store.removeImage}                
               />
             </div>
+
+            <DescriptionsBlock />
               
             <div className="form-submit-div">
               <Button

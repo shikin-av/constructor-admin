@@ -207,6 +207,15 @@ code {
   margin-bottom: 10px;
 }
 
+.inline-input {
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.inline-label {
+  padding-right: 8px;
+}
+
 .ipload-image {
   margin-top: 19px;
 }
@@ -235,6 +244,10 @@ code {
   color: 'red' !important;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .edit-step-div {
   display: flex;
   align-items: center;
@@ -255,4 +268,8 @@ code {
   font-size: 20px;
   color: lightgrey;
   cursor: default;
+}
+
+.lang-inputs-column {
+  height: 100%;
 }
