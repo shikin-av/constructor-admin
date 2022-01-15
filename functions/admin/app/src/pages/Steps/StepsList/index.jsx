@@ -76,7 +76,7 @@ const StepsListPage =  observer(() => {
       delete filledObj.ENG
     }
     if (filledObj.DAT) {
-      rendered = [{ lang: 'DAT', text: filledObj.DAT }]
+      rendered = [ ...rendered, { lang: 'DAT', text: filledObj.DAT }]
       delete filledObj.DAT
     }
     if (filledObj.RUS) {
