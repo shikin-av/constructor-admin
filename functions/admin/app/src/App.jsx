@@ -20,7 +20,7 @@ const  App = () => {
           <Route path={`/${MENU_ITEMS.LOGIN}`} element = {<Login />} />
           <Route path={`/${MENU_ITEMS.STEPS}`} element = {<StepsList />} />
           <Route path={`/${MENU_ITEMS.STEPS}/create`} element = {<EditStep mode={MODES.CREATE} />} />
-          <Route path={`/${MENU_ITEMS.STEPS}/:stepId`} element = {<EditStep />} />
+          <Route path={`/${MENU_ITEMS.STEPS}/:stepId`} element = {<EditStep mode={MODES.EDIT} />} />
           <Route path={`/${MENU_ITEMS.MANAGERS}`} element = {<Managers />} />
         </Routes>
       </BrowserRouter>

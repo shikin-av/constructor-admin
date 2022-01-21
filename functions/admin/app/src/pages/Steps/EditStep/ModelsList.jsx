@@ -19,7 +19,7 @@ const ModelsList =  observer(() => {
 
   useEffect(() => {
     store.loadModelsPage()
-  }, [store.startAt, store.token])
+  }, [store.startAt])
 
   useEffect(() => {
     if (store.saveLoading === LOADING.SUCCESS) {

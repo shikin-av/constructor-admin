@@ -31,14 +31,16 @@ const StepBlock =  observer(({ mode }) => {
       store.setStepId(uuidv4())
     } else if (mode === MODES.EDIT && navStepId) {
       store.setStepId(navStepId)
+      // store.loadStoryStep(navStepId)
     }
-  }, [])
+  }, [mode, navStepId])
 
   useEffect(() => {
     if (store.saveLoading === LOADING.SUCCESS) {
       message.success(i18n.EDIT_STEP.MESSAGES.SAVE_SUCCESS[lang])
 
       const id = store.stepId + ''
+      console.log('ID', id)
       store.resetStep() 
       navigate(`/steps/${id || ''}`)
 
