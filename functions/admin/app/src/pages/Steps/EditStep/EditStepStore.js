@@ -14,21 +14,26 @@ class EditStepStore {
     runInAction(() => {
       this.modelsLoading = LOADING.NONE
       this.modelsError = null
+
       this.allModelsCount = 0
       this.LIMIT = LIMITS.MODELS
       this.startAt = 0
       this.pageNumber = 1
       this.pageModels = []
-      this.selectedModels = []
     })
   }
 
   resetStep = () => {
     runInAction(() => {
-      this.stepId = null
       this.saveLoading = LOADING.NONE
       this.saveError = null
+
+      this.stepLoading = LOADING.NONE
+      this.stepError = null
+
+      this.stepId = null 
       this.status = STEP_STATUS.WAIT_APPROVE
+      this.selectedModels = []
       this.specialDates = null  // [moment, moment] or null
       this.imageFile = null
       this.welcomeBonus = null  // TODO:
@@ -67,6 +72,8 @@ class EditStepStore {
 
   parseModelsPageResponse = async (res) => {
     const parsed = await handleResponse(res)
+
+    console.log('load models', parsed.payload)
 
     runInAction(() => {
       this.modelsLoading = parsed.status
@@ -171,6 +178,56 @@ class EditStepStore {
         this.stepId = parsed.payload.stepId
       } else {
         this.saveError = parsed.error
+      }
+    })
+  }
+
+  loadStoryStep = async (stepId) => {
+    const token = localStorage.getItem('token')
+    this.stepLoading = LOADING.PROGRESS
+
+    await fetch(`${API_URL}/storySteps/${stepId}`, {
+      method: 'GET',
+      headers: { ...HEADERS, token},
+    })
+    .then(async res => this.parseLoadStoryStepResponse(res))
+    .catch(async err => this.parseLoadStoryStepResponse(err))
+  }
+
+  parseLoadStoryStepResponse = async (res) => {
+    const parsed = await handleResponse(res)
+
+    runInAction(() => {
+      this.stepLoading = parsed.status
+
+      console.log('load step data', parsed.payload)
+
+      if (this.stepLoading === LOADING.SUCCESS) {
+        const { 
+          stepId, 
+          status, 
+          selectedModels, 
+          specialDates, 
+          imageName, 
+          welcomeBonus, 
+          finalBonus, 
+          titles, 
+          descriptions 
+        } = parsed.payload
+
+        this.stepError = null
+        this.stepId = stepId
+        this.status = status
+        this.specialDates = specialDates
+        // this.imageFile = HANDLE imageName
+        this.welcomeBonus = welcomeBonus
+        this.finalBonus = finalBonus
+        this.titles = { ...EMPTY_LANG_INPUTS, titles }
+        this.descriptions = { ...EMPTY_LANG_INPUTS, descriptions }
+        // this.selectedModels = selectedModels
+        // TODO: selectedModels - первые в this.pageModels
+      } else {
+        this.stepError = parsed.error
       }
     })
   }

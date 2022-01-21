@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useMemo, useContext } from 'react'
 import { Input, Collapse  } from 'antd'
 import { observer } from 'mobx-react-lite'
@@ -16,7 +17,7 @@ const DescriptionsBlock =  observer(() => {
     const fillCount = Object.values(store.titles).filter(KEY => !!KEY).length
 
     return `${titleName} [ ${fillCount} / ${allCount} ]`
-  }, [store.titles])
+  }, [store.titles, lang])
 
   const descriptionsHeader = useMemo(() => {
     const titleName = i18n.EDIT_STEP.FORM.DESCRIPTION[lang]
@@ -24,7 +25,7 @@ const DescriptionsBlock =  observer(() => {
     const fillCount = Object.values(store.descriptions).filter(KEY => !!KEY).length
 
     return `${titleName} [ ${fillCount} / ${allCount} ]`
-  }, [store.descriptions])
+  }, [store.descriptions, lang])
 
   return (
     <Collapse accordion>
