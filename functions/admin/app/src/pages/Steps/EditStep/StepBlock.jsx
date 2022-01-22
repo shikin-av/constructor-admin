@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router'
 import { useNavigate } from 'react-router-dom'
+import _ from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { Divider, Select, Button, DatePicker, Space, message } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { toJS } from 'mobx'
 import { observer } from 'mobx-react-lite'
 import { editStepStore as store } from './EditStepStore'
 import i18n from '../../../components/Lang/i18n'
@@ -24,16 +26,25 @@ const StepBlock =  observer(({ mode }) => {
   const [lang] = useContext(LangContext)
   const { stepId: navStepId } = useParams()
 
-  useEffect(() => {
+  useEffect(async () => {
     store.resetStep()
+    store.resetModels()
 
     if (mode === MODES.CREATE) {
       store.setStepId(uuidv4())
+      store.resetModels()
+      store.loadModelsPage()
     } else if (mode === MODES.EDIT && navStepId) {
       store.setStepId(navStepId)
-      // store.loadStoryStep(navStepId)
+      await store.loadStoryStep(navStepId)
+      await store.loadModelsPage()
+      
     }
-  }, [mode, navStepId])
+  }, [mode, navStepId, store.saveLoading])
+
+  useEffect(() => {
+    store.loadModelsPage()
+  }, [store.startAt])
 
   useEffect(() => {
     if (store.saveLoading === LOADING.SUCCESS) {
@@ -41,7 +52,8 @@ const StepBlock =  observer(({ mode }) => {
 
       const id = store.stepId + ''
       console.log('ID', id)
-      store.resetStep() 
+      store.resetStep()
+      store.resetModels()
       navigate(`/steps/${id || ''}`)
 
     } else if (store.saveLoading === LOADING.ERROR) {
@@ -51,6 +63,34 @@ const StepBlock =  observer(({ mode }) => {
 
   const disableSubmit = store.selectedModels.length === 0
 
+  const loading = useMemo(() => {
+    if (store.saveLoading === LOADING.UNAUTHORIZED || store.stepLoading === LOADING.UNAUTHORIZED) {
+      return LOADING.UNAUTHORIZED
+    }
+
+    const saveStatus = store.saveLoading === LOADING.NONE || store.saveLoading === LOADING.SUCCESS
+    const loadStatus = mode === MODES.EDIT
+      ? store.stepLoading === LOADING.SUCCESS
+      : true
+    
+    let loadedSelectedModelsCount = 0
+    let loadedAllSelectedModels = true
+
+    if (mode === MODES.EDIT && store.selectedModels.length) {
+      for (const selected of toJS(store.selectedModels)) {
+        const loaded = _.find(toJS(store.allModels), { userId: selected.userId, modelId: selected.modelId })
+        loadedSelectedModelsCount = loaded
+          ? loadedSelectedModelsCount + 1
+          : loadedSelectedModelsCount
+      } 
+      loadedAllSelectedModels = loadedSelectedModelsCount === store.selectedModels.length
+    }    
+    
+    return saveStatus && loadStatus && loadedAllSelectedModels
+      ? LOADING.SUCCESS
+      : LOADING.PROGRESS
+  }, [mode, store.saveLoading, store.stepLoading, store.modelsLoading, store.allModels, store.selectedModels])
+
   return (
     <div className="step-block shadow">
       <div>
@@ -59,17 +99,17 @@ const StepBlock =  observer(({ mode }) => {
         </Divider>
       </div>
 
-      {store.saveLoading === LOADING.UNAUTHORIZED &&
+      {loading === LOADING.UNAUTHORIZED &&
         <div className="step-block-message">
           <Unauthorized />
         </div>
       }
-      {store.saveLoading === LOADING.PROGRESS &&
+      {loading === LOADING.PROGRESS &&
         <div className="step-block-message">
           <Loader />
         </div>
       }
-      {(store.saveLoading === LOADING.NONE || store.saveLoading === LOADING.SUCCESS) &&
+      {loading === LOADING.SUCCESS &&
         <>
           <div className="step-block-models">
             {!store.selectedModels.length
@@ -94,7 +134,7 @@ const StepBlock =  observer(({ mode }) => {
               <div className="label">
                 * <Lang text={i18n.EDIT_STEP.FORM.STATUS} />
               </div>
-              <Select defaultValue={store.status} onChange={store.setStatus}>
+              <Select value={[store.status]} onChange={store.setStatus}>
                 <Option value={STEP_STATUS.WAIT_APPROVE}>
                   <Space>
                     <ClockCircleOutlined style={{ color: '#e9b41e' }} />

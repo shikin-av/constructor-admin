@@ -5,7 +5,7 @@ service firebase.storage {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == userId;
     }
-    match /published/{image} {
+    match /public/{image} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.token.role == 'admin' || request.auth.token.role == 'manager';
     }

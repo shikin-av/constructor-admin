@@ -4,7 +4,7 @@ export const LIMITS = {  // TODO: set real limits
 }
 
 export const FOLDERS = {
-  PUBLISHED: 'published',
+  PUBLIC: 'public',
 }
 
 // For Steps titles, descriptions
