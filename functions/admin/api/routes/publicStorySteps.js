@@ -11,6 +11,10 @@ storyStepsRouter
     isAuthorized({ roles: [ADMIN, MANAGER] }),
     list
   )
+  .get('/:stepId',
+    isAuthorized({ roles: [ADMIN, MANAGER] }),
+    load
+  )
   .post('/',
     isAuthorized({ roles: [ADMIN, MANAGER] }),
     create
@@ -25,7 +29,7 @@ async function list(req, res) {
   const limit   = +req.params.limit
 
   try {
-    const collection = await db.collection('publishedStorySteps')
+    const collection = await db.collection('publicStorySteps')
       .orderBy('updatedAt', 'desc')
       .offset(startAt)
       .limit(limit)
@@ -33,7 +37,7 @@ async function list(req, res) {
 
     const steps = collection.docs.map(doc => doc.data())
 
-    const fullCollection = await db.collection('publishedStorySteps').get()
+    const fullCollection = await db.collection('publicStorySteps').get()
     const allStepsCount = fullCollection.docs.length
 
     return res.json({ steps, allStepsCount })
@@ -50,7 +54,7 @@ async function create(req, res) {
       return res.status(400).send({ message: 'doesn\'t have required params' })
     }
 
-    await db.collection('publishedStorySteps').doc(stepId).set({
+    await db.collection('publicStorySteps').doc(stepId).set({
       stepId,
       titles,
       descriptions,
@@ -69,6 +73,25 @@ async function create(req, res) {
   }
 }
 
+async function load(req, res) {
+  try {
+    const { stepId } = req.params
+
+    if (!stepId) {
+      return res.status(400).send({ message: 'doesn\'t have required params' })
+    }
+
+    const doc = await db.collection('publicStorySteps').doc(stepId).get()
+    if (!doc.exists) {
+      return res.status(400).send({ message: `No such document! ${id}` })
+    }
+
+    res.json(doc.data())
+  } catch(err) {
+    return error500(res, err)
+  }
+}
+
 async function remove(req, res) {
   try {
     const { stepId } = req.params
@@ -77,7 +100,7 @@ async function remove(req, res) {
       return res.status(400).send({ message: 'doesn\'t have required params' })
     }
 
-    const doc = await db.collection('publishedStorySteps').doc(stepId).get()
+    const doc = await db.collection('publicStorySteps').doc(stepId).get()
     if (!doc.exists) {
       return res.status(400).send({ message: `No such document! ${stepId}` })
     }
@@ -89,10 +112,10 @@ async function remove(req, res) {
       return res.status(400).send({ message: `It is not possible to delete a step that is used by players! ${stepId}` })
     }
 
-    await db.collection('publishedStorySteps').doc(stepId).delete()
+    await db.collection('publicStorySteps').doc(stepId).delete()
 
     if (imageName) {
-      bucket.file(`published/${imageName}`).delete()
+      bucket.file(`public/${imageName}`).delete()
     }    
 
     return res.json({ stepId })

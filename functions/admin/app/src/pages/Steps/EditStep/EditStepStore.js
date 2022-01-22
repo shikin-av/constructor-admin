@@ -1,4 +1,5 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx'
+import _ from 'lodash'
 import moment from 'moment'
 import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS, FOLDERS, EMPTY_LANG_INPUTS } from '../../../constants'
 import { storage, ref, getDownloadURL, uploadBytes, deleteObject } from '../../../firebase'
@@ -15,11 +16,12 @@ class EditStepStore {
       this.modelsLoading = LOADING.NONE
       this.modelsError = null
 
-      this.allModelsCount = 0
+      this.allModelsCount = 0 // TODO: rename: all needPusblish models
       this.LIMIT = LIMITS.MODELS
       this.startAt = 0
       this.pageNumber = 1
       this.pageModels = []
+      this.allModels = [] // TODO: rename: all loaded models
     })
   }
 
@@ -73,13 +75,40 @@ class EditStepStore {
   parseModelsPageResponse = async (res) => {
     const parsed = await handleResponse(res)
 
-    console.log('load models', parsed.payload)
-
     runInAction(() => {
       this.modelsLoading = parsed.status
 
       if (this.modelsLoading === LOADING.SUCCESS) {
         this.pageModels = parsed.payload.models
+
+        for (const pageModel of toJS(this.pageModels)) {
+          const finded = _.find(toJS(this.allModels), { userId: pageModel.userId, modelId: pageModel.modelId })
+          if (!finded) {
+            this.allModels = [pageModel, ...toJS(this.allModels)]
+          }
+        }
+
+        if (this.pageNumber === 1) {
+          for (const selected of toJS(this.selectedModels)) {          
+            const pageFinded = _.find(toJS(this.pageModels), { userId: selected.userId, modelId: selected.modelId })
+            if (!pageFinded) {
+              this.pageModels = [selected, ...toJS(this.pageModels)]
+            }
+
+            const allFinded = _.find(toJS(this.allModels), { userId: selected.userId, modelId: selected.modelId })
+            if (!allFinded) {
+              this.allModels = [selected, ...toJS(this.allModels)]
+            }
+          }
+        } else {
+          for (const selected of toJS(this.selectedModels)) {
+            const pageFinded = _.find(toJS(this.pageModels), { userId: selected.userId, modelId: selected.modelId })
+            if (pageFinded) {
+              _.remove(this.pageModels, (model) => model.userId === selected.userId && model.modelId === selected.modelId)
+            }
+          }
+        }
+
         this.allModelsCount = parsed.payload.allModelsCount
         this.modelsError = null
       } else {
@@ -106,13 +135,13 @@ class EditStepStore {
 
   uploadImage = async (file) => {
     const fileName = this.getFileName(file)
-    const storageRef = ref(storage, `${FOLDERS.PUBLISHED}/${fileName}`)
+    const storageRef = ref(storage, `${FOLDERS.PUBLIC}/${fileName}`)
     await uploadBytes(storageRef, file)
   }
 
   removeImage = async (file) => {
     const fileName = this.getFileName(file)
-    const storageRef = ref(storage, `${FOLDERS.PUBLISHED}/${fileName}`)
+    const storageRef = ref(storage, `${FOLDERS.PUBLIC}/${fileName}`)
     try {
       deleteObject(storageRef)
       this.imageFile = null
@@ -158,7 +187,7 @@ class EditStepStore {
 
     console.log('save body', body)
 
-    await fetch(`${API_URL}/storySteps`, {
+    await fetch(`${API_URL}/publicStorySteps`, {
       method: 'POST',
       headers: { ...HEADERS, token},
       body: JSON.stringify(body)
@@ -186,7 +215,7 @@ class EditStepStore {
     const token = localStorage.getItem('token')
     this.stepLoading = LOADING.PROGRESS
 
-    await fetch(`${API_URL}/storySteps/${stepId}`, {
+    await fetch(`${API_URL}/publicStorySteps/${stepId}`, {
       method: 'GET',
       headers: { ...HEADERS, token},
     })
@@ -200,13 +229,11 @@ class EditStepStore {
     runInAction(() => {
       this.stepLoading = parsed.status
 
-      console.log('load step data', parsed.payload)
-
       if (this.stepLoading === LOADING.SUCCESS) {
         const { 
           stepId, 
           status, 
-          selectedModels, 
+          models, 
           specialDates, 
           imageName, 
           welcomeBonus, 
@@ -218,14 +245,13 @@ class EditStepStore {
         this.stepError = null
         this.stepId = stepId
         this.status = status
-        this.specialDates = specialDates
+        // this.specialDates = specialDates
         // this.imageFile = HANDLE imageName
         this.welcomeBonus = welcomeBonus
         this.finalBonus = finalBonus
-        this.titles = { ...EMPTY_LANG_INPUTS, titles }
-        this.descriptions = { ...EMPTY_LANG_INPUTS, descriptions }
-        // this.selectedModels = selectedModels
-        // TODO: selectedModels - первые в this.pageModels
+        this.titles = { ...EMPTY_LANG_INPUTS, ...titles }
+        this.descriptions = { ...EMPTY_LANG_INPUTS, ...descriptions }
+        this.selectedModels = models
       } else {
         this.stepError = parsed.error
       }

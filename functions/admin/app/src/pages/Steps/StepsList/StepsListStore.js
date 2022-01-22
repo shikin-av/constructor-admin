@@ -27,7 +27,7 @@ class StepsListStore {
     const token = localStorage.getItem('token')
     this.stepsLoading = LOADING.PROGRESS
 
-    await fetch(`${API_URL}/storySteps/${this.startAt}/${this.LIMIT}`, {
+    await fetch(`${API_URL}/publicStorySteps/${this.startAt}/${this.LIMIT}`, {
       method: 'GET',
       headers: { ...HEADERS, token},
     })
@@ -63,7 +63,7 @@ class StepsListStore {
     const token = localStorage.getItem('token')
     this.deleteloading = LOADING.PROGRESS
 
-    await fetch(`${API_URL}/storySteps/${stepId}`, {
+    await fetch(`${API_URL}/publicStorySteps/${stepId}`, {
       method: 'DELETE',
       headers: { ...HEADERS, token},
     })
@@ -94,7 +94,7 @@ class StepsListStore {
   }
 
   loadStepImage = async (imageName) => {
-    return await getDownloadURL(ref(storage, `${FOLDERS.PUBLISHED}/${imageName}`))
+    return await getDownloadURL(ref(storage, `${FOLDERS.PUBLIC}/${imageName}`))
   }
 
   getStepById = (stepId) => this.pageSteps.find(s => s.stepId === stepId)

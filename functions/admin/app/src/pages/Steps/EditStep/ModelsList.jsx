@@ -12,22 +12,6 @@ import Loader from '../../../components/Loader'
 import ModelCard from './ModelCard'
 
 const ModelsList =  observer(() => {
-  useEffect(() => {
-    store.resetModels()
-    store.loadModelsPage()
-  }, [])
-
-  useEffect(() => {
-    store.loadModelsPage()
-  }, [store.startAt])
-
-  useEffect(() => {
-    if (store.saveLoading === LOADING.SUCCESS) {
-      store.resetModels()
-      store.loadModelsPage()
-    }    
-  }, [store.saveLoading])
-
   return (
     <>
       {store.modelsLoading === LOADING.NONE && null}
