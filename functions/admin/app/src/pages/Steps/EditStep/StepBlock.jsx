@@ -173,12 +173,11 @@ const StepBlock =  observer(({ mode }) => {
               </Space>
             </div>
 
-            <div className="ipload-image">
-              <UploadImage
-                chooseImage={store.chooseImage}
-                removeImage={store.removeImage}                
-              />
-            </div>
+            <UploadImage
+              imageUrl={store.imageURL}
+              chooseImage={store.chooseImage}
+              removeImage={store.removeImage}                
+            />
 
             <DescriptionsBlock />
               
