@@ -1,7 +1,6 @@
 const express = require('express')
 const { db, bucket } = require('../../../firebase')
 const { error500 } = require('../utils/handleErrors')
-const { firebaseDate } = require('../utils/date')
 const isAuthorized = require('../auth/authorized')
 const { ROLES: { ADMIN, MANAGER } } = require('../auth/constants')
 
@@ -17,7 +16,7 @@ storyStepsRouter
   )
   .post('/',
     isAuthorized({ roles: [ADMIN, MANAGER] }),
-    create
+    save
   )
   .delete('/:stepId',
     isAuthorized({ roles: [ADMIN, MANAGER] }),
@@ -46,12 +45,20 @@ async function list(req, res) {
   }  
 }
 
-async function create(req, res) {
+async function save(req, res) {
   try {
     const { stepId, models, titles, descriptions, status, specialDates, imageName, updatedAt } = req.body
 
     if (!status) {
       return res.status(400).send({ message: 'doesn\'t have required params' })
+    }
+
+    const doc = await db.collection('publicStorySteps').doc(stepId).get()
+    if (doc.exists) {
+      const existStep = doc.data()
+      if (existStep.imageName !== imageName || imageName === null) {
+        bucket.file(`public/${existStep.imageName}`).delete()
+      }
     }
 
     await db.collection('publicStorySteps').doc(stepId).set({

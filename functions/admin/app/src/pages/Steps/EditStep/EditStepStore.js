@@ -38,6 +38,7 @@ class EditStepStore {
       this.selectedModels = []
       this.specialDates = null  // [moment, moment] or null
       this.imageFile = null
+      this.imageURL = null
       this.welcomeBonus = null  // TODO:
       this.finalBonus = null    // TODO:
       this.titles = EMPTY_LANG_INPUTS
@@ -58,6 +59,11 @@ class EditStepStore {
   }
   setDescriptions = (val, KEY) => {
     this.descriptions = { ...this.descriptions, [KEY]: val }
+  }
+  setImageURL = async (imageName) => {
+    runInAction(async () => {
+      this.imageURL = imageName ? await this.loadStepImageURL(imageName) : null
+    })
   }
 
   loadModelsPage = async () => {
@@ -119,43 +125,13 @@ class EditStepStore {
     })
   }
 
-  loadModelImage = async (userId, modelId) => {
-    return await getDownloadURL(ref(storage, `${userId}/${modelId}.png`))
-  }
-
-  getFileName = (file) => {
-    const fileExtension = file.name.split('.').pop()
-    return `${this.stepId}.${fileExtension}`
-  }
-
-  chooseImage = (val) => {
-    this.imageFile = val.file
-    val.onSuccess()
-  }
-
-  uploadImage = async (file) => {
-    const fileName = this.getFileName(file)
-    const storageRef = ref(storage, `${FOLDERS.PUBLIC}/${fileName}`)
-    await uploadBytes(storageRef, file)
-  }
-
-  removeImage = async (file) => {
-    const fileName = this.getFileName(file)
-    const storageRef = ref(storage, `${FOLDERS.PUBLIC}/${fileName}`)
-    try {
-      deleteObject(storageRef)
-      this.imageFile = null
-    } catch(err) {
-      console.error(err)
-    }
-  }
-
   saveStoryStep = async () => {
     let imageName = null
     if (this.imageFile) {
       try {
         await this.uploadImage(this.imageFile)
         imageName = this.getFileName(this.imageFile)
+        this.setImageURL(imageName)
       } catch(err) {
         console.error(err)
         // TODO: м.б. message.error()
@@ -226,10 +202,8 @@ class EditStepStore {
   parseLoadStoryStepResponse = async (res) => {
     const parsed = await handleResponse(res)
 
-    runInAction(() => {
-      this.stepLoading = parsed.status
-
-      if (this.stepLoading === LOADING.SUCCESS) {
+    runInAction(async () => {
+      if (parsed.status === LOADING.SUCCESS) {
         const { 
           stepId, 
           status, 
@@ -245,13 +219,19 @@ class EditStepStore {
         this.stepError = null
         this.stepId = stepId
         this.status = status
-        // this.specialDates = specialDates
-        // this.imageFile = HANDLE imageName
         this.welcomeBonus = welcomeBonus
         this.finalBonus = finalBonus
         this.titles = { ...EMPTY_LANG_INPUTS, ...titles }
         this.descriptions = { ...EMPTY_LANG_INPUTS, ...descriptions }
         this.selectedModels = models
+
+        if (Array.isArray(specialDates) && specialDates.length === 2) {
+          this.specialDates = [moment(specialDates[0]), moment(specialDates[1])]
+        }
+
+        this.setImageURL(imageName)
+        
+        this.stepLoading = parsed.status
       } else {
         this.stepError = parsed.error
       }
@@ -261,6 +241,46 @@ class EditStepStore {
   paginationChange = (page) => {
     this.startAt = getStartAt(page, this.LIMIT)
     this.pageNumber = getPageNumber(this.startAt, this.LIMIT)
+  }
+
+  loadModelImageURL = async (userId, modelId) => {
+    return await getDownloadURL(ref(storage, `${userId}/${modelId}.png`))
+  }
+
+  loadStepImageURL = async (imageName) => {
+    return await getDownloadURL(ref(storage, `/public/${imageName}`))
+  }
+
+  getFileName = (file) => {
+    const fileExtension = file.name.split('.').pop()
+    return `${this.stepId}.${fileExtension}`
+  }
+
+  chooseImage = (val) => {
+    this.imageFile = val.file
+    const imageName = this.getFileName(this.imageFile)
+    this.setImageURL(imageName)
+    val.onSuccess()
+  }
+
+  uploadImage = async (file) => {
+    const fileName = this.getFileName(file)
+    const storageRef = ref(storage, `${FOLDERS.PUBLIC}/${fileName}`)
+    await uploadBytes(storageRef, file)
+  }
+
+  removeImage = async (file) => {
+    // const fileName = this.getFileName(file)
+    // const storageRef = ref(storage, `${FOLDERS.PUBLIC}/${fileName}`)
+    // try {
+    //   deleteObject(storageRef)
+    //   this.imageFile = null
+    //   this.imageName = null
+    // } catch(err) {
+    //   console.error(err)
+    // }
+    this.imageFile = null
+    this.imageURL = null
   }
 
   getModelById = (modelId) => this.pageModels.find(m => m.modelId === modelId)

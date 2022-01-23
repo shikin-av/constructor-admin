@@ -17,7 +17,7 @@ const SelectedCard = observer(({ modelId }) => {
 
   const loadImage = useCallback(async () => {
     try {
-      const url = await store.loadModelImage(model.userId, modelId)
+      const url = await store.loadModelImageURL(model.userId, modelId)
       setImageUrl(url)
     } catch(err) {
       console.log(err)
