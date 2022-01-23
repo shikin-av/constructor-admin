@@ -13,7 +13,7 @@ const Home = () => {
   const [response, setResponse] = useState()
 
   const getServerData = useCallback(async () => {
-    await fetch(`${API_URL}/users`, {
+    await fetch(`${API_URL}/test`, {
       method: 'GET',
       headers: { ...HEADERS, token },
     })
@@ -32,19 +32,22 @@ const Home = () => {
   }, [getServerData])
 
   const renderContent = useCallback(() => {
-    const { users } = response.payload
+    // const { users } = response.payload
+
+    console.log(response.payload)
+
     return (
       <Layout menuItem={MENU_ITEMS.HOME}>
         <h1>
           <Lang text={i18n.HOME.TITLE} />
         </h1>
-        {users.map(user => (
+        {/* {users.map(user => (
           <div key={user.uid}>
             <p>{user.uid}</p>
             <p>{user.email}</p>
             <hr />
           </div>
-        ))}
+        ))} */}
       </Layout>
     )
   }, [response])
