@@ -13,14 +13,14 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.token.role == 'admin' || request.auth.token.role == 'manager';
     }
-    match /usersStorySteps/{userId} {
+    match /userStorySteps/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-		match /publicStoryStepModels/{modelId} {
+		match /publicStoryStepModels/{path=**} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.token.role == 'admin' || request.auth.token.role == 'manager';
     }
-    match /usersStoryStepModels/{userId} {
+    match /userStoryStepModels/{path=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
