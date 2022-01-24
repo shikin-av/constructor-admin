@@ -1,4 +1,5 @@
 const express = require('express')
+const _ = require('lodash')
 const { v4: uuidv4 } = require('uuid')
 const { db, bucket } = require('../../../firebase')
 const { error500 } = require('../utils/handleErrors')
@@ -91,7 +92,6 @@ async function create(req, res) {
     }
 
     return res.json({ stepId })
-
   } catch(err) {
     return error500(res, err)
   }
@@ -112,14 +112,44 @@ async function edit(req, res) {
 
     const oldStep = oldDoc.data()
     // Image
-    if (
-      oldStep.imageName &&
-      (oldStep.imageName !== imageName || imageName === null)
-    ) {  // TODO: проверить при изменении стэпа
+    if (oldStep.imageName && imageName === null) {
       await bucket.file(`public/${oldStep.imageName}`).delete()
     }
 
-    const newDoc = await db.collection('publicStorySteps').doc(stepId).set({
+    /*
+     * Обработка старых и новых моделей (и их изображений)
+    */
+    // общие (с ними ничего не делаем - они остаются)
+    const intersected = _.intersectionBy(oldStep.models, models, 'modelId')
+    // исключаем старые из новых
+    const onlyNew = models.filter(newModel => !oldStep.models.some(oldModel => oldModel.modelId === newModel.modelId))
+    // исключение общих из старых
+    const onlyOld = oldStep.models.filter(oldModel => !intersected.some(intModel => intModel.modelId === oldModel.modelId))
+
+    for await (const oldModel of onlyOld) {
+      try {
+        await db.collection(`publicStoryStepModels/${stepId}/models/`)
+          .doc(oldModel.modelId)
+          .delete()
+
+        await bucket.file(`public/${stepId}/${oldModel.modelId}.png`).delete()
+      } catch(err) {
+        console.error(err)
+      }
+    }
+    for await (const newModel of onlyNew) {      
+      const userModelDoc = await db.collection(`models/users/${newModel.userId}`).doc(newModel.modelId).get()      
+      // Copy model
+      await db.collection(`publicStoryStepModels/${stepId}/models/`)
+        .doc(newModel.modelId)
+        .set(userModelDoc.data())
+
+      // Copy model image
+      await bucket.file(`${newModel.userId}/${newModel.modelId}.png`)
+        .copy(`public/${stepId}/${newModel.modelId}.png`)
+    }
+
+    await db.collection('publicStorySteps').doc(stepId).set({
       stepId,
       titles,
       descriptions,
@@ -130,21 +160,8 @@ async function edit(req, res) {
       updatedAt,
       usedByUser: false,
     })
-    const newStep = newDoc.data()
 
-    // TODO: HANDLE MODELS
-    // for await (const oldStepModel of oldStep.models) {
-      
-    // }
-    
-    // TOOD: REMOVE
-    return res.json({ oldModels: oldStep.models, newModels: newDoc.models })
-
-
-    // TODO: HANDLE  MODEL IMAGES
-    // TODO: HANDLE IMAGE CHANGE
-
-
+    return res.json({ stepId })
   } catch(err) {
     return error500(res, err)
   }

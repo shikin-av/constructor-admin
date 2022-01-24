@@ -181,7 +181,7 @@ class EditStepStore {
   }
 
   parseSaveStepResponse = async (res) => {
-    const parsed = await handleResponse(res)    
+    const parsed = await handleResponse(res)
 
     runInAction(() => {
       this.saveLoading = parsed.status
