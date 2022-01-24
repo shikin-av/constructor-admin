@@ -187,7 +187,7 @@ const StepBlock =  observer(({ mode }) => {
                 htmlType="submit"
                 disabled={disableSubmit}
                 loading={store.saveLoading === LOADING.PROGRESS}
-                onClick={store.saveStoryStep}
+                onClick={() => store.saveStoryStep(mode)}
               >
                 <Lang text={i18n.EDIT_STEP.FORM.SAVE_STEP_BUTTON} />
               </Button>

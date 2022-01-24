@@ -16,7 +16,11 @@ storyStepsRouter
   )
   .post('/',
     isAuthorized({ roles: [ADMIN, MANAGER] }),
-    save
+    create
+  )
+  .post('/:stepId',
+    isAuthorized({ roles: [ADMIN, MANAGER] }),
+    edit
   )
   .delete('/:stepId',
     isAuthorized({ roles: [ADMIN, MANAGER] }),
@@ -45,20 +49,12 @@ async function list(req, res) {
   }  
 }
 
-async function save(req, res) {
+async function create(req, res) {
   try {
-    const { stepId, models, titles, descriptions, status, specialDates, imageName, updatedAt } = req.body
+    let { stepId, models, titles, descriptions, status, specialDates, imageName, updatedAt } = req.body
 
     if (!status) {
       return res.status(400).send({ message: 'doesn\'t have required params' })
-    }
-
-    const doc = await db.collection('publicStorySteps').doc(stepId).get()
-    if (doc.exists) {
-      const existStep = doc.data()
-      if (existStep.imageName !== imageName || imageName === null) {
-        bucket.file(`public/${existStep.imageName}`).delete()
-      }
     }
 
     await db.collection('publicStorySteps').doc(stepId).set({
@@ -73,7 +69,59 @@ async function save(req, res) {
       usedByUser: false,
     })
 
-    res.json({ stepId })
+    // Models
+    for await (const model of models) {
+      const userModelDoc = await db.collection(`models/users/${model.userId}`).doc(model.modelId).get()
+      if (!userModelDoc.exists) {
+        models = models.filter(m => m.modelId === model.modelId)
+        continue
+      } else {
+        // Copy model
+        await db.collection(`publicStoryStepModels/${stepId}/models/`)
+          .doc(model.modelId)
+          .set(userModelDoc.data())
+
+        // Copy model image
+        await bucket.file(`${model.userId}/${model.modelId}.png`)
+          .copy(`public/${stepId}/${model.modelId}.png`)
+      }
+    }
+
+    return res.json({ stepId })
+
+  } catch(err) {
+    return error500(res, err)
+  }
+}
+
+async function edit(req, res) {
+  try {
+    let { stepId, models, titles, descriptions, status, specialDates, imageName, updatedAt } = req.body
+
+    if (!status) {
+      return res.status(400).send({ message: 'doesn\'t have required params' })
+    }
+
+    const doc = await db.collection('publicStorySteps').doc(stepId).get()    
+    const step = doc.data()
+    // Image
+    if (step.imageName !== imageName || imageName === null) {  // TODO: проверить при изменении стэпа
+      await bucket.file(`public/${step.imageName}`).delete()
+    }
+
+    // TODO: HANDLE MODELS
+
+    await db.collection('publicStorySteps').doc(stepId).set({
+      stepId,
+      titles,
+      descriptions,
+      status,
+      specialDates,
+      imageName,
+      models,
+      updatedAt,
+      usedByUser: false,
+    })
 
   } catch(err) {
     return error500(res, err)
@@ -119,11 +167,17 @@ async function remove(req, res) {
       return res.status(400).send({ message: `It is not possible to delete a step that is used by players! ${stepId}` })
     }
 
+    // Delete models and images of them
+    for await (const model of step.models) {
+      await db.collection(`publicStoryStepModels/${stepId}/models/`).doc(model.modelId).delete()
+      await bucket.file(`public/${stepId}/${model.modelId}.png`).delete()
+    }
+
     await db.collection('publicStorySteps').doc(stepId).delete()
 
     if (imageName) {
-      bucket.file(`public/${imageName}`).delete()
-    }    
+      await bucket.file(`public/${imageName}`).delete()
+    }
 
     return res.json({ stepId })
   } catch(err) {
