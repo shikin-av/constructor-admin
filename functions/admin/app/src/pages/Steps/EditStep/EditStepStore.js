@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx'
 import _ from 'lodash'
 import moment from 'moment'
-import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS, FOLDERS, EMPTY_LANG_INPUTS } from '../../../constants'
+import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS, FOLDERS, EMPTY_LANG_INPUTS, MODES } from '../../../constants'
 import { storage, ref, getDownloadURL, uploadBytes, deleteObject } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
 
@@ -125,7 +125,7 @@ class EditStepStore {
     })
   }
 
-  saveStoryStep = async () => {
+  saveStoryStep = async (mode) => {
     let imageName = null
     if (this.imageFile) {
       try {
@@ -163,7 +163,11 @@ class EditStepStore {
 
     console.log('save body', body)
 
-    await fetch(`${API_URL}/publicStorySteps`, {
+    const url = mode === MODES.CREATE
+      ? `${API_URL}/publicStorySteps`
+      : `${API_URL}/publicStorySteps/${this.stepId}`
+
+    await fetch(url, {
       method: 'POST',
       headers: { ...HEADERS, token},
       body: JSON.stringify(body)
