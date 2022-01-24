@@ -234,6 +234,7 @@ code {
   align-items: center;
   justify-content: center;
   background: rgba(190, 190, 190, 0.2);
+  padding: 0px 20px;
 }
 
 .link {
@@ -272,4 +273,8 @@ code {
 
 .lang-inputs-column {
   height: 100%;
+}
+
+.steps-list .ant-tag {
+  padding: 50px;
 }

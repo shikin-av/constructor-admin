@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useContext }  from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Pagination, Divider, Table, Tag, Row, Popconfirm, Tooltip, message } from 'antd'
+import { Pagination, Divider, Table, Tag, Row, Popconfirm, Tooltip, message, Typography } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { observer } from 'mobx-react-lite'
 import { stepsListStore as store } from './StepsListStore'
@@ -16,6 +16,7 @@ import Unauthorized from '../../../components/Unauthorized'
 import Error from '../../../components/Error'
 import Loader from '../../../components/Loader'
 import StepImage from './StepImage'
+const { Title } = Typography
 
 const StepsListPage =  observer(() => {
   const navigate = useNavigate()
@@ -146,7 +147,11 @@ const StepsListPage =  observer(() => {
       title: i18n.STEPS_LIST.COLUMNS.MODELS_COUNT[lang],
       dataIndex: 'models',
       key: 'models',
-      render: (models) => <span className="bold">{models.length}</span>
+      render: (models) => (
+        <div className="full-center">
+          <Title level={3}>{models.length}</Title>
+        </div>
+      )
     },
     {
       title: i18n.STEPS_LIST.COLUMNS.TITLE[lang],
