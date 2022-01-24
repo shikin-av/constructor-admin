@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router'
 import { useNavigate } from 'react-router-dom'
 import _ from 'lodash'
-import { v4 as uuidv4 } from 'uuid'
 import { Divider, Select, Button, DatePicker, Space, message } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { toJS } from 'mobx'
@@ -27,31 +26,22 @@ const StepBlock =  observer(({ mode }) => {
   const { stepId: navStepId } = useParams()
 
   useEffect(async () => {
-    store.resetStep()
-    store.resetModels()
-
-    if (mode === MODES.CREATE) {
-      store.setStepId(uuidv4())
+    if (store.saveLoading === null) {
+      store.resetStep()
       store.resetModels()
-      store.loadModelsPage()
-    } else if (mode === MODES.EDIT && navStepId) {
-      store.setStepId(navStepId)
-      await store.loadStoryStep(navStepId)
-      await store.loadModelsPage()
-      
-    }
-  }, [mode, navStepId, store.saveLoading])
 
-  useEffect(() => {
-    store.loadModelsPage()
-  }, [store.startAt])
-
-  useEffect(() => {
-    if (store.saveLoading === LOADING.SUCCESS) {
+      if (mode === MODES.CREATE) {
+        store.resetModels()
+        store.loadModelsPage()
+      } else if (mode === MODES.EDIT && navStepId) {
+        store.setStepId(navStepId)
+        await store.loadStoryStep(navStepId)
+        await store.loadModelsPage()      
+      }
+    } else if (store.saveLoading === LOADING.SUCCESS) {
       message.success(i18n.EDIT_STEP.MESSAGES.SAVE_SUCCESS[lang])
-
       const id = store.stepId + ''
-      console.log('ID', id)
+
       store.resetStep()
       store.resetModels()
       navigate(`/steps/${id || ''}`)
@@ -59,7 +49,11 @@ const StepBlock =  observer(({ mode }) => {
     } else if (store.saveLoading === LOADING.ERROR) {
       message.error(store.saveError || i18n.EDIT_STEP.MESSAGES.SAVE_ERROR[lang])
     }
-  }, [store.saveLoading])
+  }, [mode, navStepId, store.saveLoading])
+
+  useEffect(() => {
+    store.loadModelsPage()
+  }, [store.startAt])
 
   const disableSubmit = store.selectedModels.length === 0
 
@@ -187,7 +181,7 @@ const StepBlock =  observer(({ mode }) => {
                 htmlType="submit"
                 disabled={disableSubmit}
                 loading={store.saveLoading === LOADING.PROGRESS}
-                onClick={() => store.saveStoryStep(mode)}
+                onClick={() => store.saveStoryStep({ mode, stepId: navStepId })}
               >
                 <Lang text={i18n.EDIT_STEP.FORM.SAVE_STEP_BUTTON} />
               </Button>

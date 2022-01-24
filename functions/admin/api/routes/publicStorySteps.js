@@ -1,4 +1,5 @@
 const express = require('express')
+const { v4: uuidv4 } = require('uuid')
 const { db, bucket } = require('../../../firebase')
 const { error500 } = require('../utils/handleErrors')
 const isAuthorized = require('../auth/authorized')
@@ -57,6 +58,8 @@ async function create(req, res) {
       return res.status(400).send({ message: 'doesn\'t have required params' })
     }
 
+    stepId = stepId || uuidv4()
+    
     await db.collection('publicStorySteps').doc(stepId).set({
       stepId,
       titles,
@@ -102,16 +105,21 @@ async function edit(req, res) {
       return res.status(400).send({ message: 'doesn\'t have required params' })
     }
 
-    const doc = await db.collection('publicStorySteps').doc(stepId).get()    
-    const step = doc.data()
-    // Image
-    if (step.imageName !== imageName || imageName === null) {  // TODO: проверить при изменении стэпа
-      await bucket.file(`public/${step.imageName}`).delete()
+    const oldDoc = await db.collection('publicStorySteps').doc(stepId).get()
+    if (!oldDoc.exists) {
+      res.status(400).send({ message: `doesn\'t have publicStorySteps doc ${stepId}` })
     }
 
-    // TODO: HANDLE MODELS
+    const oldStep = oldDoc.data()
+    // Image
+    if (
+      oldStep.imageName &&
+      (oldStep.imageName !== imageName || imageName === null)
+    ) {  // TODO: проверить при изменении стэпа
+      await bucket.file(`public/${oldStep.imageName}`).delete()
+    }
 
-    await db.collection('publicStorySteps').doc(stepId).set({
+    const newDoc = await db.collection('publicStorySteps').doc(stepId).set({
       stepId,
       titles,
       descriptions,
@@ -122,6 +130,20 @@ async function edit(req, res) {
       updatedAt,
       usedByUser: false,
     })
+    const newStep = newDoc.data()
+
+    // TODO: HANDLE MODELS
+    // for await (const oldStepModel of oldStep.models) {
+      
+    // }
+    
+    // TOOD: REMOVE
+    return res.json({ oldModels: oldStep.models, newModels: newDoc.models })
+
+
+    // TODO: HANDLE  MODEL IMAGES
+    // TODO: HANDLE IMAGE CHANGE
+
 
   } catch(err) {
     return error500(res, err)
@@ -141,7 +163,7 @@ async function load(req, res) {
       return res.status(400).send({ message: `No such document! ${id}` })
     }
 
-    res.json(doc.data())
+    return res.json(doc.data())
   } catch(err) {
     return error500(res, err)
   }
@@ -170,7 +192,13 @@ async function remove(req, res) {
     // Delete models and images of them
     for await (const model of step.models) {
       await db.collection(`publicStoryStepModels/${stepId}/models/`).doc(model.modelId).delete()
-      await bucket.file(`public/${stepId}/${model.modelId}.png`).delete()
+
+      try {
+        const image = await bucket.file(`public/${stepId}/${model.modelId}.png`)
+        image && await image.delete()
+      } catch(err) {
+        console.error(`cannot delete image ${stepId}/${model.modelId}.png`, err.message)
+      }      
     }
 
     await db.collection('publicStorySteps').doc(stepId).delete()

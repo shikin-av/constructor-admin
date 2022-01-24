@@ -5,7 +5,7 @@ export const handleResponse = async (res) => {
   if (status) {
     if (status >= 200 && status <= 299) {
       try {
-        const payload = await res.json()
+        const payload = await res.json()        
         return {
           status: LOADING.SUCCESS,
           payload,
