@@ -35,12 +35,22 @@ const loadStoryPage = async(data, context) => {
       } else {
         // create step
         const firstUserStep = await createUserStoryStep({ userId })
-        return Promise.resolve({ steps: [firstUserStep] })
+
+        return Promise.resolve({ steps: [firstUserStep] }) // TODO: stringify
       }      
     } else if (type === TYPE.NEXT) {
+      let userSteps = []
+      const userStepsCollection = await db.collection(`userStorySteps/${userId}/steps`).get()
+      if (!userStepsCollection.exists) {
+        await db.collection('userStorySteps').doc(userId).set({ steps: [] })
+      } else {
+        userSteps = userStepsCollection.docs.map(doc => doc.data())
+      }
+
       // create step
-      const newUserStep = await createUserStoryStep({ userId })
-      return Promise.resolve({ steps: [newUserStep] })
+      const newUserStep = await createUserStoryStep({ userId, userSteps })
+
+      return Promise.resolve({ steps: [newUserStep] }) // TODO: stringify
     } else if (type === TYPE.PREVIOUS) {
       // TODO:
     }
@@ -58,18 +68,12 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
   let publicSteps = publicStepsCollection.docs.map(doc => doc.data())
 
   // исключаем степы юзера, чтоб степ не попался 2й раз
-  const userStepsCollection = await db.collection(`userStorySteps/${userId}/steps`).get()
-  if (!userStepsCollection.exists) {
-    await db.collection('userStorySteps').doc(userId).set({ steps: [] })
-  } else {
-    const userSteps = userStepsCollection.docs.map(doc => doc.data())
-    if (userSteps.length) {
-      publicSteps = publicSteps.filter(publicStep => {
-        const inUserSteps = _.find(userSteps, { stepId: publicStep.stepId })
-        return !inUserSteps
-      })
-    }
-  }  
+  if (userSteps.length) {
+    publicSteps = publicSteps.filter(publicStep => {
+      const inUserSteps = _.find(userSteps, { stepId: publicStep.stepId })
+      return !inUserSteps
+    })
+  }
 
   const randomStep = publicSteps[Math.floor(Math.random() * publicSteps.length)]
 
