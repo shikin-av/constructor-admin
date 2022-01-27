@@ -13,10 +13,12 @@ const Home = () => {
   const [response, setResponse] = useState()
 
   const getServerData = useCallback(async () => {
-    setResponse({
-      status: LOADING.SUCCESS
-    })
-    return null
+    // TODO: удалить заглушку
+    // setResponse({
+    //   status: LOADING.SUCCESS
+    // })
+    // return null
+
 
     await fetch(`${API_URL}/test`, {
       method: 'GET',
