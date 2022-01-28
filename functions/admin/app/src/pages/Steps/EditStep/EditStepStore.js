@@ -4,7 +4,6 @@ import moment from 'moment'
 import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS, FOLDERS, EMPTY_LANG_INPUTS, MODES } from '../../../constants'
 import { storage, ref, getDownloadURL, uploadBytes, deleteObject } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
-import { loadStepImageURL, fixWrongImageURL } from '../../../utils/steps'
 
 class EditStepStore {
   constructor() {
@@ -63,7 +62,7 @@ class EditStepStore {
   }
   setImageURL = async (imageName) => {
     runInAction(async () => {
-      this.imageURL = await loadStepImageURL(imageName) 
+      this.imageURL = imageName ? await this.loadStepImageURL(imageName) : null
     })
   }
 
@@ -142,7 +141,8 @@ class EditStepStore {
         // TODO: м.б. message.error()
       }
     } else if (this.imageURL) {
-      imageName = fixWrongImageURL(this.imageURL)
+      console.log('this.imageURL', this.imageURL)
+      imageName = this.imageURL
     }
 
     const redusedTitles = toJS(this.titles)
@@ -263,6 +263,10 @@ class EditStepStore {
       ? `public/${stepId}/${modelId}.png`
       : `${userId}/${modelId}.png`
     ))
+  }
+
+  loadStepImageURL = async (imageName) => {
+    return await getDownloadURL(ref(storage, `/public/${imageName}`))
   }
 
   getFileName = (file) => {

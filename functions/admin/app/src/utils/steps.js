@@ -10,20 +10,3 @@ export const getStatusColor = (status) => {
     default: return 'orange'
   }
 }
-
-export const loadStepImageURL = async (imageName) => {
-  const fixedImageName = fixWrongImageURL(imageName)
-  return await getDownloadURL(ref(storage, `/${FOLDERS.PUBLIC}/${fixedImageName}`))
-}
-
-export const fixWrongImageURL = (imageName) => {
-  if (!imageName) {
-    return null
-  } else {
-    const isURL = imageName.indexOf('https://firebasestorage') !== -1
-
-    return isURL 
-      ? imageName.split('%3F')[0]  // without query params
-      : imageName
-  }
-}
