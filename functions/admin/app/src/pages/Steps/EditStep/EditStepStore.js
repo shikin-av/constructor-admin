@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction, toJS } from 'mobx'
 import _ from 'lodash'
 import moment from 'moment'
 import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS, FOLDERS, EMPTY_LANG_INPUTS, MODES } from '../../../constants'
-import { storage, ref, getDownloadURL, uploadBytes, deleteObject } from '../../../firebase'
+import { storage, ref, getDownloadURL, uploadBytes } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
 
 class EditStepStore {
@@ -125,11 +125,14 @@ class EditStepStore {
     })
   }
 
+  extractImageNameFromURL = (url) => (url.split('%2F')[1]).split('?alt')[0]
+
   saveStoryStep = async ({ mode, stepId }) => {
     this.stepId = stepId
 
     let imageName = null
-    if (this.imageFile) {
+
+    if (this.imageFile) {  // был выбран файл в браузере
       try {
         await this.uploadImage(this.imageFile)
         imageName = this.getFileName(this.imageFile)
@@ -140,9 +143,8 @@ class EditStepStore {
         this.imageFile = null
         // TODO: м.б. message.error()
       }
-    } else if (this.imageURL) {
-      console.log('this.imageURL', this.imageURL)
-      imageName = this.imageURL
+    } else if (this.imageURL) {  // loaded step => (в браузере файл не выбран, но есть step.imageName)
+      imageName = this.extractImageNameFromURL(this.imageURL)
     }
 
     const redusedTitles = toJS(this.titles)
