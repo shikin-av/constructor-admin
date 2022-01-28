@@ -17,12 +17,12 @@ const SelectedCard = observer(({ modelId }) => {
 
   const loadImage = useCallback(async () => {
     try {
-      const url = await store.loadModelImageURL(model.userId, modelId)
+      const url = await store.loadModelImageURL(model)
       setImageUrl(url)
     } catch(err) {
       console.log(err)
     }
-  }, [model, modelId])
+  }, [model])
 
   const onImageLoad = () => {
     setImageLoaded(true)
