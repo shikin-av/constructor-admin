@@ -12,6 +12,11 @@ export const getStatusColor = (status) => {
 }
 
 export const loadStepImageURL = async (imageName) => {
+  const fixedImageName = fixWrongImageURL(imageName)
+  return await getDownloadURL(ref(storage, `/${FOLDERS.PUBLIC}/${fixedImageName}`))
+}
+
+export const fixWrongImageURL = (imageName) => {
   if (!imageName) {
     return null
   } else {
@@ -19,6 +24,6 @@ export const loadStepImageURL = async (imageName) => {
 
     return isURL 
       ? imageName.split('%3F')[0]  // without query params
-      : await getDownloadURL(ref(storage, `/${FOLDERS.PUBLIC}/${imageName}`))
+      : imageName
   }
 }
