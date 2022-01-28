@@ -4,6 +4,7 @@ import moment from 'moment'
 import { LOADING, API_URL, HEADERS, STEP_STATUS, LIMITS, FOLDERS, EMPTY_LANG_INPUTS, MODES } from '../../../constants'
 import { storage, ref, getDownloadURL, uploadBytes, deleteObject } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
+import { loadStepImageURL } from '../../../utils/steps'
 
 class EditStepStore {
   constructor() {
@@ -62,7 +63,7 @@ class EditStepStore {
   }
   setImageURL = async (imageName) => {
     runInAction(async () => {
-      this.imageURL = imageName ? await this.loadStepImageURL(imageName) : null
+      this.imageURL = await loadStepImageURL(imageName) 
     })
   }
 
@@ -140,6 +141,8 @@ class EditStepStore {
         this.imageFile = null
         // TODO: м.б. message.error()
       }
+    } else if (this.imageURL) {
+      imageName = this.imageURL // TODO: ПРИВЕСТИ К НОРМ ВИДУ !!!!!!!!!!!!
     }
 
     const redusedTitles = toJS(this.titles)
@@ -210,6 +213,8 @@ class EditStepStore {
   parseLoadStoryStepResponse = async (res) => {
     const parsed = await handleResponse(res)
 
+    console.log('LOAD STEP', parsed)
+
     runInAction(async () => {
       if (parsed.status === LOADING.SUCCESS) {
         const { 
@@ -231,7 +236,7 @@ class EditStepStore {
         this.finalBonus = finalBonus
         this.titles = { ...EMPTY_LANG_INPUTS, ...titles }
         this.descriptions = { ...EMPTY_LANG_INPUTS, ...descriptions }
-        this.selectedModels = models
+        this.selectedModels = models.map(model => ({ ...model, stepId }))
 
         if (Array.isArray(specialDates) && specialDates.length === 2) {
           this.specialDates = [moment(specialDates[0]), moment(specialDates[1])]
@@ -251,12 +256,13 @@ class EditStepStore {
     this.pageNumber = getPageNumber(this.startAt, this.LIMIT)
   }
 
-  loadModelImageURL = async (userId, modelId) => {
-    return await getDownloadURL(ref(storage, `${userId}/${modelId}.png`))
-  }
+  loadModelImageURL = async (model) => {
+    const { modelId, userId, stepId } = model
 
-  loadStepImageURL = async (imageName) => {
-    return await getDownloadURL(ref(storage, `/public/${imageName}`))
+    return await getDownloadURL(ref(storage, stepId
+      ? `public/${stepId}/${modelId}.png`
+      : `${userId}/${modelId}.png`
+    ))
   }
 
   getFileName = (file) => {

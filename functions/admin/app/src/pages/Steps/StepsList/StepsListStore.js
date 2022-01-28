@@ -1,6 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { LOADING, API_URL, HEADERS, LIMITS, FOLDERS, EMPTY_LANG_INPUTS } from '../../../constants'
-import { storage, ref, getDownloadURL } from '../../../firebase'
 import { handleResponse, getStartAt, getPageNumber } from '../../../utils/response'
 
 class StepsListStore {
@@ -91,10 +90,6 @@ class StepsListStore {
   paginationChange = (page) => {
     this.startAt = getStartAt(page, this.LIMIT)
     this.pageNumber = getPageNumber(this.startAt, this.LIMIT)
-  }
-
-  loadStepImage = async (imageName) => {
-    return await getDownloadURL(ref(storage, `${FOLDERS.PUBLIC}/${imageName}`))
   }
 
   getStepById = (stepId) => this.pageSteps.find(s => s.stepId === stepId)

@@ -12,7 +12,7 @@ async function test(req, res) {
     currentStepId: '',
   }
   const context = {
-    auth: { uid: '' }
+    auth: { uid: 'BCdWxCkMydN1qzGHursTY8SL5vz2' }
   }
   const stories = await loadStoryPage(data, context)
   return res.json(stories)
