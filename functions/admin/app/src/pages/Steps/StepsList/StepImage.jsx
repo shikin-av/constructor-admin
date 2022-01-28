@@ -1,22 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Skeleton, Empty } from 'antd'
+import { observer } from 'mobx-react-lite'
+import { stepsListStore as store } from './StepsListStore'
 import i18n from '../../../components/Lang/i18n'
 import Lang from '../../../components/Lang/Lang'
-import { loadStepImageURL } from '../../../utils/steps'
 
 const IMAGE_STYLE = {
   width: 300,
   height: 300,
 }
 
-const StepImage = ({ imageName }) => {
+const StepImage = observer(({ imageName }) => {
   const [imageUrl, setImageUrl] = useState()
   const [imageLoaded, setImageLoaded] = useState(false)
 
   const loadImage = useCallback(async () => {
     try {
-      const url = await loadStepImageURL(imageName)
+      const url = await store.loadStepImageURL(imageName)
       setImageUrl(url)
     } catch(err) {
       console.log(err)
@@ -67,6 +68,6 @@ const StepImage = ({ imageName }) => {
       }
     </div>
   )
-}
+})
 
 export default StepImage

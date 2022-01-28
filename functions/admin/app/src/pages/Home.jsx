@@ -14,10 +14,10 @@ const Home = () => {
 
   const getServerData = useCallback(async () => {
     // TODO: удалить заглушку
-    // setResponse({
-    //   status: LOADING.SUCCESS
-    // })
-    // return null
+    setResponse({
+      status: LOADING.SUCCESS
+    })
+    return null
 
 
     await fetch(`${API_URL}/test`, {
