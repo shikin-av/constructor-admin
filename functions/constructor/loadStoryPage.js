@@ -15,7 +15,7 @@ const LIMIT_NEED_PUBLISH_MODELS = 1000
 const loadStoryPage = async(data, context) => {
   const { 
     type,
-    currentStepId,
+    currentStepId,  // текущий в игре (не last), чтоб подгружать previous
   } = data
   const userId = context.auth.uid
 
