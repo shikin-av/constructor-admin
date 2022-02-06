@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect }  from 'react'
+import React from 'react'
 import { Pagination, Divider } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { editStepStore as store } from './EditStepStore'
