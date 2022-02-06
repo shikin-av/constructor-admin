@@ -1,5 +1,4 @@
-import { storage, ref, getDownloadURL } from '../firebase'
-import { STEP_STATUS, FOLDERS } from '../constants'
+import { STEP_STATUS } from '../constants'
 
 export const getStatusColor = (status) => {
   const { WAIT_APPROVE, APPROVED, CLOSED } = STEP_STATUS

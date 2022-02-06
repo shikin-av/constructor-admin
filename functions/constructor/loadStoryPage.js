@@ -1,5 +1,6 @@
 const _ = require('lodash')
-const { functions, db } = require('../firebase')
+const { v4: uuidv4 } = require('uuid')
+const { functions, db, bucket } = require('../firebase')
 
 const TYPE = {
   LAST: 'last',
@@ -7,13 +8,14 @@ const TYPE = {
   PREVIOUS: 'previous',
 }
 
+const LIMIT_NEED_PUBLISH_MODELS = 1000
+
 // TODO: ВЕРНУТЬ
 // const loadStoryPage = functions.https.onCall(async (data, context) => {
 const loadStoryPage = async(data, context) => {
-
   const { 
     type,
-    currentStepId,  // текущий в игре (не last), чтоб подгружать previous
+    currentStepId,
   } = data
   const userId = context.auth.uid
 
@@ -22,40 +24,64 @@ const loadStoryPage = async(data, context) => {
 
   try {
     if (type === TYPE.LAST) {
-      const last2stepsCollection = await db.collection(`userStorySteps/${userId}/steps`)
+      const last_2_stepsCollection = await db.collection(`userStorySteps/${userId}/steps`)
         .limit(2)
         .get()
 
-      const last2steps = last2stepsCollection.docs
+      const last_2_steps = last_2_stepsCollection.docs
         .map(doc => doc.data())
         .sort((a, b) => a.order - b.order)
 
-      if (last2steps.length) {
-        return Promise.resolve({ steps: last2steps }) // TODO: stringify
+      if (last_2_steps.length) {
+        return Promise.resolve({ steps: last_2_steps, type }) // TODO: stringify
       } else {
         // create step
         const firstUserStep = await createUserStoryStep({ userId })
 
-        return Promise.resolve({ steps: [firstUserStep] }) // TODO: stringify
-      }      
+        return Promise.resolve({ steps: [firstUserStep], type }) // TODO: stringify
+      }
+
     } else if (type === TYPE.NEXT) {
-      let userSteps = []
-      const userStepsCollection = await db.collection(`userStorySteps/${userId}/steps`).get()
-      if (!userStepsCollection.exists) {
+      const userSteps = await db.collection(`userStorySteps/${userId}/steps`)
+        .get()
+        .then(snap => {
+          const steps = []
+          snap.forEach(doc => {
+            steps.push(doc.data())
+          })
+
+          return steps
+        })
+        .catch((err) => {
+          console.log('ERROR', err)
+          return Promise.reject(err)
+        })
+
+      if (!userSteps.length) {
         await db.collection('userStorySteps').doc(userId).set({ steps: [] })
-      } else {
-        userSteps = userStepsCollection.docs.map(doc => doc.data())
       }
 
       // create step
       const newUserStep = await createUserStoryStep({ userId, userSteps })
 
-      return Promise.resolve({ steps: [newUserStep] }) // TODO: stringify
+      return Promise.resolve({ steps: [newUserStep], type }) // TODO: stringify
+
     } else if (type === TYPE.PREVIOUS) {
-      // TODO:
+      if (!currentStepId) {
+        return Promise.reject(new Error('Doesn\'t have currentStepId'))
+      }
+
+      const currentStep = await db.collection(`userStorySteps/${userId}/steps`).doc(currentStepId)
+
+      const previous_2_Steps = await db.collection(`userStorySteps/${userId}/steps`)
+        .orderBy('updatedAt', 'desc')
+        .startAfter(currentStep)
+        .limit(2)
+
+      return Promise.resolve({ steps: previous_2_Steps, type }) // TODO: stringify
     }
   } catch (err) {
-    return Promise.reject(new Error(`can't load story page with userId:${userId} - ${JSON.stringify(err)}`))
+    return Promise.reject(new Error(`can't load story page with userId:${userId} - ${err}`))
   }
 // })
 }
@@ -73,15 +99,58 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
       const inUserSteps = _.find(userSteps, { stepId: publicStep.stepId })
       return !inUserSteps
     })
+  } else {
+
   }
 
-  const randomStep = publicSteps[Math.floor(Math.random() * publicSteps.length)]
+  let randomStepWasCreated = false
+  let randomStep = userSteps.length 
+    ? publicSteps[Math.floor(Math.random() * publicSteps.length)]
+    : null
 
-  if (!randomStep) {
-    throw new Error(`Can't find random step`)
+  if (!randomStep) {  // Редкий кейс, если юзер выполнил все все стори степы
+    // Create Step from random Models:
+    const needPublishModelsCollection = await db.collection('needPublish')
+      // .where('status', '==', 'approved')  // TODO: ПРИКРУТИТЬ STATUS к моделям в 'needPublish'
+      .limit(LIMIT_NEED_PUBLISH_MODELS)
+      .get()
+
+    const needPublishModels = needPublishModelsCollection.docs.map(doc => doc.data())
+
+    const random_5_Models = []
+    for (let i = 0; i < 5; i++) {
+      random_5_Models[i] = needPublishModels[Math.floor(Math.random() * needPublishModels.length)]
+    }
+
+    const stepId = uuidv4()
+
+    randomStepWasCreated = true
+
+    randomStep = {
+      stepId,
+      titles: {},
+      descriptions: {},
+      imageName: null,
+      models: random_5_Models,
+      specialDates: null,
+      status: "approved",
+      updatedAt: new Date().getTime(),
+      usedByUser: true,
+    }
+
+    // Copy model image
+    for await (const model of random_5_Models) {
+      await bucket.file(`${model.userId}/${model.modelId}.png`)
+        .copy(`public/${stepId}/${model.modelId}.png`)
+    }
+  } else {
+    if (!randomStep.usedByUser) {
+      await db.collection('publicStorySteps').doc(randomStep.stepId).set({ ...randomStep, usedByUser: true })
+    }
   }
 
   const userStepDoc = await db.collection('userStorySteps').doc(userId).get()
+
   if (!userStepDoc.exists) {
     await db.collection('userStorySteps').doc(userId).set({})
   }
@@ -92,20 +161,21 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
     .doc(randomStep.stepId)
     .set(randomStep)
 
-  const userStepModelsDoc = await db.collection('userStoryStepModels').doc(userId).get()
-  if (!userStepModelsDoc.exists) {
-    await db.collection('userStoryStepModels').doc(userId).set({})
-  }
-
   for await (const model of randomStep.models) {
-    const stepModelDoc = await db.collection(`publicStoryStepModels/${randomStep.stepId}/models`).doc(model.modelId).get()
-    if (!stepModelDoc.exists) {
-      throw new Error(`Step model doc not exists: publicStoryStepModels/${randomStep.stepId}/models/${model.modelId}`)
-    }
+    const modelDoc = randomStepWasCreated
+      // Редкий кейс, если юзер выполнил все все стори степы
+      ? await db.collection(`models/users/${model.userId}`).doc(model.modelId).get()
+      // Обычный кейс
+      : await db.collection(`publicStoryStepModels/${randomStep.stepId}/models`).doc(model.modelId).get()
 
-    await db.collection(`userStoryStepModels/${userId}/steps/${randomStep.stepId}/models`)
-      .doc(model.modelId)
-      .set(stepModelDoc.data())
+    if (modelDoc.exists && typeof modelDoc.data === 'function') {      
+      await db.collection(`userStoryStepModels/${userId}/steps/${randomStep.stepId}/models`)
+        .doc(model.modelId)
+        .set(modelDoc.data())
+    } else {
+      continue
+    }
+    
   }
 
   return randomStep
