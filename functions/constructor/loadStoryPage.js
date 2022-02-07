@@ -108,7 +108,7 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
   }
 
   let randomStepWasCreated = false
-  let randomStep = userSteps.length 
+  let randomStep = publicSteps.length 
     ? publicSteps[Math.floor(Math.random() * publicSteps.length)]
     : null
 
