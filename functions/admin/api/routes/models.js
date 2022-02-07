@@ -42,22 +42,22 @@ async function getNeedPublishModels(req, res) {
 
   try {
     const collection = await db.collection('needPublish')
-      .orderBy('date', 'desc')
+      .orderBy('publishedAt', 'desc')
       .offset(startAt)
       .limit(limit)
       .get()
 
     const models = collection.docs.map(doc => {
-      const { date, modelId, userId } = doc.data()
+      const { publishedAt, modelId, userId } = doc.data()
 
       return {
-        date: firebaseDate(date),
+        publishedAt: firebaseDate(publishedAt),
         modelId,
         userId,
       }
     })
 
-    const fullCollection = await db.collection('needPublish').get()
+    const fullCollection = await db.collection('needPublish').get()  // TODO: м.б. фильтровать по статусу
     const allModelsCount = fullCollection.docs.length
 
     return res.json({ models, allModelsCount })
