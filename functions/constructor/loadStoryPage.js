@@ -10,9 +10,8 @@ const TYPE = {
 
 const LIMIT_NEED_PUBLISH_MODELS = 1000
 
-// TODO: ВЕРНУТЬ
-// const loadStoryPage = functions.https.onCall(async (data, context) => {
-const loadStoryPage = async(data, context) => {
+const loadStoryPage = functions.https.onCall(async (data, context) => {
+// const loadStoryPage = async(data, context) => {
   const { 
     type,
     currentStepId,  // текущий в игре (не last), чтоб подгружать previous
@@ -34,12 +33,12 @@ const loadStoryPage = async(data, context) => {
         .sort((a, b) => a.order - b.order)
 
       if (last_2_steps.length) {
-        return Promise.resolve({ steps: last_2_steps, type }) // TODO: stringify
+        return Promise.resolve(JSON.stringify({ steps: last_2_steps, type }))
       } else {
         // create step
         const firstUserStep = await createUserStoryStep({ userId })
 
-        return Promise.resolve({ steps: [firstUserStep], type }) // TODO: stringify
+        return Promise.resolve(JSON.stringify({ steps: [firstUserStep], type }))
       }
 
     } else if (type === TYPE.NEXT) {
@@ -65,7 +64,7 @@ const loadStoryPage = async(data, context) => {
       // create step
       const newUserStep = await createUserStoryStep({ userId, userSteps })
 
-      return Promise.resolve({ steps: [newUserStep], type }) // TODO: stringify
+      return Promise.resolve(JSON.stringify({ steps: [newUserStep], type }))
 
     } else if (type === TYPE.PREVIOUS) {
       if (!currentStepId) {
@@ -82,13 +81,12 @@ const loadStoryPage = async(data, context) => {
 
       const previous_2_Steps = previous_2_StepsCollection.docs.map(step => step.data())
 
-      return Promise.resolve({ steps: previous_2_Steps, type }) // TODO: stringify
+      return Promise.resolve(JSON.stringify({ steps: previous_2_Steps, type }))
     }
   } catch (err) {
     return Promise.reject(new Error(`can't load story page with userId:${userId} - ${err}`))
   }
-// })
-}
+})
 
 const createUserStoryStep = async ({ userId, userSteps = [] }) => {
   const publicStepsCollection = await db.collection('publicStorySteps')
