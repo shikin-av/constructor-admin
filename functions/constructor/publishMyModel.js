@@ -1,4 +1,4 @@
-const { functions, db } = require('../firebase')
+const { functions, db, bucket } = require('../firebase')
 
 const publishMyModel = functions.https.onCall(async (data, context) => {
   const { id } = data
@@ -22,11 +22,14 @@ const publishMyModel = functions.https.onCall(async (data, context) => {
 
     const publishData = {
       ...model,
-      userId,
       modelId: id,
       publishedAt: new Date(),
     }
     await db.collection('needPublish').doc(id).set(publishData)
+
+    // update image
+    await bucket.file(`${model.userId}/${id}.png`)
+      .copy(`needPublish/${id}.png`)
     
     return Promise.resolve(JSON.stringify({ id }))
   } catch (err) {
