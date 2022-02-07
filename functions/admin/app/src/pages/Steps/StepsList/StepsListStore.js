@@ -94,7 +94,8 @@ class StepsListStore {
   }
 
   loadStepImageURL = async (imageName) => {
-    return await getDownloadURL(ref(storage, `${FOLDERS.PUBLIC}/${imageName}`))
+    const stepId = imageName.split('.')[0]
+    return await getDownloadURL(ref(storage, `${FOLDERS.PUBLIC}/${stepId}/${imageName}`))
   }
 
   getStepById = (stepId) => this.pageSteps.find(s => s.stepId === stepId)

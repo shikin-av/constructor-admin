@@ -1,6 +1,5 @@
 const express = require('express')
 const _ = require('lodash')
-const { v4: uuidv4 } = require('uuid')
 const { db, bucket } = require('../../../firebase')
 const { error500 } = require('../utils/handleErrors')
 const isAuthorized = require('../auth/authorized')
@@ -55,11 +54,9 @@ async function create(req, res) {
   try {
     let { stepId, models, titles, descriptions, status, specialDates, imageName, updatedAt } = req.body
 
-    if (!status) {
+    if (!status || !stepId) {
       return res.status(400).send({ message: 'doesn\'t have required params' })
     }
-
-    stepId = stepId || uuidv4()
     
     await db.collection('publicStorySteps').doc(stepId).set({
       stepId,
@@ -113,7 +110,7 @@ async function edit(req, res) {
     const oldStep = oldDoc.data()
     // Image
     if (oldStep.imageName && imageName === null) {
-      await bucket.file(`public/${oldStep.imageName}`).delete()
+      await bucket.file(`public/${stepId}/${oldStep.imageName}`).delete()
     }
 
     /*
@@ -137,6 +134,7 @@ async function edit(req, res) {
         console.error(err)
       }
     }
+
     for await (const newModel of onlyNew) {      
       const userModelDoc = await db.collection(`models/users/${newModel.userId}`).doc(newModel.modelId).get()      
       // Copy model
@@ -221,7 +219,7 @@ async function remove(req, res) {
     await db.collection('publicStorySteps').doc(stepId).delete()
 
     if (imageName) {
-      await bucket.file(`public/${imageName}`).delete()
+      await bucket.file(`public/${stepId}/${imageName}`).delete()
     }
 
     return res.json({ stepId })
