@@ -71,12 +71,15 @@ const loadStoryPage = async(data, context) => {
         return Promise.reject(new Error('Doesn\'t have currentStepId'))
       }
 
-      const currentStep = await db.collection(`userStorySteps/${userId}/steps`).doc(currentStepId)
+      const currentStepDoc = await db.collection(`userStorySteps/${userId}/steps`).doc(currentStepId).get()
 
-      const previous_2_Steps = await db.collection(`userStorySteps/${userId}/steps`)
+      const previous_2_StepsCollection = await db.collection(`userStorySteps/${userId}/steps`)
         .orderBy('updatedAt', 'desc')
-        .startAfter(currentStep)
+        .startAfter(currentStepDoc)
         .limit(2)
+        .get()
+
+      const previous_2_Steps = previous_2_StepsCollection.docs.map(step => step.data())
 
       return Promise.resolve({ steps: previous_2_Steps, type }) // TODO: stringify
     }
