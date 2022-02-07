@@ -94,7 +94,7 @@ class StepsListStore {
   }
 
   loadStepImageURL = async (imageName) => {
-    const stepId = imageName.split('.')[0]
+    const stepId = imageName.split('.').slice(0, -1).join('.')
     return await getDownloadURL(ref(storage, `${FOLDERS.PUBLIC}/${stepId}/${imageName}`))
   }
 
