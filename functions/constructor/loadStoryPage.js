@@ -25,6 +25,7 @@ const loadStoryPage = async(data, context) => {
   try {
     if (type === TYPE.LAST) {
       const last_2_stepsCollection = await db.collection(`userStorySteps/${userId}/steps`)
+        .orderBy('updatedAt', 'desc')
         .limit(2)
         .get()
 
