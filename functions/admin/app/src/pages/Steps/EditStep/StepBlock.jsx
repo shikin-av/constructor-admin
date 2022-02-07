@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router'
 import { useNavigate } from 'react-router-dom'
 import _ from 'lodash'
+import { v4 as uuidv4 } from 'uuid'
 import { Divider, Select, Button, DatePicker, Space, message } from 'antd'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { toJS } from 'mobx'
@@ -33,6 +34,7 @@ const StepBlock =  observer(({ mode }) => {
       if (mode === MODES.CREATE) {
         store.resetModels()
         store.loadModelsPage()
+        store.setStepId(uuidv4())
       } else if (mode === MODES.EDIT && navStepId) {
         store.setStepId(navStepId)
         await store.loadStoryStep(navStepId)
@@ -181,7 +183,7 @@ const StepBlock =  observer(({ mode }) => {
                 htmlType="submit"
                 disabled={disableSubmit}
                 loading={store.saveLoading === LOADING.PROGRESS}
-                onClick={() => store.saveStoryStep({ mode, stepId: navStepId })}
+                onClick={() => store.saveStoryStep({ mode })}
               >
                 <Lang text={i18n.EDIT_STEP.FORM.SAVE_STEP_BUTTON} />
               </Button>

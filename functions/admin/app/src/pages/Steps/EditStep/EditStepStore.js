@@ -127,9 +127,7 @@ class EditStepStore {
 
   extractImageNameFromURL = (url) => (url.split('%2F')[1]).split('?alt')[0]
 
-  saveStoryStep = async ({ mode, stepId }) => {
-    this.stepId = stepId
-
+  saveStoryStep = async ({ mode }) => {
     let imageName = null
 
     if (this.imageFile) {  // был выбран файл в браузере
@@ -160,7 +158,7 @@ class EditStepStore {
     this.saveLoading = LOADING.PROGRESS
     const token = localStorage.getItem('token')
     const body = {
-      stepId,
+      stepId: this.stepId,
       models: toJS(this.selectedModels),
       imageName,
       titles: redusedTitles,
@@ -172,8 +170,8 @@ class EditStepStore {
 
     console.log('save body', body)
 
-    const url = (mode === MODES.EDIT && stepId)
-      ? `${API_URL}/publicStorySteps/${stepId}`
+    const url = (mode === MODES.EDIT && this.stepId)
+      ? `${API_URL}/publicStorySteps/${this.stepId}`
       : `${API_URL}/publicStorySteps`
 
     await fetch(url, {
@@ -268,7 +266,7 @@ class EditStepStore {
   }
 
   loadStepImageURL = async (imageName) => {
-    return await getDownloadURL(ref(storage, `/public/${imageName}`))
+    return await getDownloadURL(ref(storage, `/public/${this.stepId}/${imageName}`))
   }
 
   getFileName = (file) => {
@@ -285,7 +283,7 @@ class EditStepStore {
 
   uploadImage = async (file) => {
     const fileName = this.getFileName(file)
-    const storageRef = ref(storage, `${FOLDERS.PUBLIC}/${fileName}`)
+    const storageRef = ref(storage, `${FOLDERS.PUBLIC}/${this.stepId}/${fileName}`)
     await uploadBytes(storageRef, file)
   }
 
