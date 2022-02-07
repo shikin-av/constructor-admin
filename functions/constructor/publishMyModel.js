@@ -21,9 +21,10 @@ const publishMyModel = functions.https.onCall(async (data, context) => {
     }    
 
     const publishData = {
+      ...model,
       userId,
       modelId: id,
-      date: new Date(),
+      publishedAt: new Date(),
     }
     await db.collection('needPublish').doc(id).set(publishData)
     

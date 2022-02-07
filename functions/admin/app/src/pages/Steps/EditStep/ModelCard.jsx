@@ -33,7 +33,7 @@ const ModelCard = observer(({ modelId, selected }) => {
     const m = store.getModelById(modelId)
     setModel({
       ...m,
-      formattedDate: `${dateFormat(m.date)}  |  ${timeFormat(m.date)}`
+      formattedDate: `${dateFormat(m.publishedAt)}  |  ${timeFormat(m.publishedAt)}`
     })
   }, [modelId])
 
