@@ -57,6 +57,26 @@ async function create(req, res) {
     if (!status || !stepId) {
       return res.status(400).send({ message: 'doesn\'t have required params' })
     }
+
+    // Models
+    for await (const model of models) {
+      const needPublishModelDoc = await db.collection('needPublish').doc(model.modelId).get()
+      if (!needPublishModelDoc.exists) {
+        return res.status(400).send({ message: `doesn\'t have need publish model ${model.modelId}` })
+      } else {
+        const needPublishModel = needPublishModelDoc.data()
+        // Step Model fields
+        model.detailsCount = needPublishModel.detailsCount
+        // Copy model
+        await db.collection(`publicStoryStepModels/${stepId}/models/`)
+          .doc(model.modelId)
+          .set(needPublishModel)
+
+        // Copy model image
+        await bucket.file(`needPublish/${model.modelId}.png`)
+          .copy(`public/${stepId}/${model.modelId}.png`)
+      }
+    }
     
     await db.collection('publicStorySteps').doc(stepId).set({
       stepId,
@@ -69,25 +89,6 @@ async function create(req, res) {
       updatedAt,
       usedByUser: false,
     })
-
-    // Models
-    for await (const model of models) {
-      const needPublishModelDoc = await db.collection('needPublish').doc(model.modelId).get()
-      if (!needPublishModelDoc.exists) {
-        // models = models.filter(m => m.modelId === model.modelId)
-        // continue
-        return res.status(400).send({ message: `doesn\'t have need publish model ${model.modelId}` })
-      } else {
-        // Copy model
-        await db.collection(`publicStoryStepModels/${stepId}/models/`)
-          .doc(model.modelId)
-          .set(needPublishModelDoc.data())
-
-        // Copy model image
-        await bucket.file(`needPublish/${model.modelId}.png`)
-          .copy(`public/${stepId}/${model.modelId}.png`)
-      }
-    }
 
     return res.json({ stepId })
   } catch(err) {
@@ -138,10 +139,16 @@ async function edit(req, res) {
 
     for await (const newModel of onlyNew) {      
       const needPublishModelDoc = await db.collection('needPublish').doc(newModel.modelId).get()
+      const needPublishModel = needPublishModelDoc.data()
+      
+      const model = models.find(m => m.modelId === needPublishModel.modelId)
+      // Step Model fields
+      model.detailsCount = needPublishModel.detailsCount
+
       // Copy model
       await db.collection(`publicStoryStepModels/${stepId}/models/`)
         .doc(newModel.modelId)
-        .set(needPublishModelDoc.data())
+        .set(needPublishModel)
 
       // Copy model image
       await bucket.file(`needPublish/${newModel.modelId}.png`)

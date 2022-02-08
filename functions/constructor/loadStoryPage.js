@@ -121,6 +121,7 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
 
     const needPublishModels = needPublishModelsCollection.docs.map(doc => {
       const { publishedAt, userId, detailsCount } = doc.data()
+      // Step Model fields
       return {
         modelId: doc.id,
         publishedAt: firebaseDate(publishedAt),
