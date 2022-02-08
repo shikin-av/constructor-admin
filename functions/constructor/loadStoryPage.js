@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { v4: uuidv4 } = require('uuid')
 const { functions, db, bucket } = require('../firebase')
+const { firebaseDate } = require('../admin/api/utils/date')
 
 const TYPE = {
   LAST: 'last',
@@ -35,7 +36,7 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
       if (last_2_steps.length) {
         return Promise.resolve(JSON.stringify({ steps: last_2_steps, type }))
       } else {
-        // create step
+        // create first step
         const firstUserStep = await createUserStoryStep({ userId })
 
         return Promise.resolve(JSON.stringify({ steps: [firstUserStep], type }))
@@ -87,6 +88,7 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
     return Promise.reject(new Error(`can't load story page with userId:${userId} - ${err}`))
   }
 })
+// }
 
 const createUserStoryStep = async ({ userId, userSteps = [] }) => {
   const publicStepsCollection = await db.collection('publicStorySteps')
@@ -117,12 +119,22 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
       .limit(LIMIT_NEED_PUBLISH_MODELS)
       .get()
 
-    const needPublishModels = needPublishModelsCollection.docs.map(doc => doc.data())
+    const needPublishModels = needPublishModelsCollection.docs.map(doc => {
+      const { publishedAt, userId, detailsCount } = doc.data()
+      return {
+        modelId: doc.id,
+        publishedAt: firebaseDate(publishedAt),
+        userId,
+        detailsCount,
+      }
+    })
 
-    const random_5_Models = []
+    let random_5_Models = []
     for (let i = 0; i < 5; i++) {
       random_5_Models[i] = needPublishModels[Math.floor(Math.random() * needPublishModels.length)]
     }
+
+    random_5_Models = random_5_Models.sort((a, b) => a.detailsCount - b.detailsCount)
 
     const stepId = uuidv4()
 
