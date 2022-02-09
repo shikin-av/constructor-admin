@@ -63,19 +63,27 @@ async function create(req, res) {
       const needPublishModelDoc = await db.collection('needPublish').doc(model.modelId).get()
       if (!needPublishModelDoc.exists) {
         return res.status(400).send({ message: `doesn\'t have need publish model ${model.modelId}` })
-      } else {
-        const needPublishModel = needPublishModelDoc.data()
-        // Step Model fields
-        model.detailsCount = needPublishModel.detailsCount
-        // Copy model
-        await db.collection(`publicStoryStepModels/${stepId}/models/`)
-          .doc(model.modelId)
-          .set(needPublishModel)
-
-        // Copy model image
-        await bucket.file(`needPublish/${model.modelId}.png`)
-          .copy(`public/${stepId}/${model.modelId}.png`)
       }
+
+      const needPublishModel = needPublishModelDoc.data()
+      // Step Model fields
+      model.detailsCount = needPublishModel.detailsCount
+      // Copy model
+      await db.collection(`publicStoryStepModels/${stepId}/models/`)
+        .doc(model.modelId)
+        .set({
+          ...needPublishModel,
+          inSteps: needPublishModel.inSteps + 1,
+        })
+
+      await db.collection('needPublish').doc(model.modelId).set({
+        ...needPublishModel,
+        inSteps: needPublishModel.inSteps + 1,
+      })
+
+      // Copy model image
+      await bucket.file(`needPublish/${model.modelId}.png`)
+        .copy(`public/${stepId}/${model.modelId}.png`)
     }
     
     await db.collection('publicStorySteps').doc(stepId).set({
@@ -132,6 +140,15 @@ async function edit(req, res) {
           .delete()
 
         await bucket.file(`public/${stepId}/${oldModel.modelId}.png`).delete()
+
+        const needPublishModelDoc = await db.collection('needPublish').doc(oldModel.modelId).get()
+        if (needPublishModelDoc.exists) {
+          const needPublishModel = needPublishModelDoc.data()
+          await db.collection('needPublish').doc(oldModel.modelId).set({
+            ...needPublishModel,
+            inSteps: needPublishModel.inSteps - 1,
+          })
+        }
       } catch(err) {
         console.error(err)
       }
@@ -139,6 +156,10 @@ async function edit(req, res) {
 
     for await (const newModel of onlyNew) {      
       const needPublishModelDoc = await db.collection('needPublish').doc(newModel.modelId).get()
+      if (!needPublishModelDoc.exists) {
+        return res.status(400).send({ message: `doesn\'t have need publish model ${newModel.modelId}` })
+      }
+
       const needPublishModel = needPublishModelDoc.data()
       
       const model = models.find(m => m.modelId === needPublishModel.modelId)
@@ -148,7 +169,15 @@ async function edit(req, res) {
       // Copy model
       await db.collection(`publicStoryStepModels/${stepId}/models/`)
         .doc(newModel.modelId)
-        .set(needPublishModel)
+        .set({
+          ...needPublishModel,
+          inSteps: needPublishModel.inSteps + 1,
+        })
+
+      await db.collection('needPublish').doc(newModel.modelId).set({
+        ...needPublishModel,
+        inSteps: needPublishModel.inSteps + 1,
+      })
 
       // Copy model image
       await bucket.file(`needPublish/${newModel.modelId}.png`)
@@ -221,7 +250,16 @@ async function remove(req, res) {
         image && await image.delete()
       } catch(err) {
         console.error(`cannot delete image ${stepId}/${model.modelId}.png`, err.message)
-      }      
+      }
+
+      const needPublishModelDoc = await db.collection('needPublish').doc(model.modelId).get()
+      if (needPublishModelDoc.exists) {
+        const needPublishModel = needPublishModelDoc.data()
+        await db.collection('needPublish').doc(model.modelId).set({
+          ...needPublishModel,
+          inSteps: needPublishModel.inSteps - 1,
+        })
+      }
     }
 
     await db.collection('publicStorySteps').doc(stepId).delete()

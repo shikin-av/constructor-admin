@@ -183,10 +183,13 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
       // Обычный кейс
       : await db.collection(`publicStoryStepModels/${randomStep.stepId}/models`).doc(model.modelId).get()
 
+    // Фильтруем поля
+    const { approved, inSteps, published, publishedAt, ...modelData } = modelDoc.data()
+
     if (modelDoc.exists && typeof modelDoc.data === 'function') {      
       await db.collection(`userStoryStepModels/${userId}/steps/${randomStep.stepId}/models`)
         .doc(model.modelId)
-        .set(modelDoc.data())
+        .set(modelData)
     } else {
       continue
     }

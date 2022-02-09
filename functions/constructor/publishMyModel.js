@@ -24,6 +24,8 @@ const publishMyModel = functions.https.onCall(async (data, context) => {
       ...model,
       modelId: id,
       publishedAt: new Date(),
+      approved: false,
+      inSteps: 0,
     }
     await db.collection('needPublish').doc(id).set(publishData)
 
