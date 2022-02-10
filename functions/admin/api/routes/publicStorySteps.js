@@ -68,6 +68,7 @@ async function create(req, res) {
       const needPublishModel = needPublishModelDoc.data()
       // Step Model fields
       model.detailsCount = needPublishModel.detailsCount
+      model.colors = needPublishModel.colors
       // Copy model
       await db.collection(`publicStoryStepModels/${stepId}/models/`)
         .doc(model.modelId)
@@ -165,7 +166,7 @@ async function edit(req, res) {
       const model = models.find(m => m.modelId === needPublishModel.modelId)
       // Step Model fields
       model.detailsCount = needPublishModel.detailsCount
-
+      model.colors = needPublishModel.colors
       // Copy model
       await db.collection(`publicStoryStepModels/${stepId}/models/`)
         .doc(newModel.modelId)
