@@ -120,13 +120,14 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
       .get()
 
     const needPublishModels = needPublishModelsCollection.docs.map(doc => {
-      const { publishedAt, userId, detailsCount } = doc.data()
+      const { publishedAt, userId, detailsCount, colors } = doc.data()
       // Step Model fields
       return {
         modelId: doc.id,
         publishedAt: firebaseDate(publishedAt),
         userId,
         detailsCount,
+        colors,
       }
     })
 
@@ -147,7 +148,7 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
       descriptions: {},
       imageName: null,
       models: random_5_Models,
-      specialDates: null,
+      specialDates: [],
       status: "approved",
       updatedAt: new Date().getTime(),
       usedByUser: true,

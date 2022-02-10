@@ -25,7 +25,7 @@ const loadMyModelsPage = functions.https.onCall(async (data, context) => {
       } = doc.data()
 
       return {
-        id: doc.id,
+        modelId: doc.id,
         userId,
         colors,
         detailsCount,
@@ -33,8 +33,6 @@ const loadMyModelsPage = functions.https.onCall(async (data, context) => {
         published,
       }
     })
-
-    // TODO - стартуя с startAt с количеством limit
 
     return Promise.resolve(JSON.stringify({ models }))
   } catch (err) {
