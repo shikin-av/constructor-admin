@@ -3,10 +3,15 @@ const { v4: uuidv4 } = require('uuid')
 const { functions, db, bucket } = require('../firebase')
 const { firebaseDate } = require('../admin/api/utils/date')
 
-const TYPE = {
+const LOAD_TYPE = {
   LAST: 'last',
-  NEXT: 'next',
   PREVIOUS: 'previous',
+}
+
+const STEP_STATUS = {
+  NEW: 'new',
+  PROGRESS: 'progress',
+  FINISHED: 'finished',
 }
 
 const LIMIT_NEED_PUBLISH_MODELS = 1000
@@ -23,9 +28,9 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
   if (!type) return Promise.reject(new Error('doesn`t have type'))
 
   try {
-    if (type === TYPE.LAST) {
+    if (type === LOAD_TYPE.LAST) {
       const last_2_stepsCollection = await db.collection(`userStorySteps/${userId}/steps`)
-        .orderBy('updatedAt', 'desc')
+        .orderBy('createdAt', 'desc')
         .limit(2)
         .get()
 
@@ -34,40 +39,27 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
         .sort((a, b) => a.order - b.order)
 
       if (last_2_steps.length) {
+        const lastStep = last_2_steps[last_2_steps.length - 1]        
+        if (lastStep.status == STEP_STATUS.FINISHED) {
+          const newUserStep = await createUserStoryStep({ userId })
+
+          return Promise.resolve(JSON.stringify({
+            steps: [
+              newUserStep,
+              last_2_steps[0],
+            ],
+            type,
+          }))
+        }
+
         return Promise.resolve(JSON.stringify({ steps: last_2_steps, type }))
       } else {
-        // create first step
         const firstUserStep = await createUserStoryStep({ userId })
 
         return Promise.resolve(JSON.stringify({ steps: [firstUserStep], type }))
       }
 
-    } else if (type === TYPE.NEXT) {
-      const userSteps = await db.collection(`userStorySteps/${userId}/steps`)
-        .get()
-        .then(snap => {
-          const steps = []
-          snap.forEach(doc => {
-            steps.push(doc.data())
-          })
-
-          return steps
-        })
-        .catch((err) => {
-          console.log('ERROR', err)
-          return Promise.reject(err)
-        })
-
-      if (!userSteps.length) {
-        await db.collection('userStorySteps').doc(userId).set({ steps: [] })
-      }
-
-      // create step
-      const newUserStep = await createUserStoryStep({ userId, userSteps })
-
-      return Promise.resolve(JSON.stringify({ steps: [newUserStep], type }))
-
-    } else if (type === TYPE.PREVIOUS) {
+    } else if (type === LOAD_TYPE.PREVIOUS) {
       if (!currentStepId) {
         return Promise.reject(new Error('Doesn\'t have currentStepId'))
       }
@@ -75,7 +67,7 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
       const currentStepDoc = await db.collection(`userStorySteps/${userId}/steps`).doc(currentStepId).get()
 
       const previous_2_StepsCollection = await db.collection(`userStorySteps/${userId}/steps`)
-        .orderBy('updatedAt', 'desc')
+        .orderBy('createdAt', 'desc')
         .startAfter(currentStepDoc)
         .limit(2)
         .get()
@@ -150,7 +142,6 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
       models: random_5_Models,
       specialDates: [],
       status: "approved",
-      updatedAt: new Date().getTime(),
       usedByUser: true,
     }
 
@@ -165,8 +156,13 @@ const createUserStoryStep = async ({ userId, userSteps = [] }) => {
     }
   }
 
-  const userStepDoc = await db.collection('userStorySteps').doc(userId).get()
+  randomStep = {
+    ...randomStep,
+    createdAt: new Date().getTime(),
+    status: STEP_STATUS.NEW,
+  }
 
+  const userStepDoc = await db.collection('userStorySteps').doc(userId).get()
   if (!userStepDoc.exists) {
     await db.collection('userStorySteps').doc(userId).set({})
   }
