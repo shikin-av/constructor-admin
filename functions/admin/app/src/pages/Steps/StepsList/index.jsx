@@ -149,7 +149,7 @@ const StepsListPage =  observer(() => {
       key: 'models',
       render: (models) => (
         <div className="full-center">
-          <Title level={3}>{models.length}</Title>
+          <Title level={3} className="models-count">{models.length}</Title>
         </div>
       )
     },

@@ -11,7 +11,7 @@ const LOAD_TYPE = {
 const STEP_STATUS = {
   NEW: 'new',
   PROGRESS: 'progress',
-  FINISHED: 'finished',
+  COMPLETE: 'complete',
 }
 
 const LIMIT_NEED_PUBLISH_MODELS = 1000
@@ -36,17 +36,18 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
 
       const last_2_steps = last_2_stepsCollection.docs
         .map(doc => doc.data())
-        .sort((a, b) => a.order - b.order)
+        .sort((a, b) => b.createdAt - a.createdAt)
 
-      if (last_2_steps.length) {
-        const lastStep = last_2_steps[last_2_steps.length - 1]        
-        if (lastStep.status == STEP_STATUS.FINISHED) {
+      if (last_2_steps.length) {        
+        const lastStep = last_2_steps[0]
+
+        if (lastStep.status == STEP_STATUS.COMPLETE) {
           const newUserStep = await createUserStoryStep({ userId })
 
           return Promise.resolve(JSON.stringify({
             steps: [
               newUserStep,
-              last_2_steps[0],
+              lastStep,
             ],
             type,
           }))
@@ -82,12 +83,19 @@ const loadStoryPage = functions.https.onCall(async (data, context) => {
 })
 // }
 
-const createUserStoryStep = async ({ userId, userSteps = [] }) => {
+const createUserStoryStep = async ({ userId }) => {
   const publicStepsCollection = await db.collection('publicStorySteps')
     .where('status', '==', 'approved')
     .get()
 
   let publicSteps = publicStepsCollection.docs.map(doc => doc.data())
+
+  const userStepsCollection = await db.collection('userStorySteps')
+    .doc(userId)
+    .collection('steps')
+    .get()
+  
+  const userSteps = userStepsCollection.docs.map(step => step.data())
 
   // исключаем степы юзера, чтоб степ не попался 2й раз
   if (userSteps.length) {

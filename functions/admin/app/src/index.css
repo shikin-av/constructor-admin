@@ -278,3 +278,10 @@ code {
 .steps-list .ant-tag {
   padding: 50px;
 }
+
+.models-count {
+  color: rgb(24, 144, 255);
+  border: 1px solid rgb(24, 144, 255);
+  padding: 10px 20px;
+  background: #f5faff;
+}
