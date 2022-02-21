@@ -132,8 +132,13 @@ const createUserStoryStep = async ({ userId }) => {
     })
 
     let random_5_Models = []
-    for (let i = 0; i < 5; i++) {
-      random_5_Models[i] = needPublishModels[Math.floor(Math.random() * needPublishModels.length)]
+
+    while(random_5_Models.length < 5) {
+      const randomModel = needPublishModels[Math.floor(Math.random() * needPublishModels.length)]
+
+      if (!random_5_Models.includes(randomModel)) {
+        random_5_Models.push(randomModel)
+      }
     }
 
     random_5_Models = random_5_Models.sort((a, b) => a.detailsCount - b.detailsCount)
