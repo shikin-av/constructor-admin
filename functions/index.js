@@ -9,3 +9,4 @@ exports.publishMyModel = require('./constructor/publishMyModel')
 
 exports.loadStoryPage = require('./constructor/loadStoryPage')
 exports.loadStoryModel = require('./constructor/loadStoryModel')
+exports.saveBuildModel = require('./constructor/saveBuildModel')

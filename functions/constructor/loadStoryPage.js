@@ -127,6 +127,7 @@ const createUserStoryStep = async ({ userId }) => {
         publishedAt: firebaseDate(publishedAt),
         userId,
         detailsCount,
+        buildedCount: 0,
         colors,
       }
     })
@@ -154,7 +155,6 @@ const createUserStoryStep = async ({ userId }) => {
       imageName: null,
       models: random_5_Models,
       specialDates: [],
-      status: "approved",
       usedByUser: true,
     }
 
@@ -168,6 +168,8 @@ const createUserStoryStep = async ({ userId }) => {
       await db.collection('publicStorySteps').doc(randomStep.stepId).set({ ...randomStep, usedByUser: true })
     }
   }
+
+  randomStep.models = randomStep.models.map(m => ({...m, buildedCount: 0 }))
 
   randomStep = {
     ...randomStep,
@@ -194,7 +196,9 @@ const createUserStoryStep = async ({ userId }) => {
       : await db.collection(`publicStoryStepModels/${randomStep.stepId}/models`).doc(model.modelId).get()
 
     // Фильтруем поля
-    const { approved, inSteps, published, publishedAt, ...modelData } = modelDoc.data()
+    let { approved, inSteps, published, publishedAt, ...modelData } = modelDoc.data()
+
+    modelData = { ...modelData, buildedCount: 0 }
 
     if (modelDoc.exists && typeof modelDoc.data === 'function') {      
       await db.collection(`userStoryStepModels/${userId}/steps/${randomStep.stepId}/models`)
