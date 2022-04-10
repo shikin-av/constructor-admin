@@ -2,30 +2,24 @@ const _ = require('lodash')
 const { functions, db } = require('../firebase')
 
 const saveBuildModel = functions.https.onCall(async (data, context) => {
-  let { modelId, stepId, lastPortion } = data
+  let { modelId, stepId, details } = data
   const userId = context.auth.uid
-  lastPortion = JSON.parse(lastPortion)
+  details = JSON.parse(details)
 
   if (!userId) return Promise.reject(new Error('doesn`t have userId'))
   if (!modelId) return Promise.reject(new Error('doesn`t have modelId'))
   if (!stepId) return Promise.reject(new Error('doesn`t have stepId'))
-  if (!lastPortion) return Promise.reject(new Error('doesn`t have lastDetailIndexes'))
-  if (!Array.isArray(lastPortion)) {
-    return Promise.reject(new Error(`"lastDetailIndexes" must be an array - ${lastPortion}`))
+  if (!details) return Promise.reject(new Error('doesn`t have details'))
+  if (!Array.isArray(details)) {
+    return Promise.reject(new Error(`"details" must be an array - ${details}`))
   }
 
   try {
     const modelDoc = await db.collection(`userStoryStepModels/${userId}/steps/${stepId}/models`).doc(modelId).get()
     let model = modelDoc.data()
-
-    lastPortion = _.sortBy(lastPortion, 'index')
-    const portionBuilded = lastPortion.filter(d => d.builded == true)
-    const notBuildedPortionCount = lastPortion.length - portionBuilded.length
-    const lastBuildedItem = _.maxBy(portionBuilded, 'index')
-    const notBuildedAllCount = model.detailsCount - (lastBuildedItem.index + 1 - notBuildedPortionCount)
     
-    model.buildedCount = model.detailsCount - notBuildedAllCount
-    model.buildedLastDetails = lastPortion
+    model.details = details
+    model.buildedCount = details.filter(d => !!d.b).length
 
     // Save UserStoryStepModel
     await db.collection(`userStoryStepModels/${userId}/steps/${stepId}/models`).doc(modelId).set(model)
