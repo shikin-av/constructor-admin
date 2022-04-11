@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { functions, db } = require('../firebase')
+const { STEP_STATUS } = require('./constants')
 
 const saveBuildModel = functions.https.onCall(async (data, context) => {
   let { modelId, stepId, details } = data
@@ -40,9 +41,15 @@ const saveBuildModel = functions.https.onCall(async (data, context) => {
       }
     }
 
-    if (step.models.length == buildedModelsCount) {
-      step.status = "complete"
+    if (step.status === STEP_STATUS.NEW) {
+      step.status = STEP_STATUS.PROGRESS
     }
+
+    if (step.models.length == buildedModelsCount) {
+      step.status = STEP_STATUS.COMPLETE
+    }
+
+    step.lastPlayedModelId = modelId
 
     // Save UserStoryStep
     await db.collection(`userStorySteps/${userId}/steps`).doc(stepId).set(step)

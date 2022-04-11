@@ -2,19 +2,7 @@ const _ = require('lodash')
 const { v4: uuidv4 } = require('uuid')
 const { functions, db, bucket } = require('../firebase')
 const { firebaseDate } = require('../admin/api/utils/date')
-
-const LOAD_TYPE = {
-  LAST: 'last',
-  PREVIOUS: 'previous',
-}
-
-const STEP_STATUS = {
-  NEW: 'new',
-  PROGRESS: 'progress',
-  COMPLETE: 'complete',
-}
-
-const LIMIT_NEED_PUBLISH_MODELS = 1000
+const { LIMIT_NEED_PUBLISH_MODELS, LOAD_TYPE, STEP_STATUS } = require('./constants')
 
 const loadStoryPage = functions.https.onCall(async (data, context) => {
 // const loadStoryPage = async(data, context) => {
